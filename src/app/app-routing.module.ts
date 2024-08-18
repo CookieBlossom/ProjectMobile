@@ -11,6 +11,34 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
+  },
+  {
+    path: 'products',
+    loadChildren: () => import('./pages/products/products.module').then( m => m.ProductsPageModule)
+  },
+  {
+    path: 'profile',
+    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+  },
+  {
+    path: 'information',
+    loadChildren: () => import('./pages/information/information.module').then( m => m.InformationPageModule)
+  },
+  {
+    path: 'postulation',
+    loadChildren: () => import('./pages/postulation/postulation.module').then( m => m.PostulationPageModule)
+  },
+  {
+    path: 'claim',
+    loadChildren: () => import('./pages/claim/claim.module').then( m => m.ClaimPageModule)
+  },
 ];
 
 @NgModule({
