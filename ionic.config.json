@@ -1,0 +1,7 @@
+{
+  "name": "shoeVault",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
