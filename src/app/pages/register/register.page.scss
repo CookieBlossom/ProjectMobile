@@ -1,0 +1,18 @@
+.header-register{
+    background-color: black;
+    height: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-register h1{
+    font-family: "Noto Sans", sans-serif;
+    font-size: xx-large;
+    color: white;
+}
+.form-register{
+    background-color: white;
+    height: 85%;
+    border-radius: 15% 0% 0% 0%;
+}
