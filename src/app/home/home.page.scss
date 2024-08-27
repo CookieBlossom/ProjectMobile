@@ -1,27 +1,144 @@
-#container {
-  text-align: center;
+ion-icon{
+  color: rgb(255, 255, 255);
+}
+ion-title{
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 600;
+  font-size: 25px;
+  text-align: right;
+  color: black;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-content{
+  overflow: false;
 }
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
+ion-card{
   margin: 0;
 }
+.header-home{
+  position: absolute;
+  width: 100%;
+  background-color: rgb(245, 245, 245);
+  height: 90px;
+  border-radius: 0% 0% 15% 15%;
+}
 
-#container a {
-  text-decoration: none;
+.title-home{
+  display: flex;
+}
+
+.icon-logo{
+  width: 120px;
+  height: 100px;
+}
+
+.lastunits-section{
+  display: flex;
+  flex-direction: column;
+  margin-top: 110px;
+  height: 300px;
+  border-radius: 10%;
+}
+.container-products{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(226, 224, 224);
+  justify-content: space-around;
+  border-radius: 50% 50% 0% 0%;
+}
+
+.card{
+  padding: 10px;
+  background: rgb(226, 224, 224);
+  background: radial-gradient(circle, rgb(81 70 70) 0%, rgb(0 0 0) 100%);
+  width: 40%;
+  margin-top: 80px;
+  height: 200px;
+  border-radius: 10%;
+  box-shadow: 0px 4px 10px #000000;
+  position: relative;
+  overflow: visible;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.card-content p{
+  color: rgb(255, 255, 255);
+}
+.card-content{
+  margin-top: 80px;
+  width: 100%;
+}
+
+.sc-ion-searchbar-md-h{
+  --border-radius: 20px
+}
+
+.card-image{
+  position: absolute;
+  top: -72px;
+  left: 41%;
+  transform: translateX(-40%);
+  width: 150px;
+  border-radius: 50%;
+  box-shadow: 0px 4px 20px #000000;
+}
+
+.card-image img{
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.gender-section{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row-reverse;
+  background-image: linear-gradient(180deg, #e2e0e0, #5a5a5a);
+}
+
+.gender-section p{
+  font-weight: 600;
+  position: absolute;
+  color: #000000;
+  transform: translate(-10px, 0px);
+  font-size: 30px;
+  text-orientation: upright;
+  writing-mode: tb;
+  letter-spacing: 0.3rem;
+  margin: 0;
+  border-left: solid;
+}
+
+.gender-maculine{
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+}
+.gender-maculine img{
+  height: 377px;
+  position: relative;
+  transform: translate(20px, 5px);
+}
+.gender-female{
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+}
+
+.gender-female img{
+  position: relative;
+  transform: translate(20px, 5px);
+}
+
+.prueba{
+  width: 100%;
+  height: 500px;
+  background-color: #e2e0e0;
 }

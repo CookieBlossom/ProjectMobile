@@ -39,6 +39,14 @@ const routes: Routes = [
     path: 'claim',
     loadChildren: () => import('./pages/claim/claim.module').then( m => m.ClaimPageModule)
   },
+  {
+    path: 'shopping-cart',
+    loadChildren: () => import('./pages/shopping-cart/shopping-cart.module').then( m => m.ShoppingCartPageModule)
+  },
+  {
+    path: 'favorites',
+    loadChildren: () => import('./pages/favorites/favorites.module').then( m => m.FavoritesPageModule)
+  },
 ];
 
 @NgModule({

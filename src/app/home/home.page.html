@@ -1,20 +1,73 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
+<ion-header>
+  <div class="header-home">
+    <div class="title-home">
+      <ion-title>ShoeVault</ion-title>
+      <ion-searchbar aria-placeholder="Buscar"></ion-searchbar>
+    </div>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <section class="lastunits-section">
+    <div class="container-products">
+      <div class="card">
+        <div class="card-image">
+          <img class="image" src="/assets/products/sample.png" alt="">
+        </div>
+        <div class="card-content">
+          <p>$21.342</p>
+          <p>ultimas 10 unidades</p>
+          <ion-button class="card-button" shape="round" fill="solid" color="light">Ver detalle</ion-button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-image">
+          <img class="image" src="/assets/products/sample.png" alt="">
+        </div>
+        <div class="card-content">
+          <p>$21.342</p>
+          <p>ultimas 10 unidades</p>
+          <ion-button class="card-button" shape="round" fill="solid" color="light">Ver detalle</ion-button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="gender-section">
+    <div class="gender-maculine">
+      <img class="gender-image" src="/assets/gender/Male.png" alt="">
+      <p>MASCULINO</p>
+    </div>
+    <div class="gender-female">
+      
+      <img class="gender-image" src="/assets/gender/Female.png" alt="">
+      <p>FEMENINO</p>
+    </div>
+  </section>
+  <div class="prueba"></div>
 </ion-content>
+
+<ion-toolbar>
+  <ion-tabs class="tabs">
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="products">
+        <ion-icon class="icon-tab" src="/assets/footsteps.svg" alt=""></ion-icon>
+        <p>Productos</p>
+      </ion-tab-button>
+      <ion-tab-button tab="shopping-cart">
+        <ion-icon class="icon-tab" src="/assets/cart.svg" alt=""></ion-icon>
+        <p>Carrito</p>
+      </ion-tab-button>
+      <ion-tab-button tab="profile">
+        <ion-icon class="icon-tab" src="/assets/person.svg" alt=""></ion-icon>
+        <p>Perfil</p>
+      </ion-tab-button>
+      <ion-tab-button tab="favorites">
+        <ion-icon class="icon-tab" src="/assets/heart.svg" alt=""></ion-icon>
+        <p>Favoritos</p>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>  
+</ion-toolbar>
+
+
+
