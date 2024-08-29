@@ -9,6 +9,7 @@
 
 <ion-content [fullscreen]="true">
   <section class="lastunits-section">
+    <p class="lastunits-text">Ver todo <img [routerLink]="['/products']" src="/assets/arrow.svg" alt=""></p>
     <div class="container-products">
       <div class="card">
         <div class="card-image">
@@ -27,47 +28,45 @@
         <div class="card-content">
           <p>$21.342</p>
           <p>ultimas 10 unidades</p>
-          <ion-button class="card-button" shape="round" fill="solid" color="light">Ver detalle</ion-button>
+          <ion-button shape="round" fill="solid" color="light">Ver detalle</ion-button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-image">
+          <img class="image" src="/assets/products/sample.png" alt="">
+        </div>
+        <div class="card-content">
+          <p>$21.342</p>
+          <p>ultimas 10 unidades</p>
+          <ion-button shape="round" fill="solid" color="light">Ver detalle</ion-button>
         </div>
       </div>
     </div>
   </section>
   <section class="gender-section">
     <div class="gender-maculine">
-      <img class="gender-image" src="/assets/gender/Male.png" alt="">
-      <p>MASCULINO</p>
+      <ion-button [routerLink]="['/products']" fill="solid" color="translucent">
+        <span class="text-gender">MASCULINO <img src="/assets/arrow-down.svg"></span>
+        <img class="gender-image" src="/assets/gender/Male.png" alt="">
+      </ion-button>
     </div>
     <div class="gender-female">
-      
-      <img class="gender-image" src="/assets/gender/Female.png" alt="">
-      <p>FEMENINO</p>
+      <ion-button [routerLink]="['/products']" fill="solid" color="translucent">
+        <span class="text-gender">FEMENINO <img src="/assets/arrow-down.svg"></span>
+        <img class="gender-image" src="/assets/gender/Female.png" alt="">
+      </ion-button>
     </div>
   </section>
-  <div class="prueba"></div>
+  <section class="brands-section">
+    <p class="text-brands">
+      Nuestras marcas asociadas
+    </p>
+    <div class="container-brands">
+      <img src="/assets/brands/Adidas.png" alt="">
+      <img src="/assets/brands/Puma.png" alt="">
+    </div>
+  </section>
 </ion-content>
-
 <ion-toolbar>
-  <ion-tabs class="tabs">
-    <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="products">
-        <ion-icon class="icon-tab" src="/assets/footsteps.svg" alt=""></ion-icon>
-        <p>Productos</p>
-      </ion-tab-button>
-      <ion-tab-button tab="shopping-cart">
-        <ion-icon class="icon-tab" src="/assets/cart.svg" alt=""></ion-icon>
-        <p>Carrito</p>
-      </ion-tab-button>
-      <ion-tab-button tab="profile">
-        <ion-icon class="icon-tab" src="/assets/person.svg" alt=""></ion-icon>
-        <p>Perfil</p>
-      </ion-tab-button>
-      <ion-tab-button tab="favorites">
-        <ion-icon class="icon-tab" src="/assets/heart.svg" alt=""></ion-icon>
-        <p>Favoritos</p>
-      </ion-tab-button>
-    </ion-tab-bar>
-  </ion-tabs>  
+  <app-tabs></app-tabs>
 </ion-toolbar>
-
-
-
