@@ -1,18 +1,18 @@
 <ion-tabs>
   <ion-tab-bar slot="bottom" class="container-tabs">
-    <ion-tab-button [routerLink]="['/home']">
+    <ion-tab-button (click)="irPagina('/home')">
       <img src="/assets/home.svg" alt="">
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/products']">
+    <ion-tab-button (click)="irPagina('/products')">
       <img src="/assets/footsteps.svg" alt="">
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/profile']">
+    <ion-tab-button (click)="irPagina('/profile')">
       <img src="/assets/person.svg" alt="">
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/favorites']">
+    <ion-tab-button (click)="irPagina('/favorites')">
       <img src="/assets/heart.svg" alt="">
     </ion-tab-button>
-    <ion-tab-button [routerLink]="['/shopping-cart']">
+    <ion-tab-button (click)="irPagina('/shopping-cart')">
       <img src="/assets/cart.svg" alt="">
     </ion-tab-button>
   </ion-tab-bar>

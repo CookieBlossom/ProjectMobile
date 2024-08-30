@@ -2,24 +2,30 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-tabs',
-  templateUrl: './tabs.component.html',
-  styleUrls: ['./tabs.component.scss'],
+  selector: 'app-product-detail',
+  templateUrl: './product-detail.page.html',
+  styleUrls: ['./product-detail.page.scss'],
 })
-export class TabsComponent  implements OnInit {
+export class ProductDetailPage implements OnInit {
+  productId: any;
   Productos: any;
   Usuarios: any;
-  constructor( private router:Router, private activedRoute:ActivatedRoute){
-    this.activedRoute.queryParams.subscribe( param => {
+  constructor(private activatedroute:ActivatedRoute, private router:Router){ 
+    this.activatedroute.paramMap.subscribe( params =>{
+      this.productId = params.get('id');
+      console.log('El id del producto es: ', this.productId);
+    })
+    this.activatedroute.queryParams.subscribe( params =>{
       if(this.router.getCurrentNavigation()?.extras.state){
         this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
         this.Usuarios = this.router.getCurrentNavigation()?.extras?.state?.['usuarios'];
       }
     })
   }
-  ngOnInit() {}
+
+  ngOnInit() {
+  }
   irPagina( ruta:string ){
-    console.log(this.Productos, this.Usuarios);
     let navigationextras:NavigationExtras = {
       state:{
         productos: this.Productos,
@@ -28,5 +34,4 @@ export class TabsComponent  implements OnInit {
     }
     this.router.navigate([ruta], navigationextras);
   }
-  
 }
