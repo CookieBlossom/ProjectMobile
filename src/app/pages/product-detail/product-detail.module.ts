@@ -2,20 +2,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { ProductsPageRoutingModule } from './products-routing.module';
-import { ProductsPage } from './products.page';
+import { ProductDetailPageRoutingModule } from './product-detail-routing.module';
+
+import { ProductDetailPage } from './product-detail.page';
 import { TabsModule } from 'src/app/components/tabs/tabs.module';
-import { RouterLinkWithHref } from '@angular/router';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    ProductDetailPageRoutingModule,
     TabsModule,
-    RouterLinkWithHref,
-    ProductsPageRoutingModule,
   ],
-  declarations: [ProductsPage]
+  declarations: [ProductDetailPage]
 })
-export class ProductsPageModule {}
+export class ProductDetailPageModule {}

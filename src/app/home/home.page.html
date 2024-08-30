@@ -9,49 +9,32 @@
 
 <ion-content [fullscreen]="true">
   <section class="lastunits-section">
-    <p class="lastunits-text">Ver todo <img [routerLink]="['/products']" src="/assets/arrow.svg" alt=""></p>
-    <div class="container-products">
-      <div class="card">
-        <div class="card-image">
-          <img class="image" src="/assets/products/sample.png" alt="">
+    <p class="lastunits-text">Ver todo <img (click)="irPagina('/products')" src="/assets/arrow.svg" alt=""></p>
+    <div class="container-products" >
+      <ng-container *ngFor="let product of Productos">
+        <div class="card" *ngIf="product.stock < 10">
+          <div class="card-image">
+            <img class="image" src="/assets/products/sample.png" alt="">
+          </div>
+          <div class="card-content">
+            <p>{{ product.name | uppercase }}</p>
+            <p>{{ product.price | currency: 'CLP' }}</p>
+            <p>ultimas {{product.stock}} unidades</p>
+            <ion-button class="card-button" shape="round" expand="full" color="light">Ver detalle</ion-button>
+          </div>
         </div>
-        <div class="card-content">
-          <p>$21.342</p>
-          <p>ultimas 10 unidades</p>
-          <ion-button class="card-button" shape="round" fill="solid" color="light">Ver detalle</ion-button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-image">
-          <img class="image" src="/assets/products/sample.png" alt="">
-        </div>
-        <div class="card-content">
-          <p>$21.342</p>
-          <p>ultimas 10 unidades</p>
-          <ion-button shape="round" fill="solid" color="light">Ver detalle</ion-button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-image">
-          <img class="image" src="/assets/products/sample.png" alt="">
-        </div>
-        <div class="card-content">
-          <p>$21.342</p>
-          <p>ultimas 10 unidades</p>
-          <ion-button shape="round" fill="solid" color="light">Ver detalle</ion-button>
-        </div>
-      </div>
+      </ng-container>
     </div>
   </section>
   <section class="gender-section">
     <div class="gender-maculine">
-      <ion-button [routerLink]="['/products']" fill="solid" color="translucent">
+      <ion-button (click)="irPagina('/products')" fill="solid" color="translucent">
         <span class="text-gender">MASCULINO <img src="/assets/arrow-down.svg"></span>
         <img class="gender-image" src="/assets/gender/Male.png" alt="">
       </ion-button>
     </div>
     <div class="gender-female">
-      <ion-button [routerLink]="['/products']" fill="solid" color="translucent">
+      <ion-button (click)="irPagina('/products')" fill="solid" color="translucent">
         <span class="text-gender">FEMENINO <img src="/assets/arrow-down.svg"></span>
         <img class="gender-image" src="/assets/gender/Female.png" alt="">
       </ion-button>
