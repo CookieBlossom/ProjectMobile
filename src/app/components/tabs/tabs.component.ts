@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
@@ -7,12 +7,12 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
   styleUrls: ['./tabs.component.scss'],
 })
 export class TabsComponent  implements OnInit {
-  Productos: any;
+  @Input() Productos: any;
+  
   Usuarios: any;
   constructor( private router:Router, private activedRoute:ActivatedRoute){
     this.activedRoute.queryParams.subscribe( param => {
       if(this.router.getCurrentNavigation()?.extras.state){
-        this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
         this.Usuarios = this.router.getCurrentNavigation()?.extras?.state?.['usuarios'];
       }
     })
@@ -23,7 +23,7 @@ export class TabsComponent  implements OnInit {
     let navigationextras:NavigationExtras = {
       state:{
         productos: this.Productos,
-        usuarios: this.Usuarios
+        usuarios: this.Usuarios,
       }
     }
     this.router.navigate([ruta], navigationextras);

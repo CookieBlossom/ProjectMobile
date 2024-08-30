@@ -120,9 +120,7 @@ export class HomePage {
       price: 30000
     },
   ];
-
   Usuarios: any;
-
   constructor( private router:Router, private activedRoute:ActivatedRoute){
     this.activedRoute.queryParams.subscribe( param => {
       if(this.router.getCurrentNavigation()?.extras.state){
@@ -136,10 +134,12 @@ export class HomePage {
     let navigationextras:NavigationExtras = {
       state:{
         productos: this.Productos,
-        usuarios: this.Usuarios
+        usuarios: this.Usuarios,
       }
     }
     this.router.navigate([ruta], navigationextras);
   }
-
+  dataToTabs(){
+    this.router.navigate([])
+  }
 }
