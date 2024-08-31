@@ -11,7 +11,7 @@ import { RouterLinkWithHref } from '@angular/router';
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
+    IonicModule.forRoot(),
     TabsModule,
     RouterLinkWithHref,
     ProductsPageRoutingModule,

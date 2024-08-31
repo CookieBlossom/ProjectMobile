@@ -8,7 +8,6 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 })
 export class TabsComponent  implements OnInit {
   @Input() Productos: any;
-  
   Usuarios: any;
   constructor( private router:Router, private activedRoute:ActivatedRoute){
     this.activedRoute.queryParams.subscribe( param => {

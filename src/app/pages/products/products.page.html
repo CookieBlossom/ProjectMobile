@@ -1,11 +1,56 @@
-<ion-header [translucent]="true">
-</ion-header>
+<ion-menu side="end" menuId="filterMenu" contentId="mainContent">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Filtros</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <!-- Aquí puedes agregar tus filtros -->
+    <ion-list>
+      <ion-item>
+        <ion-label>Filtro 1</ion-label>
+        <ion-toggle slot="end"></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label>Filtro 2</ion-label>
+        <ion-toggle slot="end"></ion-toggle>
+      </ion-item>
+      <!-- Agrega más filtros según tus necesidades -->
+    </ion-list>
+  </ion-content>
+</ion-menu>
 
-<ion-content [fullscreen]="true">
-  <div *ngFor="let product of Productos">
-    jola
-  </div>
+<ion-content [fullscreen]="true" id="mainContent">
+  <section class="header-products">
+    <div class="header">
+      <img src="/assets/icon/shoeVault-logo.png" alt="">
+      <h3>ShoeVault</h3>
+    </div>
+    <div class="filter" (click)="abrirFiltroMenu()">
+      <p>Filtros</p>
+      <img src="/assets/filter.svg" alt="">
+    </div>
+  </section>
+  <section class="section-products">
+    <ion-grid>
+      <ion-row class="container-products">
+        <ng-container *ngFor="let product of Productos">
+          <div class="product" size="1" (click)="verDetalleProducto(product.id)">
+            <div class="image-product">
+              <img src="{{product.image}}">
+            </div>
+            <div class="content-product">
+              <h4>{{ product.name }}</h4>
+              <p class="stock-product">Disponibles: {{ product.stock }}</p>
+              <p class="price-product">{{ product.price | currency: 'CLP' }}</p>
+            </div>
+          </div>
+        </ng-container>
+      </ion-row>
+    </ion-grid>
+  </section>
 </ion-content>
+
 <ion-toolbar>
   <app-tabs [Productos]="Productos"></app-tabs>
 </ion-toolbar>
