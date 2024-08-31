@@ -1,34 +1,65 @@
-
-.header-login{
-    background-color: rgb(0, 0, 0);
-    height: 30%;
+.header-login {
     display: flex;
-    align-items: center;
     justify-content: center;
-}
-
-.icon-container{
-    background-color: white;
-    border-radius: 20% 0% 20% 0%;
-}
-
-.icon-login{
+    align-items: center;
+    height: 35vh; // Reduce el tamaño del encabezado
+    background-color: #1a1a1a;
+  }
+  
+  .icon-login {
     width: 150px;
-    height: 150px;
-}
-
-.form-login{
-    position: absolute;
-    height: 70%;
-    width: 100%;
-    background-color: white;
-    border-top-left-radius: 100px;
+    height: auto;
+  }
+  
+  .form-login {
+    background-color: rgba(255, 255, 255, 0.819);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 20px;
+    margin-top: -20px; // Para superponer el formulario ligeramente sobre el encabezado
+    box-shadow: 0 4px 6px rgb(0, 0, 0);
+  }
+  
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #110f0f;
+  }
+  
+  .input-container {
+    margin-bottom: 20px;
+  }
+  
+  ion-item {
+    margin-bottom: 15px;
+  }
+  
+  .button-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-.form-login h1{
-    font-weight: 600;
-    font-size: xx-large;
-    font-family: "Noto Sans", sans-serif;
-}
+    gap: 10px;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  .custom-button {
+    --background: #0A0A0A; /* Gris oscuro */
+    --background-activated: #808080; /* Gris más oscuro al hacer clic */
+    --color: white; /* Color del texto */
+    border-radius: 8px; /* Bordes redondeados */
+  }
+  
+  .custom-button-outline {
+    --border-color: #0A0A0A; /* Gris oscuro */
+    --color: #404040; /* Color del texto en el botón outline */
+    --background: transparent; /* Fondo transparente para el outline */
+    --background-activated: rgba(169, 169, 169, 0.2); /* Fondo gris claro al hacer clic */
+    border-radius: 8px; /* Bordes redondeados */
+  }
+  
