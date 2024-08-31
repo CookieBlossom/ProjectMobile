@@ -17,9 +17,9 @@
             <img class="image" src="/assets/products/sample.png" alt="">
           </div>
           <div class="card-content">
-            <p>{{ product.name | uppercase }}</p>
-            <p>{{ product.price | currency: 'CLP' }}</p>
-            <p>ultimas {{product.stock}} unidades</p>
+            <p class="title-card">{{ product.name | uppercase }}</p>
+            <p class="price-card">{{ product.price | currency: 'CLP' }}</p>
+            <p class="stock-card">ultimas {{product.stock}} unidades</p>
           </div>
           <ion-button class="card-button" shape="round" expand="full" color="light">Ver detalle</ion-button>
         </div>

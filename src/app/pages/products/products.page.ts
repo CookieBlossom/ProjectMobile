@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
-
 @Component({
   selector: 'app-products',
   templateUrl: './products.page.html',
@@ -41,5 +40,8 @@ export class ProductsPage implements OnInit {
 
     // Navegar a la ruta con el parámetro de ID
     this.router.navigate(['/product-detail', productId], navigationExtras);
+  }
+  toggleFavorite(product: any) {
+    product.isFavorite = !product.isFavorite;
   }
 }
