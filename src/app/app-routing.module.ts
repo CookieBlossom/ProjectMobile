@@ -51,6 +51,26 @@ const routes: Routes = [
     path: 'favorites',
     loadChildren: () => import('./pages/favorites/favorites.module').then( m => m.FavoritesPageModule)
   },
+  {
+    path: 'panel-adm',
+    loadChildren: () => import('./pages/panel-adm/panel-adm.module').then( m => m.PanelAdmPageModule)
+  },
+  {
+    path: 'adm-products',
+    loadChildren: () => import('./pages/adm-products/adm-products.module').then( m => m.AdmProductsPageModule)
+  },
+  {
+    path: 'adm-modify',
+    loadChildren: () => import('./pages/adm-modify/adm-modify.module').then( m => m.AdmModifyPageModule)
+  },
+  {
+    path: 'modify-pass',
+    loadChildren: () => import('./pages/modify-pass/modify-pass.module').then( m => m.ModifyPassPageModule)
+  },
+  {
+    path: 'modify-profile',
+    loadChildren: () => import('./pages/modify-profile/modify-profile.module').then( m => m.ModifyProfilePageModule)
+  },
 ];
 
 @NgModule({

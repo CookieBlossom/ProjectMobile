@@ -1,0 +1,36 @@
+<ion-content [fullscreen]="true">
+  <div class="background">
+    <div class="top">
+      <h1 class="title">Bienvenido</h1>
+      <img src="/assets/person.svg" alt="">
+    </div>
+    <div class="middle">
+      <div (click)="irPagina('/adm-products')" class="card-product" >
+        <p class="title-card">Adm. Productos</p>
+        <img src="/assets/arrow.svg" alt="">
+      </div>
+      <div class="card-dashboard">
+        <p class="title-dash">Dashboard</p>
+        <div class="lessStock-dash">
+          <ng-container *ngFor="let product of Productos">
+            <div class="product" *ngIf="product.stock < 10">
+              <img class="image-product" src="{{product.image}}">
+              <p>{{product.name}}</p>
+              <p>{{product.stock}}</p>
+            </div>
+          </ng-container>
+        </div>
+        <div class="categories-dash">
+          <div class="category"><p>Running</p></div>
+          <div class="category"><p>LifeStyle</p></div>
+          <div class="category"><p>Skateboarding</p></div>
+        </div>
+        <div class="brands-dash">
+          <img class="brand" src="/assets/brands/Puma.png">
+          <img class="brand" src="/assets/brands/Adidas.png">
+        </div>
+      </div>
+    </div>
+    <div class="bottom"></div>
+  </div>
+</ion-content>

@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss'],
+  selector: 'app-panel-adm',
+  templateUrl: './panel-adm.page.html',
+  styleUrls: ['./panel-adm.page.scss'],
 })
-export class ProfilePage implements OnInit {
-
+export class PanelAdmPage implements OnInit {
   Productos: any;
   constructor( private router:Router, private activatedroute:ActivatedRoute) {
     this.activatedroute.queryParams.subscribe( param => {
@@ -27,5 +26,4 @@ export class ProfilePage implements OnInit {
     }
     this.router.navigate([ruta], navigationextras);
   }
-
 }

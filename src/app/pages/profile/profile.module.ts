@@ -7,12 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePageRoutingModule } from './profile-routing.module';
 
 import { ProfilePage } from './profile.page';
+import { TabsModule } from 'src/app/components/tabs/tabs.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    TabsModule,
     ProfilePageRoutingModule
   ],
   declarations: [ProfilePage]
