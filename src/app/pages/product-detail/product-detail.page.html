@@ -1,16 +1,49 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>product-detail</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">product-detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <div class="header-product">
+    <img class="favorite-product" 
+    [src]="productoDetalle.isFavorite ? '/assets/heart-red.svg' : '/assets/heart-white.svg'" 
+    alt="Favorite" 
+    (click)="toggleFavorite(productoDetalle); $event.stopPropagation()">
+
+    <img (click)="irPagina('/products')" class="arrow-back" src="/assets/arrow-back.svg">
+
+ <div class="image-product">
+    </div>
+    <div class="image-product">
+      <img src="/assets/products/sample.png" alt="">
+    </div>
+  </div>
+  <div class="information-product">
+    <h3>{{productoDetalle.name}}</h3>
+    <h4 class="title-size">Sizes</h4>
+    <div class="sizes-product">
+      <ng-container *ngFor="let size of productoDetalle.sizes">
+        <ion-button 
+          class="size-product" 
+          [ngClass]="{'selected': size === selectedSize}" 
+          (click)="selectSize(size)"
+          shape="round"> 
+          {{ size }}
+        </ion-button>
+      </ng-container>
+    </div>
+    <div class="description-product">
+      <h4>Descripción</h4>
+      <p>{{productoDetalle.description}}</p>
+    </div>
+    <div class="stock-product">
+      <p class="price-product">{{productoDetalle.price | currency:'CLP'}}</p>
+      <div class="stock-selector">
+        <ion-button (click)="decreaseQuantity()" shape="round" fill="outline">-</ion-button>
+          <span class="stock-quantity">{{ selectedQuantity }}</span>
+        <ion-button (click)="increaseQuantity()" shape="round" fill="outline">+</ion-button>
+      </div>
+    </div>
+    <div class="addToCart">
+      <ion-button expand="full" (click)="addToCart()">Agregar al carrito</ion-button>
+    </div>
+    <ion-toast id="toast-message" [message]="toastMessage" [duration]="2000" [isOpen]="isToastOpen" (didDismiss)="isToastOpen = false" position="top"></ion-toast>
+  </div>
 <ion-toolbar>
   <app-tabs [Productos]="Productos"></app-tabs>
 </ion-toolbar>

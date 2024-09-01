@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=New+Amsterdam&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+ion-button {
+    --background: #F5F5F5;
+    --color: #000000;
+    --box-shadow: 0 2px 6px 0 rgb(0, 0, 0, 0.25);
+    --border-color: #000000;
+}
+.favorite-product{
+    position: absolute;
+    width: 50px;
+    transform: translateX(350px) translateY(5px);
+    background: #000000;
+    border-radius: 50%;
+    padding: 5px;
+}
+.arrow-back{
+    position: absolute;
+    width: 45px;
+    transform: translateY(5px);
+}
+.header-product{
+    width: 100%;
+    height: 30%;
+    background-color: #F5F5F5;
+    border-radius: 0% 0% 48% 52% / 10% 18% 15% 17% 
+}
+.image-product{
+    position: absolute;
+    width: 60%;
+    border-radius: 50%;
+    transform: translateX(80px) translateY(70px);
+    box-shadow: 0px 1px 20px 0px rgba(0, 0, 0, 0.47);
+}
+.image-product img{
+    border-radius: 50%;
+}
+.information-product{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 57%;
+    margin-top: 60px;
+    background-color: linear-gradient(180deg, #1b1b1b, #464545);
+}
+
+.information-product h3{
+    margin: 0;
+    line-height: 1.2;
+    text-align: center;
+    font-size: 40px;
+    font-family: "New Amsterdam", sans-serif;
+}
+.title-size{
+    text-align: center;
+    font-size: 25px;
+    letter-spacing: 5px;
+    margin: 0px;
+}
+.sizes-product{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 60px;
+}
+.size-product.selected {
+    --background: #3b3b3b;
+    --color: #f5f5f5; /* Color del texto cuando está seleccionado */
+}
+.description-product p{
+    text-align: center;
+    padding: 10px;
+    font-size: 15px;
+    color: #e2e2e2;
+}
+
+.description-product h4{
+    text-align: center;
+    font-size: 25px;
+    letter-spacing: 5px;
+    margin: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stock-product{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.price-product{
+    font-size: 30px;
+    text-align: center;
+    margin: 0;
+    font-weight: 500;
+    font-family: "Titillium Web", sans-serif;
+}
+.stock-selector{
+    background-color: #1b1b1b;
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    width: 170px;
+    height: 40px;
+    justify-content: space-between;
+}
+
+.stock-selector span{
+    font-size: 18px;
+}
+.addToCart{
+    margin-top: 40px;
+}

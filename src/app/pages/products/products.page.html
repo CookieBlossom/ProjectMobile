@@ -36,6 +36,10 @@
       <ion-row class="container-products">
         <ng-container *ngFor="let product of Productos">
           <div class="product" size="1" (click)="verDetalleProducto(product.id)">
+            <img class="favorite-product" 
+                 [src]="product.isFavorite ? '/assets/heart-red.svg' : '/assets/heart.svg'" 
+                 alt="Favorite" 
+                 (click)="toggleFavorite(product); $event.stopPropagation()">
             <div class="image-product">
               <img src="{{product.image}}">
             </div>
