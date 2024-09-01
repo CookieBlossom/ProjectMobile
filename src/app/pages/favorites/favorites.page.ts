@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-favorites',
@@ -6,10 +7,33 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./favorites.page.scss'],
 })
 export class FavoritesPage implements OnInit {
-
-  constructor() { }
+  Productos: any;
+  Usuarios: any;
+  selectedSegment: string = 'All';
+  constructor( private router:Router, private activedRoute:ActivatedRoute){
+    this.activedRoute.queryParams.subscribe( param => {
+      if(this.router.getCurrentNavigation()?.extras.state){
+        this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
+        this.Usuarios = this.router.getCurrentNavigation()?.extras?.state?.['usuarios'];
+      }
+    })
+  }
 
   ngOnInit() {
   }
+  irPagina( ruta:string ){
+    console.log(this.Productos, this.Usuarios);
+    let navigationextras:NavigationExtras = {
+      state:{
+        productos: this.Productos,
+        usuarios: this.Usuarios,
+      }
+    }
+    this.router.navigate([ruta], navigationextras);
+  }
 
+  segmentChanged(event: any) {
+    console.log('Segmento seleccionado:', this.selectedSegment);
+    // Puedes manejar otros cambios aquí si es necesario
+  }
 }

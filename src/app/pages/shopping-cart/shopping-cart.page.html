@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>shopping-cart</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">shopping-cart</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="header-shopping">
+    <img src="/assets/arrow-back.svg" alt="">
+    <p class="items-shopping">Tu cesta de compras (5)</p>
+  </div>
+  <div class="content-shopping">
+    <div class="shopping-product" *ngFor="let product of Productos.slice(0,5)">
+      <ion-checkbox alignment="center" (ionChange)="onCheckboxChange($event, product)"></ion-checkbox>
+      <img src="/assets/products/sample.png">
+      <div class="text-product">
+        <p class="title-product">Puma Tracer One Origin</p>
+        <p class="price-product"> CLP 40.120</p>
+        <div class="back-product">
+          <ion-button (click)="decreaseQuantity()" shape="round" fill="outline">-</ion-button>
+          <span class="stock-quantity">{{ selectedQuantity }}</span>
+          <ion-button (click)="increaseQuantity()" shape="round" fill="outline">+</ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="shopping-button">
+    <ion-button expand="full" (click)="comprar()" color="dark">Comprar</ion-button>
+    <ion-toast id="toast-message" [message]="toastMessage" [duration]="2000" [isOpen]="isToastOpen" (didDismiss)="isToastOpen = false" position="top"></ion-toast>
+  </div>
+
 </ion-content>
+<ion-toolbar>
+  <app-tabs [Productos]="Productos"></app-tabs>
+</ion-toolbar>
