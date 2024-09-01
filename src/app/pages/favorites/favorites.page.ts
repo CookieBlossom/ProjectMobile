@@ -9,6 +9,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 export class FavoritesPage implements OnInit {
   Productos: any;
   Usuarios: any;
+  selectedSegment: string = 'All';
   constructor( private router:Router, private activedRoute:ActivatedRoute){
     this.activedRoute.queryParams.subscribe( param => {
       if(this.router.getCurrentNavigation()?.extras.state){
@@ -17,6 +18,7 @@ export class FavoritesPage implements OnInit {
       }
     })
   }
+
   ngOnInit() {
   }
   irPagina( ruta:string ){
@@ -28,5 +30,10 @@ export class FavoritesPage implements OnInit {
       }
     }
     this.router.navigate([ruta], navigationextras);
+  }
+
+  segmentChanged(event: any) {
+    console.log('Segmento seleccionado:', this.selectedSegment);
+    // Puedes manejar otros cambios aquí si es necesario
   }
 }

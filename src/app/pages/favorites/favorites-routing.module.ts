@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { TabsModule } from 'src/app/components/tabs/tabs.module';
 import { FavoritesPage } from './favorites.page';
 
 const routes: Routes = [
@@ -11,7 +10,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule, TabsModule],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
 export class FavoritesPageRoutingModule {}
