@@ -21,9 +21,10 @@ export class PanelAdmPage implements OnInit {
   irPagina( ruta:string ){
     let navigationextras:NavigationExtras = {
       state:{
-        productos: this.Productos,
+        productos: this.Productos
       }
     }
+    console.log(this.Productos);
     this.router.navigate([ruta], navigationextras);
   }
 }

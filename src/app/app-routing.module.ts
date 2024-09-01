@@ -60,7 +60,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/adm-products/adm-products.module').then( m => m.AdmProductsPageModule)
   },
   {
-    path: 'adm-modify',
+    path: 'adm-modify/:id',
     loadChildren: () => import('./pages/adm-modify/adm-modify.module').then( m => m.AdmModifyPageModule)
   },
   {
@@ -70,6 +70,10 @@ const routes: Routes = [
   {
     path: 'modify-profile',
     loadChildren: () => import('./pages/modify-profile/modify-profile.module').then( m => m.ModifyProfilePageModule)
+  },
+  {
+    path: '**',
+    loadChildren: () => import('./pages/error-page/error-page.module').then( m => m.ErrorPagePageModule)
   },
 ];
 
