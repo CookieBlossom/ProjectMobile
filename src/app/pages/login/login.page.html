@@ -9,7 +9,6 @@
     <h1>Log in</h1>
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="input-container">
-        <!-- Cambiado de Username a Email -->
         <ion-item>
           <ion-label position="floating">Email</ion-label>
           <ion-input type="email" formControlName="email"></ion-input>
@@ -33,7 +32,7 @@
 
       <div class="button-container">
         <ion-button expand="block" class="custom-button" type="submit" [disabled]="loginForm.invalid">Login</ion-button>
-        <ion-button expand="block" class="custom-button-outline" fill="outline">Register</ion-button>
+        <ion-button expand="block" class="custom-button-outline" fill="outline" (click)="navigateToRegister()">Register</ion-button>
       </div>
     </form>
   </div>

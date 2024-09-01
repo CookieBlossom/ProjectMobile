@@ -1,18 +1,37 @@
-.header-register{
-    background-color: black;
-    height: 15%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+.img
 
-.header-register h1{
-    font-family: "Noto Sans", sans-serif;
-    font-size: xx-large;
-    color: white;
-}
-.form-register{
-    background-color: white;
-    height: 85%;
-    border-radius: 15% 0% 0% 0%;
-}
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 16px;
+  }
+  
+  mat-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  mat-card-header, mat-card-title {
+    text-align: center;
+  }
+  
+  .example-full-width {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .submit-button {
+    width: 100%;
+  }
+  

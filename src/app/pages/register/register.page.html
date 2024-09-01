@@ -1,13 +1,75 @@
-<ion-header [translucent]="true">
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <div class="header-register">
-    <h1>Sign Up</h1>
-  </div>
-  <div class="form-register">
-    <div class="aqui-haz-tu-formulario2">
-
+<ion-content fullscreen="true">
+  <div class="header-login">
+    <div class="icon-container">
+      <img class="icon-login" src="/assets/icon/shoeVault-logo2.png" alt="ShoeVault Logo" />
     </div>
+  </div>
+
+  <div class="login-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Registro de Usuario</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="example-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Correo Electrónico</mat-label>
+            <input matInput formControlName="email" placeholder="Ej. correo@dominio.com">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Contraseña</mat-label>
+            <input matInput formControlName="password" placeholder="Ej. Palabra123.">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Confirmar Contraseña</mat-label>
+            <input matInput formControlName="confirmPassword" placeholder=" ">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="firstName" placeholder="Ej. Juan">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Apellido</mat-label>
+            <input matInput formControlName="lastName" placeholder="Ej. Pérez">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Dirección</mat-label>
+            <textarea matInput formControlName="address" placeholder="Ej. Calle Principal 100"></textarea>
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Teléfono</mat-label>
+            <input matInput type="tel" formControlName="phone" placeholder="Ej. +56912345678">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Ciudad</mat-label>
+            <input matInput formControlName="city" placeholder="Ej. santiago">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Comuna</mat-label>
+            <input matInput formControlName="comuna" placeholder="Ej. huechuraba">
+          </mat-form-field>
+
+          <mat-form-field class="example-full-width">
+            <mat-label>Código Postal</mat-label>
+            <input matInput formControlName="postalCode" maxlength="5" placeholder="Ej. 94105">
+            <mat-hint align="end">{{ registerForm.get('postalCode')?.value?.length || 0 }} / 5</mat-hint>
+
+          </mat-form-field>
+
+          <div class="button-container">
+            <button mat-raised-button color="primary" type="submit" class="submit-button">Registrar</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
   </div>
 </ion-content>
