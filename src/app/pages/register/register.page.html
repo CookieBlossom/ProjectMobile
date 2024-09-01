@@ -4,7 +4,6 @@
       <img class="icon-login" src="/assets/icon/shoeVault-logo2.png" alt="ShoeVault Logo" />
     </div>
   </div>
-
   <div class="login-container">
     <mat-card>
       <mat-card-header>
@@ -13,56 +12,55 @@
       <mat-card-content>
         <form class="example-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field class="test" apperance="outline">
             <mat-label>Correo Electrónico</mat-label>
             <input matInput formControlName="email" placeholder="Ej. correo@dominio.com">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field class="" apperance="outline">
             <mat-label>Contraseña</mat-label>
             <input matInput formControlName="password" placeholder="Ej. Palabra123.">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Confirmar Contraseña</mat-label>
             <input matInput formControlName="confirmPassword" placeholder=" ">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="firstName" placeholder="Ej. Juan">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Apellido</mat-label>
             <input matInput formControlName="lastName" placeholder="Ej. Pérez">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Dirección</mat-label>
             <textarea matInput formControlName="address" placeholder="Ej. Calle Principal 100"></textarea>
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Teléfono</mat-label>
             <input matInput type="tel" formControlName="phone" placeholder="Ej. +56912345678">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Ciudad</mat-label>
             <input matInput formControlName="city" placeholder="Ej. santiago">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Comuna</mat-label>
             <input matInput formControlName="comuna" placeholder="Ej. huechuraba">
           </mat-form-field>
 
-          <mat-form-field class="example-full-width">
+          <mat-form-field apperance="outline">
             <mat-label>Código Postal</mat-label>
             <input matInput formControlName="postalCode" maxlength="5" placeholder="Ej. 94105">
-            <mat-hint align="end">{{ registerForm.get('postalCode')?.value?.length || 0 }} / 5</mat-hint>
-
+            <mat-hint>{{ registerForm.get('postalCode')?.value?.length || 0 }} / 5</mat-hint>
           </mat-form-field>
 
           <div class="button-container">
