@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { IonicModule } from '@ionic/angular';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -26,30 +27,43 @@ import { IonicModule } from '@ionic/angular';
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
+  Usuarios: any[] = [];
+  newUsuario: any = {
+    email: '',
+    firstName: '',
+    lastName: '',
+    address: '',
+    phone: '',
+    city: '',
+    comuna: '',
+    postalCode: '',
+    password: '',
+  };
 
-  constructor(private fb: FormBuilder, private snackBar: MatSnackBar) {
-    this.registerForm = this.fb.group(
-      {
-        email: ['', [Validators.required, Validators.email]],
-        firstName: ['', [Validators.required]],
-        lastName: ['', [Validators.required]],
-        address: ['', [Validators.required]],
-        phone: ['', [Validators.required, Validators.pattern('^[+0-9]{10,15}$')]],
-        city: ['', [Validators.required]],
-        comuna: ['', [Validators.required]],
-        postalCode: ['', [Validators.required, Validators.maxLength(5)]],
-        password: [
-          '', 
-          [
-            Validators.required,
-            Validators.minLength(8),
-            Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[.!@#$%^&*])[A-Za-z0-9.!@#$%^&*]{8,}$')
-          ]
-        ],
-        confirmPassword: ['', [Validators.required, Validators.minLength(8)]] 
-      },
-      { validator: this.passwordMatchValidator }
-    );
+  constructor(
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      address: ['', [Validators.required]],
+      phone: ['', [Validators.required, Validators.pattern('^[+0-9]{10,15}$')]],
+      city: ['', [Validators.required]],
+      comuna: ['', [Validators.required]],
+      postalCode: ['', [Validators.required, Validators.maxLength(5)]],
+      password: [
+        '', 
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[.!@#$%^&*])[A-Za-z0-9.!@#$%^&*]{8,}$')
+        ]
+      ],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]] 
+    }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit() {}
@@ -62,10 +76,23 @@ export class RegisterPage implements OnInit {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      console.log('Datos del formulario:', this.registerForm.value);
+      this.newUsuario = {
+        email: this.registerForm.value.email,
+        firstName: this.registerForm.value.firstName,
+        lastName: this.registerForm.value.lastName,
+        address: this.registerForm.value.address,
+        phone: this.registerForm.value.phone,
+        city: this.registerForm.value.city,
+        comuna: this.registerForm.value.comuna,
+        postalCode: this.registerForm.value.postalCode,
+        password: this.registerForm.value.password,
+      };
+
+      this.Usuarios.push(this.newUsuario);
       this.showSuccessMessage();
+      this.irAPaginaUsuario(this.newUsuario);
+      
     } else {
-      console.log('Formulario inválido');
       if (this.registerForm.errors?.['mismatch']) {
         this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {
           duration: 3000,
@@ -80,6 +107,15 @@ export class RegisterPage implements OnInit {
         });
       }
     }
+  }
+
+  irAPaginaUsuario(user: any) {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        Usuarios: this.Usuarios
+      }
+    };
+    this.router.navigate(['/login'], navigationExtras);
   }
 
   showSuccessMessage() {
