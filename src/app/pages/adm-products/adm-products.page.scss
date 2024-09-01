@@ -1,0 +1,30 @@
+.header-adm{
+    background-color: #F5F5F5;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.header-adm h3{
+    margin: 0;
+    color: black;
+    font-size: 28px;
+    font-family: 'Concert One', sans-serif;
+}
+.header-adm img{
+    width: 28px;
+    height: 28px;
+}
+.colums-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    border: 1px solid #FFFF;
+    padding: 10px 0px;
+    background-color: #181717;
+}
+.colums-header p{
+    margin: 0;
+    font-size: 16px;
+}

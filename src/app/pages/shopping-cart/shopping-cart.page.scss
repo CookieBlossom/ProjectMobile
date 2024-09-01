@@ -35,13 +35,16 @@ ion-checkbox::part(container) {
     margin: 0;
 }
 .content-shopping{
-    height: 93%;
+    height: 96%;
 }
 .shopping-product{
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 10px;
+    background-color: #0000006e;
+    border-radius: 30px;
+    margin: 5px;
 }
 .shopping-product img{
     width: 140px;

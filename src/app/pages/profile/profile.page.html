@@ -1,13 +1,37 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>profile</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="top">
+    <img class="image-profile" src="/assets/person.svg" alt="">
+    <p class="title-profile">Perfil</p>
+  </div>
+  <div class="bottom">
+    <div class="container-list">
+      <div class="item-list">
+        Compras
+        <img (click)="irPagina('/shopping-cart')" src="/assets/arrow-black.svg" alt="">
+      </div>
+      <div class="item-list">
+        Favoritos
+        <img (click)="irPagina('/favorites')" src="/assets/arrow-black.svg" alt="">
+      </div>
+      <div class="item-list">
+        Reclamos
+        <img (click)="irPagina('/claim')" src="/assets/arrow-black.svg" alt="">
+      </div>
+      <div class="item-list">
+        Modificar datos
+        <img (click)="irPagina('/modify-profile')" src="/assets/arrow-black.svg" alt="">
+      </div>
+      <div class="item-list">
+        Modificar contraseña
+        <img (click)="irPagina('/modify-pass')" src="/assets/arrow-black.svg" alt="">
+      </div>
+      <div class="item-list">
+        Panel de Administrador
+        <img (click)="irPagina('/panel-adm')" src="/assets/arrow-black.svg" alt="">
+      </div>
+    </div>
+  </div>
 </ion-content>
+<ion-toolbar>
+  <app-tabs [Productos]="Productos"></app-tabs>
+</ion-toolbar>
