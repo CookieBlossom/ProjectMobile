@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; // Importa el Router
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-login',
@@ -10,17 +10,10 @@ import { Router } from '@angular/router'; // Importa el Router
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) { // Inyecta el Router
+  constructor(private formBuilder: FormBuilder, private router: Router) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')
-        ]
-      ]
+      password: ['',[Validators.required,Validators.minLength(8),Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]]
     });
   }
 
@@ -36,6 +29,9 @@ export class LoginPage implements OnInit {
     } else {
       console.log('Formulario inválido');
     }
+  }
+  navigateToRegister() {
+    this.router.navigate(['/register']); // Redirige a la página de registro
   }
 
   get formControls() {
