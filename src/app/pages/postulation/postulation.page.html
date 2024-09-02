@@ -1,27 +1,41 @@
 <ion-content fullscreen="true">
-  <div class="header-login">
-    <div class="icon-container">
-      <img
-        class="icon-login"
-        src="/assets/icon/shoeVault-logo2.png"
-        alt="ShoeVault Logo"
-      />
+  <div class="background">
+    <div class="header-login">
+      <div class="icon-container">
+        <img
+          class="icon-login"
+          src="/assets/icon/shoeVault-logo2.png"
+          alt="ShoeVault Logo"
+        />
+      </div>
+      <div class="header-bottom"> 
+        <img class="icon-arrow" (click)="irPagina('/profile')" src="/assets/arrow-back.svg" alt="">
+        <h3 class="title">Postulaciones de Trabajo</h3>
+      </div>
     </div>
+
+    <form [formGroup]="postulationForm" (ngSubmit)="onSubmit()" class="example-form">
+      <mat-form-field class="example-full-width">
+        <mat-label>Puesto a postular</mat-label>
+        <input matInput formControlName="position" placeholder="Ex. Vendedor" />
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width coment">
+        <mat-label>Comentario a CV y email</mat-label>
+        <textarea matInput formControlName="comment" placeholder=" "></textarea>
+      </mat-form-field>
+
+      <div class="example-button-row">
+        <button mat-stroked-button type="submit">Send Postulation</button>
+      </div>
+    </form>
+
+    <ion-toast
+      [isOpen]="isToastOpen"
+      [message]="toastMessage"
+      duration="2000"
+      (didDismiss)="isToastOpen = false"
+      position="top"
+    ></ion-toast>
   </div>
-
-  <form class="example-form">
-    <mat-form-field class="example-full-width">
-      <mat-label>Puesto a postular</mat-label>
-      <input matInput placeholder="Ex. Vendedor" value="Vendedor" />
-    </mat-form-field>
-
-    <mat-form-field class="example-full-width coment">
-      <mat-label>Coment to cv and email</mat-label>
-      <textarea matInput placeholder=" "></textarea>
-    </mat-form-field>
-
-    <div class="example-button-row">
-      <button mat-stroked-button>Send Postulation</button>
-    </div>
-  </form>
 </ion-content>
