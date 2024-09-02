@@ -72,6 +72,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/modify-profile/modify-profile.module').then( m => m.ModifyProfilePageModule)
   },
   {
+    path: 'panel-add',
+    loadChildren: () => import('./pages/panel-add/panel-add.module').then( m => m.PanelAddPageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/error-page/error-page.module').then( m => m.ErrorPagePageModule)
   },

@@ -1,0 +1,77 @@
+<ion-content>
+  <div class="text-header">Añadir Productos</div>
+  <form (ngSubmit)="addProducto()" #productForm="ngForm" class="formulario">
+    
+    <ion-item class="form-container">
+      <ion-label position="floating">Nombre del Producto</ion-label>
+      <ion-input [(ngModel)]="newProducto.name" name="name" required></ion-input>
+    </ion-item>
+    <div *ngIf="productForm.submitted && !newProducto.name" class="error-message">
+      El nombre del producto es obligatorio.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label position="floating">Stock</ion-label>
+      <ion-input type="number" [(ngModel)]="newProducto.stock" name="stock" required></ion-input>
+    </ion-item>
+    <div *ngIf="productForm.submitted && newProducto.stock <= 0" class="error-message">
+      El stock debe ser mayor a 0.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label>Marca</ion-label>
+      <ion-select [(ngModel)]="newProducto.brand" name="brand" required>
+        <ion-select-option value="Adidas">Adidas</ion-select-option>
+        <ion-select-option value="Puma">Puma</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="productForm.submitted && !newProducto.brand" class="error-message">
+      La marca es obligatoria.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label>Género</ion-label>
+      <ion-select [(ngModel)]="newProducto.gender" name="gender" required>
+        <ion-select-option value="Male">Masculino</ion-select-option>
+        <ion-select-option value="Female">Femenino</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <div *ngIf="productForm.submitted && !newProducto.gender" class="error-message">
+      El género es obligatorio.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label position="floating">Categoría</ion-label>
+      <ion-input [(ngModel)]="newProducto.category" name="category" required></ion-input>
+    </ion-item>
+    <div *ngIf="productForm.submitted && !newProducto.category" class="error-message">
+      La categoría es obligatoria.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea [(ngModel)]="newProducto.description" name="description" required></ion-textarea>
+    </ion-item>
+    <div *ngIf="productForm.submitted && !newProducto.description" class="error-message">
+      La descripción es obligatoria.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label position="floating">Precio</ion-label>
+      <ion-input type="number" [(ngModel)]="newProducto.price" name="price" required></ion-input>
+    </ion-item>
+    <div *ngIf="productForm.submitted && newProducto.price <= 0" class="error-message">
+      El precio debe ser mayor a 0.
+    </div>
+
+    <ion-item class="form-container">
+      <ion-label position="floating">Imagen</ion-label>
+      <ion-input [(ngModel)]="newProducto.image" name="image" required></ion-input>
+    </ion-item>
+    <div *ngIf="productForm.submitted && !newProducto.image" class="error-message">
+      La imagen es obligatoria.
+    </div>
+
+    <ion-button expand="full" type="submit">Agregar Producto</ion-button>
+  </form>
+</ion-content>

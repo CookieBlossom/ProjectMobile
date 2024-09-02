@@ -12,6 +12,7 @@
       </div>
       <div class="card-dashboard">
         <p class="title-dash">Dashboard</p>
+        <p class="text-stock">Productos con poco stock</p>
         <div class="lessStock-dash">
           <ng-container *ngFor="let product of Productos">
             <div class="product" *ngIf="product.stock < 10">
