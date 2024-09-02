@@ -1,13 +1,23 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>postulation</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="header-login">
+  <div class="icon-container">
+    <img
+      class="icon-login"
+      src="/assets/icon/shoeVault-logo2.png"
+      alt="ShoeVault Logo"
+    />
+  </div>
+</div>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">postulation</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>Puesto a postular</mat-label>
+      <input matInput placeholder="Ex. Pizza" value="Sushi" />
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Leave a comment</mat-label>
+      <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
+    </mat-form-field>
+  </form>
 </ion-content>
