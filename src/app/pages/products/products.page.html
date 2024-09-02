@@ -1,34 +1,45 @@
 <ion-menu side="end" menuId="filterMenu" contentId="mainContent">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Filtros</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content>
-    <!-- Aquí puedes agregar tus filtros -->
+  <div class="tilte">Filtros</div>
+  <div class="filters">
     <ion-list>
+      <!-- Filtro de rango de precio -->
+      <div class="slider-container">
+        <ion-label>Rango de Precio</ion-label>
+        <mat-slider class="custom-slider" min="0" max="10000" step="100" thumbLabel tickInterval="1000" [(ngModel)]="priceRange" aria-label="Rango de Precio"></mat-slider>
+        <div class="slider-values">
+          <span>{{ priceRange }}</span>
+        </div>
+      </div>
       <ion-item>
-        <ion-label>Filtro 1</ion-label>
-        <ion-toggle slot="end"></ion-toggle>
+        <ion-label>Categorías</ion-label>
+        <mat-select class="custom-select" [(ngModel)]="selectedCategory" placeholder="Seleccione una categoría">
+          <mat-option value="Running">Running</mat-option>
+          <mat-option value="Skateboarding">Skateboarding</mat-option>
+        </mat-select>
       </ion-item>
       <ion-item>
-        <ion-label>Filtro 2</ion-label>
-        <ion-toggle slot="end"></ion-toggle>
+        <ion-label>Género</ion-label>
+        <mat-select class="custom-select" [(ngModel)]="selectedGender" placeholder="Seleccione un género">
+          <mat-option value="Male">Masculino</mat-option>
+          <mat-option value="Female">Femenino</mat-option>
+        </mat-select>
       </ion-item>
-      <!-- Agrega más filtros según tus necesidades -->
+      <ion-item lines="none">
+        <ion-button class="custom-button" expand="full" (click)="applyFilters()">Aplicar Filtros</ion-button>
+      </ion-item>
     </ion-list>
-  </ion-content>
+  </div>
 </ion-menu>
-
 <ion-content [fullscreen]="true" id="mainContent">
   <section class="header-products">
     <div class="header">
       <img src="/assets/icon/shoeVault-logo.png" alt="">
       <h3>ShoeVault</h3>
     </div>
-    <div class="filter" (click)="abrirFiltroMenu()">
+    <div class="filter">
+      <img (click)="irPagina('/home')" class="arrow-back" src="/assets/arrow-back.svg" style="background-color: white; border-radius: 10px; width: 25px;">
       <p>Filtros</p>
-      <img src="/assets/filter.svg" alt="">
+      <img src="/assets/filter.svg" (click)="abrirFiltroMenu()">
     </div>
   </section>
   <section class="section-products">

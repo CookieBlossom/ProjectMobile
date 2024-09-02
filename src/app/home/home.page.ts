@@ -149,4 +149,12 @@ export class HomePage {
     }
     this.router.navigate([ruta], navigationextras);
   }
+  verDetalleProducto(productId: number) {
+    const navigationExtras: NavigationExtras = {
+      state: { 
+        productos: this.Productos,
+      }
+    };
+    this.router.navigate(['/product-detail', productId], navigationExtras);
+  }
 }

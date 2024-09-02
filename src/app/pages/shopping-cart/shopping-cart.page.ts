@@ -17,7 +17,12 @@ export class ShoppingCartPage implements OnInit {
   constructor(private activatedroute:ActivatedRoute, private router:Router){
     if(this.router.getCurrentNavigation()?.extras.state){
       this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
-      console.log(this.Productos);
+      this.Productos.forEach((product: { quantity: number; }) => {
+        if (!product.quantity) {
+          product.quantity = 1;
+        }
+      });
+
     }
   
   } 
@@ -31,14 +36,15 @@ export class ShoppingCartPage implements OnInit {
     }
     this.router.navigate([ruta], navigationextras);
   }
-  increaseQuantity() {
-    if (this.selectedQuantity < this.maxQuantity) {
-      this.selectedQuantity++;
+  increaseQuantity(product: any) {
+    if (product.quantity < product.stock) {
+      product.quantity++;
     }
   }
-  decreaseQuantity() {
-    if (this.selectedQuantity > 1) {
-      this.selectedQuantity--;
+
+  decreaseQuantity(product: any) {
+    if (product.quantity > 1) {
+      product.quantity--;
     }
   }
   onCheckboxChange(event: any, product: any) {

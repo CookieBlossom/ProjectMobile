@@ -8,6 +8,9 @@ import { MenuController } from '@ionic/angular';
 })
 export class ProductsPage implements OnInit {
   Productos: any;
+  priceRange: number = 10000;
+  selectedCategory: string = '';
+  selectedGender: string = '';
   constructor( private router:Router, private activatedroute:ActivatedRoute, private menucontroller:MenuController) {
     this.activatedroute.queryParams.subscribe( param => {
       if(this.router.getCurrentNavigation()?.extras.state){
@@ -43,5 +46,16 @@ export class ProductsPage implements OnInit {
   }
   toggleFavorite(product: any) {
     product.isFavorite = !product.isFavorite;
+  }
+  applyFilters() {
+    if (!this.selectedCategory && !this.selectedGender && this.priceRange === 10000) {
+      alert('Debe seleccionar al menos un filtro para aplicar.');
+      return;
+    }
+    console.log('Filtros aplicados:', {
+      priceRange: this.priceRange,
+      category: this.selectedCategory,
+      gender: this.selectedGender
+    });
   }
 }
