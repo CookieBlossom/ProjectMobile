@@ -1,32 +1,43 @@
 .header-login {
-    display: flex;
-    height: 20%;
-    background-color: #212121;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .icon-login {
-    width: 125px;
-  }
-  .icon-container{
-    display: flex;
-    background-color: white;
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    justify-content: center;
-    align-items: center;
-  }
+  display: flex;
+  height: 20%;
+  background-color: #212121;
+  justify-content: center;
+  align-items: center;
+}
 
-  .example-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center ;
-    justify-content: center;
-    gap: 16px;
-    width: 100%;
-    padding: 16px;
+.icon-login {
+  width: 125px;
+}
+.icon-container {
+  display: flex;
+  background-color: white;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  justify-content: center;
+  align-items: center;
+}
 
-  }
-  
+.example-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px;
+}
+.example-full-width {
+  width: 100%;
+  height: 100px;
+}
+.coment {
+  height: 200px;
+}
+.example-button-row {
+  width: 100%;
+}
+.example-button-row button {
+  width: 100%;
+}

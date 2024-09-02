@@ -18,12 +18,15 @@ export class AdmProductsPage {
     })
   }
 
-  irPagina(ruta: string) {
-    this.router.navigate([ruta]);
+  irPagina( ruta:string ){
+    let navigationextras:NavigationExtras = {
+      state:{
+        productos: this.Productos,
+      }
+    }
+    this.router.navigate([ruta], navigationextras);
   }
-
   modificarProducto(productId: number) {
-    // Redirige a la página adm-modify con el ID del producto
     this.router.navigate(['/adm-modify', productId]);
   }
 

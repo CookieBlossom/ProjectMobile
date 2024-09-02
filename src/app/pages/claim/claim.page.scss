@@ -1,11 +1,20 @@
 .header-login {
-    display: flex;
-    height: 20%;
-    background-color: #212121;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .icon-login {
-    width: 125px;
-  }
+  display: flex;
+  height: 20%;
+  background-color: #212121;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-login {
+  width: 125px;
+}
+.icon-container {
+  display: flex;
+  background-color: white;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  justify-content: center;
+  align-items: center;
+}

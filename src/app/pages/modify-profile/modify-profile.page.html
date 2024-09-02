@@ -1,13 +1,93 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>modify-profile</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">modify-profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="header-login">
+    <div class="icon-container">
+      <img
+        class="icon-login"
+        src="/assets/icon/shoeVault-logo2.png"
+        alt="ShoeVault Logo"
+      />
+    </div>
+  </div>
+  <div class="login-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Change information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="example-form">
+          <mat-form-field apperance="outline">
+            <mat-label>Nombre</mat-label>
+            <input
+              matInput
+              formControlName="firstName"
+              placeholder="Ej. Juan"
+            />
+          </mat-form-field>
+
+          <mat-form-field apperance="outline">
+            <mat-label>Apellido</mat-label>
+            <input
+              matInput
+              formControlName="lastName"
+              placeholder="Ej. Pérez"
+            />
+          </mat-form-field>
+
+          <mat-form-field apperance="outline">
+            <mat-label>Dirección</mat-label>
+            <textarea
+              matInput
+              formControlName="address"
+              placeholder="Ej. Calle Principal 100"
+            ></textarea>
+          </mat-form-field>
+
+          <mat-form-field apperance="outline">
+            <mat-label>Teléfono</mat-label>
+            <input
+              matInput
+              type="tel"
+              formControlName="phone"
+              placeholder="Ej. +56912345678"
+            />
+          </mat-form-field>
+
+          <mat-form-field apperance="outline">
+            <mat-label>Ciudad</mat-label>
+            <input matInput formControlName="city" placeholder="Ej. santiago" />
+          </mat-form-field>
+
+          <mat-form-field apperance="outline">
+            <mat-label>Comuna</mat-label>
+            <input
+              matInput
+              formControlName="comuna"
+              placeholder="Ej. huechuraba"
+            />
+          </mat-form-field>
+
+          <mat-form-field apperance="outline">
+            <mat-label>Código Postal</mat-label>
+            <input
+              matInput
+              formControlName="postalCode"
+              maxlength="5"
+              placeholder="Ej. 94105"
+            />
+          </mat-form-field>
+
+          <div class="button-container">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="submit-button"
+            >
+              Confirm Change
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </ion-content>
