@@ -32,10 +32,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/postulation/postulation.module').then( m => m.PostulationPageModule)
   },
   {
-    path: 'claim',
-    loadChildren: () => import('./pages/claim/claim.module').then( m => m.ClaimPageModule)
-  },
-  {
     path: 'shopping-cart',
     loadChildren: () => import('./pages/shopping-cart/shopping-cart.module').then( m => m.ShoppingCartPageModule)
   },
