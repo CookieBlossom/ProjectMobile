@@ -1,13 +1,107 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>adm-modify</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">adm-modify</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="header-login">
+    <div class="icon-container">
+      <img
+        class="icon-login"
+        src="/assets/icon/shoeVault-logo2.png"
+        alt="ShoeVault Logo"
+      />
+    </div>
+  </div>
+  <div class="login-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Modificar Producto</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="productForm" class="example-form" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input
+              matInput
+              formControlName="name"
+              placeholder="Ej. Adidas Supernova"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              placeholder="Descripción del producto"
+            ></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Precio</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="price"
+              placeholder="Ej. 30000"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Categoría</mat-label>
+            <input
+              matInput
+              formControlName="category"
+              placeholder="Ej. Running"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Marca</mat-label>
+            <input
+              matInput
+              formControlName="brand"
+              placeholder="Ej. Adidas"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Género</mat-label>
+            <input
+              matInput
+              formControlName="gender"
+              placeholder="Ej. Male"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Stock</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="stock"
+              placeholder="Ej. 20"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Imagen</mat-label>
+            <input
+              matInput
+              formControlName="image"
+              placeholder="URL de la imagen"
+            />
+          </mat-form-field>
+
+          <div class="button-container">
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="submit-button"
+              [disabled]="productForm.invalid"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </ion-content>

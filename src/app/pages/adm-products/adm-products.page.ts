@@ -27,7 +27,12 @@ export class AdmProductsPage {
     this.router.navigate([ruta], navigationextras);
   }
   modificarProducto(productId: number) {
-    this.router.navigate(['/adm-modify', productId]);
+    const navigationExtras: NavigationExtras = {
+      state: { 
+        productos: this.Productos,
+      }
+    };
+    this.router.navigate(['/adm-modify', productId], navigationExtras);
   }
 
   async confirmarEliminacion(product: any) {

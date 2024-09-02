@@ -48,14 +48,12 @@ export class ProductDetailPage implements OnInit {
     this.selectedSize = size;
     console.log('Tamaño seleccionado:', size);
   }
-  // Función para incrementar la cantidad
   increaseQuantity() {
     if (this.selectedQuantity < this.maxQuantity) {
       this.selectedQuantity++;
     }
   }
 
-  // Función para decrementar la cantidad
   decreaseQuantity() {
     if (this.selectedQuantity > 1) {
       this.selectedQuantity--;
