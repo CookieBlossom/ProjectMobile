@@ -11,11 +11,11 @@
   <div class="login-container">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Change information</mat-card-title>
+        <mat-card-title>Change Information</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form class="example-form">
-          <mat-form-field apperance="outline">
+        <form [formGroup]="profileForm" class="example-form" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline">
             <mat-label>Nombre</mat-label>
             <input
               matInput
@@ -24,7 +24,7 @@
             />
           </mat-form-field>
 
-          <mat-form-field apperance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Apellido</mat-label>
             <input
               matInput
@@ -33,7 +33,7 @@
             />
           </mat-form-field>
 
-          <mat-form-field apperance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Dirección</mat-label>
             <textarea
               matInput
@@ -42,7 +42,7 @@
             ></textarea>
           </mat-form-field>
 
-          <mat-form-field apperance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Teléfono</mat-label>
             <input
               matInput
@@ -52,21 +52,25 @@
             />
           </mat-form-field>
 
-          <mat-form-field apperance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Ciudad</mat-label>
-            <input matInput formControlName="city" placeholder="Ej. santiago" />
+            <input
+              matInput
+              formControlName="city"
+              placeholder="Ej. Santiago"
+            />
           </mat-form-field>
 
-          <mat-form-field apperance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Comuna</mat-label>
             <input
               matInput
               formControlName="comuna"
-              placeholder="Ej. huechuraba"
+              placeholder="Ej. Huechuraba"
             />
           </mat-form-field>
 
-          <mat-form-field apperance="outline">
+          <mat-form-field appearance="outline">
             <mat-label>Código Postal</mat-label>
             <input
               matInput
@@ -82,6 +86,7 @@
               color="primary"
               type="submit"
               class="submit-button"
+              [disabled]="profileForm.invalid"
             >
               Confirm Change
             </button>
