@@ -10,29 +10,29 @@
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="input-container">
         <ion-item>
-          <ion-label position="floating">Email</ion-label>
+          <ion-label position="floating">Correo</ion-label>
           <ion-input type="email" formControlName="email"></ion-input>
         </ion-item>
         <!-- Mensajes de error para el campo de correo electrónico -->
         <div *ngIf="formControls['email'].invalid && (formControls['email'].dirty || formControls['email'].touched)" class="error-message">
-          <p *ngIf="formControls['email'].errors?.['required']">Email is required.</p>
-          <p *ngIf="formControls['email'].errors?.['email']">Please enter a valid email address.</p>
+          <p *ngIf="formControls['email'].errors?.['required']">Correo requerido</p>
+          <p *ngIf="formControls['email'].errors?.['email']">Por favor ingrese un correo valido</p>
         </div>
 
         <ion-item>
-          <ion-label position="floating">Password</ion-label>
+          <ion-label position="floating">Contraseña</ion-label>
           <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
         <div *ngIf="formControls['password'].invalid && (formControls['password'].dirty || formControls['password'].touched)" class="error-message">
-          <p *ngIf="formControls['password'].errors?.['required']">Password is required.</p>
-          <p *ngIf="formControls['password'].errors?.['minlength']">Password must be at least 8 characters long.</p>
-          <p *ngIf="formControls['password'].errors?.['pattern']">Password must contain at least one uppercase letter, one number, and one special character (e.g., !&#64;#$%^&*.,).</p>
+          <p *ngIf="formControls['password'].errors?.['required']">Contraseña requerida</p>
+          <p *ngIf="formControls['password'].errors?.['minlength']">Contraseña debe contener al menos 8 caracteres</p>
+          <p *ngIf="formControls['password'].errors?.['pattern']">La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial(e.g., !&#64;#$%^&*.,).</p>
         </div>
       </div>
 
       <div class="button-container">
         <ion-button expand="block" class="custom-button" type="submit" [disabled]="loginForm.invalid">Login</ion-button>
-        <ion-button expand="block" class="custom-button-outline" fill="outline" (click)="navigateToRegister()">Register</ion-button>
+        <ion-button expand="block" class="custom-button-outline" fill="outline" (click)="navigateToRegister()">Registro</ion-button>
       </div>
     </form>
   </div>
