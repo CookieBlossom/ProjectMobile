@@ -2,55 +2,57 @@ import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Productos } from '../services/productos';
+import { Productos } from './productos';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceBDService {
   public database!: SQLiteObject;
+
   // Definiciones de tablas
   tableBrand: string = `
   CREATE TABLE IF NOT EXISTS brand (
-    idbrand INTEGER PRIMARY KEY AUTOINCREMENT, 
+    idbrand INTEGER PRIMARY KEY AUTOINCREMENT,
     namebrand TEXT NOT NULL
   );`;
 
   tableCategory: string = `
   CREATE TABLE IF NOT EXISTS category (
-    idcategory INTEGER PRIMARY KEY AUTOINCREMENT, 
+    idcategory INTEGER PRIMARY KEY AUTOINCREMENT,
     namecategory TEXT NOT NULL
   );`;
 
   tableSize: string = `
   CREATE TABLE IF NOT EXISTS size (
-    idsize INTEGER PRIMARY KEY AUTOINCREMENT, 
+    idsize INTEGER PRIMARY KEY AUTOINCREMENT,
     size INTEGER NOT NULL
   );`;
 
   tableGender: string = `
   CREATE TABLE IF NOT EXISTS gender (
-    idgender INTEGER PRIMARY KEY AUTOINCREMENT, 
+    idgender INTEGER PRIMARY KEY AUTOINCREMENT,
     namegender TEXT NOT NULL
   );`;
 
   tableStateOrder: string = `
   CREATE TABLE IF NOT EXISTS state_order (
-    idstate INTEGER PRIMARY KEY AUTOINCREMENT, 
+    idstate INTEGER PRIMARY KEY AUTOINCREMENT,
     state TEXT NOT NULL
   );`;
 
   tableRol: string = `
   CREATE TABLE IF NOT EXISTS rol (
-    idrol INTEGER PRIMARY KEY AUTOINCREMENT, 
+    idrol INTEGER PRIMARY KEY AUTOINCREMENT,
     rol TEXT NOT NULL
   );`;
 
   tableCard: string = `
   CREATE TABLE IF NOT EXISTS card (
-    idcard INTEGER PRIMARY KEY AUTOINCREMENT, 
-    nrocard TEXT CHECK(LENGTH(nrocard) = 16 AND nrocard GLOB '[0-9]*') NOT NULL, 
-    datecard TEXT NOT NULL, 
-    namecard TEXT NOT NULL, 
+    idcard INTEGER PRIMARY KEY AUTOINCREMENT,
+    nrocard TEXT CHECK(LENGTH(nrocard) = 16 AND nrocard GLOB '[0-9]*') NOT NULL,
+    datecard TEXT NOT NULL,
+    namecard TEXT NOT NULL,
     cvvcard TEXT CHECK(LENGTH(cvvcard) = 3 AND cvvcard GLOB '[0-9]*') NOT NULL
   );`;
 
@@ -78,7 +80,7 @@ export class ServiceBDService {
     FOREIGN KEY (idbrand) REFERENCES brand(idbrand),
     FOREIGN KEY (idgender) REFERENCES gender(idgender)
   );`;
-  
+
   tableUser: string = `
   CREATE TABLE IF NOT EXISTS user (
     rut TEXT PRIMARY KEY,
@@ -92,7 +94,7 @@ export class ServiceBDService {
     password TEXT NOT NULL,
     phone INTEGER,
     idrol INTEGER NOT NULL,
-    FOREIGN KEY (idrol) REFERENCES rol(idrol)  
+    FOREIGN KEY (idrol) REFERENCES rol(idrol)
   );`;
 
   tableFavoritesList: string = `
@@ -110,7 +112,7 @@ export class ServiceBDService {
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     rut TEXT NOT NULL,
     totalcart INTEGER NOT NULL,
-    FOREIGN KEY (rut) REFERENCES user(rut) 
+    FOREIGN KEY (rut) REFERENCES user(rut)
   );`;
 
   tableOrder: string = `
@@ -135,7 +137,7 @@ export class ServiceBDService {
     idcard INTEGER NOT NULL,
     rut TEXT NOT NULL,
     FOREIGN KEY (idcard) REFERENCES card(idcard),
-    FOREIGN KEY (rut) REFERENCES user(rut)    
+    FOREIGN KEY (rut) REFERENCES user(rut)
   );`;
 
   tableProductSize: string = `
@@ -178,110 +180,108 @@ export class ServiceBDService {
     FOREIGN KEY (rut) REFERENCES user(rut),
     FOREIGN KEY (idstate) REFERENCES state_order(idstate)
   );`;
-
-
-  //inserts iniciales
-
-  registerBrand: string = `INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(1, 'Adidas');`;
-  registerBrand2: string = `INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(2, 'Puma');`;
-  registerCategory: string = `INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(1, 'Running');`;
-  registerCategory2: string = `INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(2, 'LifeStyle');`;
-  registerSize: string = `INSERT or IGNORE INTO size(idsize, size) VALUES(1, 10);`;
-  registerSize2: string = `INSERT or IGNORE INTO size(idsize, size) VALUES(2, 15);`;
-  registerSize3: string = `INSERT or IGNORE INTO size(idsize, size) VALUES(3, 20);`;
-  registerSize4: string = `INSERT or IGNORE INTO size(idsize, size) VALUES(4, 25);`;
-  registerGenderFemale: string = `INSERT or IGNORE INTO gender(idgender, namegender) VALUES(1, 'Femenino');`;
-  registerGenderMale: string = `INSERT or IGNORE INTO gender(idgender, namegender) VALUES(2, 'Masculino');`;
-  registerStateOrder1: string = `INSERT or IGNORE INTO state_order(idstate, state) VALUES(1, 'Compra Realizada');`;
-  registerStateOrder2: string = `INSERT or IGNORE INTO state_order(idstate, state) VALUES(2, 'Pendiente a Retiro');`;
-  registerStateOrder3: string = `INSERT or IGNORE INTO state_order(idstate, state) VALUES(3, 'Entregado');`;
-  registerStateOrder4: string = `INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Pendiente a reclamo');`;
-  registerStateOrder5: string = `INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Solicitud de reclamo rechazada');`;
-  registerStateOrder6: string = `INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Solicitud de reclamo aceptada');`;
-  registerRolAdmin: string = `INSERT or IGNORE INTO rol(idrol, rol) VALUES(1, 'Admin');`;
-  registerRolUser: string = `INSERT or IGNORE INTO rol(idrol, rol) VALUES(2, 'User');`;
-  registerComplaint1: string = `INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');`;
-  registerComplaint2: string = `INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');`;  
-  registerComplaint3: string = `INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolucion');`;
-  registerComplaint4: string = `INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la informacion del producto', 'Devolucion');`;
-  registerComplaint5: string = `INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Producto defectuoso', 'Devolucion');`;
-  
-  //observables (SELECT)
-
   listaProducts = new BehaviorSubject([]);
+  // Observable para estado de la BBDD
+  private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  //funciones del retorno de observables para las variables del select
-
+  constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {
+    this.createConection();
+  }
+  //funciones de retorno de observable para las variables de los selects
   fetchProducts(): Observable<Productos[]>{
     return this.listaProducts.asObservable();
-  }
-
-  //observable para el estado de la bbdd
-  private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  constructor(private sqlite: SQLite, private platform:Platform, private alertController: AlertController){
-    this.createConection();
   }
 
   dbReady(){
     return this.isDBReady.asObservable();
   }
 
-  async presentAlert(titulo: string, msj: string){
+  async presentAlert(title: string, message: string) {
     const alert = await this.alertController.create({
-      header: titulo,
-      message: msj,
+      header: title,
+      message: message,
       buttons: ['OK'],
     });
     await alert.present();
   }
-  createConection(){
-    this.platform.ready().then(()=>{
+
+  createConection() {
+    this.platform.ready().then(() => {
       this.sqlite.create({
         name: 'shoevault.db',
-        location: 'default'
-      }).then((db: SQLiteObject)=>{
+        location: 'default',
+      }).then((db: SQLiteObject) => {
         this.database = db;
         this.createTables();
-
         this.isDBReady.next(true);
-      }).catch(e=>{
-        this.presentAlert('Crear conexion', 'Error en crear la BBDD: '+ JSON.stringify(e));
-      })
-    })
+      }).catch(e => {
+        this.presentAlert('Crear conexión', 'Error en crear la BBDD: ' + JSON.stringify(e));
+      });
+    });
   }
+
+
 
   async createTables() {
-      try {
-        // Crear todas las tablas en el orden adecuado
-        await this.database.executeSql(this.tableBrand, []);
-        await this.database.executeSql(this.tableCategory, []);
-        await this.database.executeSql(this.tableSize, []);
-        await this.database.executeSql(this.tableGender, []);
-        await this.database.executeSql(this.tableStateOrder, []);
-        await this.database.executeSql(this.tableRol, []);
-        await this.database.executeSql(this.tableCard, []);
-        await this.database.executeSql(this.tableComplaint, []);
-        
-        // Tablas dependientes de otras tablas
-        await this.database.executeSql(this.tableUser, []);
-        await this.database.executeSql(this.tableProduct, []);
-        await this.database.executeSql(this.tableFavoritesList, []);
-        await this.database.executeSql(this.tableShoppingCart, []);
-        await this.database.executeSql(this.tableOrder, []);
-  
-        // Tablas intermediarias
-        await this.database.executeSql(this.tableUserCards, []);
-        await this.database.executeSql(this.tableProductSize, []);
-        await this.database.executeSql(this.tableFavoriteItem, []);
-        await this.database.executeSql(this.tableCartItem, []);
-        await this.database.executeSql(this.tableOrderHistory, []);
-        
-        this.presentAlert('Crear tablas', 'Tablas creadas con éxito.');
-      } catch (e) {
-        this.presentAlert('Crear tabla', 'Error en crear tabla: ' + JSON.stringify(e));
-      }
-  }
+    try {
+      await this.database.executeSql(this.tableBrand, []);
+      await this.presentAlert('Crear tabla', 'Tabla brand creada correctamente.');
 
+      await this.database.executeSql(this.tableCategory, []);
+      await this.presentAlert('Crear tabla', 'Tabla category creada correctamente.');
+
+      await this.database.executeSql(this.tableSize, []);
+      await this.presentAlert('Crear tabla', 'Tabla size creada correctamente.');
+
+      await this.database.executeSql(this.tableGender, []);
+      await this.presentAlert('Crear tabla', 'Tabla gender creada correctamente.');
+
+      await this.database.executeSql(this.tableStateOrder, []);
+      await this.presentAlert('Crear tabla', 'Tabla state_order creada correctamente.');
+
+      await this.database.executeSql(this.tableRol, []);
+      await this.presentAlert('Crear tabla', 'Tabla rol creada correctamente.');
+
+      await this.database.executeSql(this.tableCard, []);
+      await this.presentAlert('Crear tabla', 'Tabla card creada correctamente.');
+
+      await this.database.executeSql(this.tableComplaint, []);
+      await this.presentAlert('Crear tabla', 'Tabla complaint creada correctamente.');
+
+      await this.database.executeSql(this.tableUser, []);
+      await this.presentAlert('Crear tabla', 'Tabla user creada correctamente.');
+
+      await this.database.executeSql(this.tableProduct, []);
+      await this.presentAlert('Crear tabla', 'Tabla product creada correctamente.');
+
+      await this.database.executeSql(this.tableFavoritesList, []);
+      await this.presentAlert('Crear tabla', 'Tabla favorites_list creada correctamente.');
+
+      await this.database.executeSql(this.tableShoppingCart, []);
+      await this.presentAlert('Crear tabla', 'Tabla shopping_cart creada correctamente.');
+
+      await this.database.executeSql(this.tableOrder, []);
+      await this.presentAlert('Crear tabla', 'Tabla order creada correctamente.');
+
+      await this.database.executeSql(this.tableUserCards, []);
+      await this.presentAlert('Crear tabla', 'Tabla user_card creada correctamente.');
+
+      await this.database.executeSql(this.tableProductSize, []);
+      await this.presentAlert('Crear tabla', 'Tabla product_size creada correctamente.');
+
+      await this.database.executeSql(this.tableFavoriteItem, []);
+      await this.presentAlert('Crear tabla', 'Tabla favorite_item creada correctamente.');
+
+      await this.database.executeSql(this.tableCartItem, []);
+      await this.presentAlert('Crear tabla', 'Tabla cart_item creada correctamente.');
+
+      await this.database.executeSql(this.tableOrderHistory, []);
+      await this.presentAlert('Crear tabla', 'Tabla order_history creada correctamente.');
+
+    } catch (e) {
+      this.presentAlert('Crear tabla', 'Error en crear tabla: ' + JSON.stringify(e));
+    }
+  }
   searchProducts(){
     return this.database.executeSql('SELECT * FROM product', []).then(res =>{
       let items: Productos[] = [];
@@ -308,7 +308,7 @@ export class ServiceBDService {
     })
   }
   insertProduct(nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number){
-    return this.database.executeSql(`INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,[nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct]).then(res=>{
+    return this.database.executeSql('INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',[nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct]).then(res=>{
       this.presentAlert("Insertar", "Producto agregado exitosamente");
       this.searchProducts();
     }).catch(e=>{
@@ -323,7 +323,7 @@ export class ServiceBDService {
       this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));
     });
   }
-  
+
   editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
     return this.database.executeSql(
       'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
@@ -334,5 +334,6 @@ export class ServiceBDService {
     }).catch(e => {
       this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
     });
-  } 
+
+  }
 }
