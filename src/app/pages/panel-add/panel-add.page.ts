@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { ServiceBDService } from 'src/app/services/service-bd.service'; // Importa el servicio de la base de datos
 
 @Component({
   selector: 'app-panel-add',
@@ -13,23 +14,42 @@ export class PanelAddPage implements OnInit {
     name: '',
     stock: 0,
     brand: '',
-    sizes: [],
+    sizes: [], // Asume que sizes es un array, ajusta según tu lógica
     gender: '',
     category: '',
     description: '',
     price: 0,
-    image: ''
+    image: '' // Podrías cambiar a tipo `any` si vas a subir imágenes
   };
 
-  constructor( private router:Router, private activedRoute:ActivatedRoute){
-    this.activedRoute.queryParams.subscribe( param => {
-      if(this.router.getCurrentNavigation()?.extras.state){
+  constructor(
+    private router: Router,
+    private activedRoute: ActivatedRoute,
+    private serviceBD: ServiceBDService // Inyecta el servicio de la base de datos
+  ) {
+    this.activedRoute.queryParams.subscribe(param => {
+      if (this.router.getCurrentNavigation()?.extras.state) {
         this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
       }
-    })
+    });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Llamada para verificar la conexión a la base de datos al iniciar el componente
+    this.verificarConexionBD();
+  }
+
+  verificarConexionBD() {
+    // Verificar si la base de datos está lista
+    this.serviceBD.dbReady().subscribe(isReady => {
+      if (isReady) {
+        console.log('Conexión a la base de datos establecida correctamente.');
+        this.serviceBD.createTables(); // Crear las tablas en caso de que aún no se hayan creado
+      } else {
+        console.error('No se pudo establecer la conexión a la base de datos.');
+      }
+    });
+  }
 
   addProducto() {
     if (!this.newProducto.name || !this.newProducto.stock || !this.newProducto.brand ||
@@ -48,14 +68,15 @@ export class PanelAddPage implements OnInit {
     this.irPagina('/panel-adm');
   }
 
-  irPagina( ruta:string ){
-    let navigationextras:NavigationExtras = {
-      state:{
+  irPagina(ruta: string) {
+    let navigationextras: NavigationExtras = {
+      state: {
         productos: this.Productos,
       }
-    }
+    };
     this.router.navigate([ruta], navigationextras);
   }
+
   resetForm() {
     this.newProducto = {
       id: null,
