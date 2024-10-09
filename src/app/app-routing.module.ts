@@ -28,10 +28,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
   },
   {
-    path: 'postulation',
-    loadChildren: () => import('./pages/postulation/postulation.module').then( m => m.PostulationPageModule)
-  },
-  {
     path: 'shopping-cart',
     loadChildren: () => import('./pages/shopping-cart/shopping-cart.module').then( m => m.ShoppingCartPageModule)
   },
@@ -77,7 +73,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(
       routes, { preloadingStrategy: PreloadAllModules }
-      
+
     )
   ],
   exports: [RouterModule]

@@ -3,50 +3,43 @@ import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Productos } from './productos';
-
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceBDService {
-  public database!: SQLiteObject;
 
+  public database!: SQLiteObject;
   // Definiciones de tablas
   tableBrand: string = `
   CREATE TABLE IF NOT EXISTS brand (
     idbrand INTEGER PRIMARY KEY AUTOINCREMENT,
     namebrand TEXT NOT NULL
   );`;
-
   tableCategory: string = `
   CREATE TABLE IF NOT EXISTS category (
     idcategory INTEGER PRIMARY KEY AUTOINCREMENT,
     namecategory TEXT NOT NULL
   );`;
-
   tableSize: string = `
   CREATE TABLE IF NOT EXISTS size (
     idsize INTEGER PRIMARY KEY AUTOINCREMENT,
     size INTEGER NOT NULL
   );`;
-
   tableGender: string = `
   CREATE TABLE IF NOT EXISTS gender (
     idgender INTEGER PRIMARY KEY AUTOINCREMENT,
     namegender TEXT NOT NULL
   );`;
-
   tableStateOrder: string = `
   CREATE TABLE IF NOT EXISTS state_order (
     idstate INTEGER PRIMARY KEY AUTOINCREMENT,
     state TEXT NOT NULL
   );`;
-
   tableRol: string = `
   CREATE TABLE IF NOT EXISTS rol (
     idrol INTEGER PRIMARY KEY AUTOINCREMENT,
     rol TEXT NOT NULL
   );`;
-
   tableCard: string = `
   CREATE TABLE IF NOT EXISTS card (
     idcard INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +48,6 @@ export class ServiceBDService {
     namecard TEXT NOT NULL,
     cvvcard TEXT CHECK(LENGTH(cvvcard) = 3 AND cvvcard GLOB '[0-9]*') NOT NULL
   );`;
-
   tableComplaint: string = `
   CREATE TABLE IF NOT EXISTS complaint (
     idcomplaint INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,7 +55,6 @@ export class ServiceBDService {
     descriptioncomplaint TEXT,
     type_complaint TEXT NOT NULL
   );`;
-
   // Tablas dependientes
   tableProduct: string = `
   CREATE TABLE IF NOT EXISTS product (
@@ -80,7 +71,6 @@ export class ServiceBDService {
     FOREIGN KEY (idbrand) REFERENCES brand(idbrand),
     FOREIGN KEY (idgender) REFERENCES gender(idgender)
   );`;
-
   tableUser: string = `
   CREATE TABLE IF NOT EXISTS user (
     rut TEXT PRIMARY KEY,
@@ -96,7 +86,6 @@ export class ServiceBDService {
     idrol INTEGER NOT NULL,
     FOREIGN KEY (idrol) REFERENCES rol(idrol)
   );`;
-
   tableFavoritesList: string = `
   CREATE TABLE IF NOT EXISTS favorites_list (
     idlist INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -105,7 +94,6 @@ export class ServiceBDService {
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (rut) REFERENCES user(rut)
   );`;
-
   tableShoppingCart: string = `
   CREATE TABLE IF NOT EXISTS shopping_cart (
     idcart INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -114,7 +102,6 @@ export class ServiceBDService {
     totalcart INTEGER NOT NULL,
     FOREIGN KEY (rut) REFERENCES user(rut)
   );`;
-
   tableOrder: string = `
   CREATE TABLE IF NOT EXISTS "order" (
     idorder INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -129,7 +116,6 @@ export class ServiceBDService {
     FOREIGN KEY (idcomplaint) REFERENCES complaint(idcomplaint),
     FOREIGN KEY (idproduct) REFERENCES product(idproduct)
   );`;
-
   // Tablas intermediarias
   tableUserCards: string = `
   CREATE TABLE IF NOT EXISTS user_card (
@@ -139,7 +125,6 @@ export class ServiceBDService {
     FOREIGN KEY (idcard) REFERENCES card(idcard),
     FOREIGN KEY (rut) REFERENCES user(rut)
   );`;
-
   tableProductSize: string = `
   CREATE TABLE IF NOT EXISTS product_size (
     idproduct_size INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -149,7 +134,6 @@ export class ServiceBDService {
     FOREIGN KEY (idsize) REFERENCES size(idsize),
     UNIQUE (idproduct, idsize)
   );`;
-
   tableFavoriteItem: string = `
   CREATE TABLE IF NOT EXISTS favorite_item (
     idfavorite_item INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -159,7 +143,6 @@ export class ServiceBDService {
     FOREIGN KEY (idlist) REFERENCES favorites_list(idlist),
     FOREIGN KEY (idproduct) REFERENCES product(idproduct)
   );`;
-
   tableCartItem: string = `
   CREATE TABLE IF NOT EXISTS cart_item (
     idcart_item INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -168,7 +151,6 @@ export class ServiceBDService {
     FOREIGN KEY (idcart) REFERENCES shopping_cart(idcart),
     FOREIGN KEY (idproduct) REFERENCES product(idproduct)
   );`;
-
   tableOrderHistory: string = `
   CREATE TABLE IF NOT EXISTS order_history (
     idhistory INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -180,10 +162,36 @@ export class ServiceBDService {
     FOREIGN KEY (rut) REFERENCES user(rut),
     FOREIGN KEY (idstate) REFERENCES state_order(idstate)
   );`;
+  //inserts iniciales
+
+  registerBrand: string = "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(1, 'Adidas');";
+  registerBrand2: string = "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(2, 'Puma');";
+  registerCategory: string = "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(1, 'Running');";
+  registerCategory2: string = "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(2, 'LifeStyle');";
+  registerSize: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(1, 10);";
+  registerSize2: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(2, 15);";
+  registerSize3: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(3, 20);";
+  registerSize4: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(4, 25);";
+  registerGenderFemale: string = "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(1, 'Femenino');";
+  registerGenderMale: string = "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(2, 'Masculino');";
+  registerStateOrder1: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(1, 'Compra Realizada');";
+  registerStateOrder2: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(2, 'Pendiente a Retiro');";
+  registerStateOrder3: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(3, 'Entregado');";
+  registerStateOrder4: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Pendiente a reclamo');";
+  registerStateOrder5: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Solicitud de reclamo rechazada');";
+  registerStateOrder6: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Solicitud de reclamo aceptada');";
+  registerRolAdmin: string = "INSERT or IGNORE INTO rol(idrol, rol) VALUES(1, 'Admin');";
+  registerRolUser: string = "INSERT or IGNORE INTO rol(idrol, rol) VALUES(2, 'User');";
+  registerComplaint1: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');";
+  registerComplaint2: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');";
+  registerComplaint3: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolucion');";
+  registerComplaint4: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la informacion del producto', 'Devolucion');";
+  registerComplaint5: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Producto defectuoso', 'Devolucion');";
+  registerUser: string = "INSERT or IGNORE INTO user(rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol) VALUES('21737273-9','Maria','Jesus','Vega','Soto','assets/products/sample.png', 'Femenino', 'maria@gmail.com', '123', 932444444, 1);";
+
   listaProducts = new BehaviorSubject([]);
   // Observable para estado de la BBDD
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
   constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {
     this.createConection();
   }
@@ -191,11 +199,9 @@ export class ServiceBDService {
   fetchProducts(): Observable<Productos[]>{
     return this.listaProducts.asObservable();
   }
-
   dbReady(){
     return this.isDBReady.asObservable();
   }
-
   async presentAlert(title: string, message: string) {
     const alert = await this.alertController.create({
       header: title,
@@ -219,65 +225,26 @@ export class ServiceBDService {
       });
     });
   }
-
-
-
   async createTables() {
     try {
       await this.database.executeSql(this.tableBrand, []);
-      await this.presentAlert('Crear tabla', 'Tabla brand creada correctamente.');
-
       await this.database.executeSql(this.tableCategory, []);
-      await this.presentAlert('Crear tabla', 'Tabla category creada correctamente.');
-
       await this.database.executeSql(this.tableSize, []);
-      await this.presentAlert('Crear tabla', 'Tabla size creada correctamente.');
-
       await this.database.executeSql(this.tableGender, []);
-      await this.presentAlert('Crear tabla', 'Tabla gender creada correctamente.');
-
       await this.database.executeSql(this.tableStateOrder, []);
-      await this.presentAlert('Crear tabla', 'Tabla state_order creada correctamente.');
-
       await this.database.executeSql(this.tableRol, []);
-      await this.presentAlert('Crear tabla', 'Tabla rol creada correctamente.');
-
       await this.database.executeSql(this.tableCard, []);
-      await this.presentAlert('Crear tabla', 'Tabla card creada correctamente.');
-
       await this.database.executeSql(this.tableComplaint, []);
-      await this.presentAlert('Crear tabla', 'Tabla complaint creada correctamente.');
-
       await this.database.executeSql(this.tableUser, []);
-      await this.presentAlert('Crear tabla', 'Tabla user creada correctamente.');
-
       await this.database.executeSql(this.tableProduct, []);
-      await this.presentAlert('Crear tabla', 'Tabla product creada correctamente.');
-
       await this.database.executeSql(this.tableFavoritesList, []);
-      await this.presentAlert('Crear tabla', 'Tabla favorites_list creada correctamente.');
-
       await this.database.executeSql(this.tableShoppingCart, []);
-      await this.presentAlert('Crear tabla', 'Tabla shopping_cart creada correctamente.');
-
       await this.database.executeSql(this.tableOrder, []);
-      await this.presentAlert('Crear tabla', 'Tabla order creada correctamente.');
-
       await this.database.executeSql(this.tableUserCards, []);
-      await this.presentAlert('Crear tabla', 'Tabla user_card creada correctamente.');
-
       await this.database.executeSql(this.tableProductSize, []);
-      await this.presentAlert('Crear tabla', 'Tabla product_size creada correctamente.');
-
       await this.database.executeSql(this.tableFavoriteItem, []);
-      await this.presentAlert('Crear tabla', 'Tabla favorite_item creada correctamente.');
-
       await this.database.executeSql(this.tableCartItem, []);
-      await this.presentAlert('Crear tabla', 'Tabla cart_item creada correctamente.');
-
       await this.database.executeSql(this.tableOrderHistory, []);
-      await this.presentAlert('Crear tabla', 'Tabla order_history creada correctamente.');
-
     } catch (e) {
       this.presentAlert('Crear tabla', 'Error en crear tabla: ' + JSON.stringify(e));
     }
@@ -300,9 +267,7 @@ export class ServiceBDService {
           })
         }
       }
-
       this.listaProducts.next(items as any);
-
     }).catch(e=>{
       this.presentAlert('Select', 'Error:' + JSON.stringify(e));
     })
@@ -323,7 +288,6 @@ export class ServiceBDService {
       this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));
     });
   }
-
   editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
     return this.database.executeSql(
       'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
