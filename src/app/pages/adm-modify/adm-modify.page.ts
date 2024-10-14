@@ -5,6 +5,7 @@ import { filter } from 'rxjs/operators';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Productos } from 'src/app/services/productos';
+import { ProductSizes } from 'src/app/services/product-sizes';
 
 @Component({
   selector: 'app-adm-modify',
@@ -16,10 +17,12 @@ export class AdmModifyPage implements OnInit {
   oldImage: any;
   newImage: any;
   productSelected: Productos | undefined;
+  productSizes: ProductSizes | undefined;
   productId: number | null = null;
   brandsAvailable: any[] = [];
   sizesAvailable: any[] = [];
   categoriesAvailable: any[] = [];
+  genderAvailable: any[] = [];
 
   constructor(
     private activatedroute: ActivatedRoute,
@@ -52,13 +55,12 @@ export class AdmModifyPage implements OnInit {
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
         if (this.productId) {
-          this.cargarProducto(this.productId);  // Cargar el producto por ID
+          this.selectDataStatic();
+          this.cargarProducto(this.productId);
         }
-        this.selectDataStatic();  // Cargar las marcas, categorías y tallas
       });
   }
 
-  // Método para buscar el producto por su ID y rellenar el formulario
   cargarProducto(id: number) {
     this.serviceBD.getProductById(id).then((product: Productos | null) => {
       if (product) {
@@ -71,19 +73,29 @@ export class AdmModifyPage implements OnInit {
           brand: product.idbrand,
           gender: product.idgender,
           stock: product.stockproduct,
-          image: product.image
+          image: product.image,
         });
         this.oldImage = product.image;
+
+        this.serviceBD.fetchProductSizes().subscribe((sizes: ProductSizes[]) => {
+          const productSizes = sizes.filter(size => size.idproduct === product.idproduct);
+
+          this.sizesAvailable.forEach(size => {
+            const isSelected = productSizes.some(ps => ps.idsize === size.idsize);
+            size.selected = isSelected;
+          });
+        });
       } else {
         this.serviceBD.presentAlert('Error', 'Producto no encontrado');
       }
     }).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error cargando el producto: ' + JSON.stringify(e));
+      this.serviceBD.presentAlert('Error', 'Error cargando el producto');
     });
   }
 
   onSubmit() {
     if (this.productForm.valid && this.productId) {
+      const imageToSave = this.newImage ? this.newImage : this.oldImage;
       const updatedProduct = {
         nameproduct: this.productForm.value.name,
         descriptionproduct: this.productForm.value.description,
@@ -91,11 +103,19 @@ export class AdmModifyPage implements OnInit {
         idcategory: this.productForm.value.category,
         idbrand: this.productForm.value.brand,
         idgender: this.productForm.value.gender,
-        image: this.newImage,
-        priceproduct: this.productForm.value.price
+        image: imageToSave,
+        priceproduct: this.productForm.value.price,
       };
+
+      const selectedSizes = this.sizesAvailable.filter(size => size.selected).map(size => size.idsize);
+
+      if (selectedSizes.length === 0) {
+        this.serviceBD.presentAlert('Error', 'Debes seleccionar al menos una talla.');
+        return;
+      }
+
       this.serviceBD.editProduct(
-        this.productId,
+        this.productId!,
         updatedProduct.nameproduct,
         updatedProduct.descriptionproduct,
         updatedProduct.stockproduct,
@@ -105,10 +125,16 @@ export class AdmModifyPage implements OnInit {
         updatedProduct.image,
         updatedProduct.priceproduct
       ).then(() => {
-        this.serviceBD.presentAlert('Éxito', 'Producto modificado correctamente');
-        this.irPagina('/panel-adm');
+        this.serviceBD.deleteProductSizes(this.productId!).then(() => {
+          selectedSizes.forEach(sizeId => {
+            this.serviceBD.insertProductSize(this.productId!, sizeId).catch(err => {
+              this.serviceBD.presentAlert('Error', 'Error al actualizar talla');
+            });
+          });
+          this.irPagina('/panel-adm');
+        });
       }).catch(e => {
-        this.serviceBD.presentAlert('Error', 'Error actualizando el producto: ' + JSON.stringify(e));
+        this.serviceBD.presentAlert('Error', 'Error actualizando el producto');
       });
     } else {
       this.serviceBD.presentAlert('Error', 'Formulario inválido');
@@ -118,36 +144,30 @@ export class AdmModifyPage implements OnInit {
   selectDataStatic() {
     this.serviceBD.fetchBrands().then(data => {
       this.brandsAvailable = data || [];
-    }).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas: ' + JSON.stringify(e));
+    }).catch(() => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas');
     });
 
     this.serviceBD.fetchCategories().then(data => {
       this.categoriesAvailable = data || [];
-    }).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las categorías: ' + JSON.stringify(e));
+    }).catch(() => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las categorías');
     });
 
     this.serviceBD.fetchSizes().then(data => {
       this.sizesAvailable = data.map(size => ({
         ...size,
-        selected: false
+        selected: false,
       }));
-    }).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas: ' + JSON.stringify(e));
+    }).catch(() => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas');
     });
-  }
 
-  onSizeTouched(size: any) {
-    size.touched = true;
-  }
-
-  isAnySizeSelected(): boolean {
-    return this.sizesAvailable.some(size => size.selected);
-  }
-
-  isAnySizeTouched(): boolean {
-    return this.sizesAvailable.some(size => size.touched);
+    this.serviceBD.fetchGenders().then(data => {
+      this.genderAvailable = data || [];
+    }).catch(() => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo los géneros');
+    });
   }
 
   irPagina(ruta: string) {
@@ -158,8 +178,17 @@ export class AdmModifyPage implements OnInit {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
-      resultType: CameraResultType.Uri
+      resultType: CameraResultType.Uri,
     });
     this.newImage = image.webPath;
   };
+  onSizeTouched(size: any) {
+    size.touched = true;
+  }
+  isAnySizeSelected(): boolean {
+    return this.sizesAvailable.some(size => size.selected);
+  }
+  isAnySizeTouched(): boolean {
+    return this.sizesAvailable.some(size => size.touched);
+  }
 }

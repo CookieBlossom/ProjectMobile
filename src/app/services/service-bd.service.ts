@@ -14,11 +14,8 @@ import { Order } from './order';
 import { ProductSizes } from './product-sizes';
 import { ShoppingCart } from './shopping-cart';
 import { Users } from './users';
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class ServiceBDService {
-
   public database!: SQLiteObject;
   // Definiciones de tablas
   tableBrand: string = `
@@ -173,7 +170,6 @@ export class ServiceBDService {
     FOREIGN KEY (idstate) REFERENCES state_order(idstate)
   );`;
   //inserts iniciales
-
   async insertStaticData():Promise<void>{
     const inserts = [
       "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(1, 'Adidas');",
@@ -201,13 +197,11 @@ export class ServiceBDService {
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolución');",
     ];
     for (let insert of inserts) {
-      await this.database.executeSql(insert, []).catch(e => {
-        this.presentAlert('Error en la inserción', 'Error al insertar datos estáticos: ' + JSON.stringify(e));
-      });
+      await this.database.executeSql(insert, []).catch(e => {this.presentAlert('Error en la inserción', 'Error al insertar datos estáticos: ' + JSON.stringify(e));});
     }
-  }
-
+  };
   listProducts = new BehaviorSubject([]);
+  listProductSizes = new BehaviorSubject([]);
   listCards = new BehaviorSubject([]);
   listCardsUser = new BehaviorSubject([]);
   listOrders = new BehaviorSubject([]);
@@ -215,28 +209,19 @@ export class ServiceBDService {
   listComplaint = new BehaviorSubject([]);
   listFavoriteItems = new BehaviorSubject([]);
   listFavorite = new BehaviorSubject([]);
-  listProductSizes = new BehaviorSubject([]);
   listShoppingCart = new BehaviorSubject([]);
   listCartItem = new BehaviorSubject([]);
   listUsers = new BehaviorSubject([]);
-
-  // Observable para estado de la BBDD
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {
-    this.createConection();
-  }
-
-  dbReady(){
-    return this.isDBReady.asObservable();
-  }
+  constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {this.createConection();}
+  dbReady(){return this.isDBReady.asObservable();};
   async presentAlert(title: string, message: string) {
     const alert = await this.alertController.create({
       header: title,
       message: message,
       buttons: ['OK'],
     });
-    await alert.present();
-  }
+    await alert.present();}
   createConection(){
     this.platform.ready().then(()=>{
       this.sqlite.create({
@@ -247,15 +232,8 @@ export class ServiceBDService {
         this.createTables()
         this.insertStaticData();
         this.isDBReady.next(true);
-      }).catch(e=>{
-        this.presentAlert('Crear Conexion', 'Error en crear BD: ' + JSON.stringify(e));
-      })
-
-    })
-  }
-
-
-
+      }).catch(e=>{this.presentAlert('Crear Conexion', 'Error en crear BD: ' + JSON.stringify(e));})})
+  };
   async createTables() {
     try {
       await this.database.executeSql(this.tableBrand, []);
@@ -276,10 +254,8 @@ export class ServiceBDService {
       await this.database.executeSql(this.tableFavoriteItem, []);
       await this.database.executeSql(this.tableCartItem, []);
       await this.database.executeSql(this.tableOrderHistory, []);
-    } catch (e) {
-      this.presentAlert('Crear tabla', 'Error en crear tabla: ' + JSON.stringify(e));
-    }
-  }
+    } catch (e) {this.presentAlert('Crear tabla', 'Error en crear tabla: ' + JSON.stringify(e));}
+  };
   async searchProducts(){
     try {
       const res = await this.database.executeSql('SELECT * FROM product', []);
@@ -295,211 +271,137 @@ export class ServiceBDService {
             idbrand: res.rows.item(i).idbrand,
             idgender: res.rows.item(i).idgender,
             image: res.rows.item(i).image,
-            priceproduct: res.rows.item(i).priceproduct
-          });
+            priceproduct: res.rows.item(i).priceproduct});
         }
       }
       this.listProducts.next(items as any);
-    } catch (e) {
-      this.presentAlert('Select', 'Error:' + JSON.stringify(e));
-    }
+    } catch (e) {this.presentAlert('Select', 'Error:' + JSON.stringify(e));}
+  };
+  async searchProductSizes() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM product_size', []);
+      let items: ProductSizes[] = [];
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
+          items.push({idproduct_size: res.rows.item(i).idproduct_size,idproduct: res.rows.item(i).idproduct,idsize: res.rows.item(i).idsize});}
+      }
+      this.listProductSizes.next(items as any);
+    } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
   }
-  // async searchCards() {
-  //   try {
-  //     const res = await this.database.executeSql('SELECT * FROM card', []);
-  //     let items: Card[] = [];
-  //     if (res.rows.length > 0) {
-  //       for (let i = 0; i < res.rows.length; i++) {
-  //         items.push({
-  //           idcard: res.rows.item(i).idcard,
-  //           cardname: res.rows.item(i).cardname,
-  //           cardnumber: res.rows.item(i).cardnumber,
-  //           // Otros campos que tengas en la tabla card
-  //         });
-  //       }
-  //     }
-  //     this.listCards.next(items); // Actualiza el BehaviorSubject con los datos encontrados
-  //   } catch (e) {
-  //     this.presentAlert('Select', 'Error al buscar las tarjetas: ' + JSON.stringify(e));
-  //   }
-  // }
-
   async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number): Promise<number> {
     const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-
     return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
-      .then(res => {
-        this.presentAlert("Insertar", "Producto agregado exitosamente");
-        // Devolver el ID del producto insertado
-        return res.insertId;
-      });
+      .then(res => {this.searchProducts(); return res.insertId;});
   }
-
   async deleteProduct(id: number) {
     try {
+      await this.deleteProductSizes(id);
       const res = await this.database.executeSql('DELETE FROM product WHERE idproduct = ?', [id]);
-      this.presentAlert("Eliminar", "Producto eliminado correctamente");
+      this.searchProducts();
+
     } catch (e) {
       this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));
     }
   }
+
   async editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
     try {
       const res = await this.database.executeSql(
         'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
-        [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, id]
-      );
+        [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, id]);
       this.presentAlert("Modificar", "Producto modificado correctamente");
-    } catch (e) {
-      this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
-    }
+      this.searchProducts();  // Actualizar el observable después de editar
+    } catch (e) {this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));}
   }
   async getProductById(id: number): Promise<Productos | null> {
     const query = `SELECT * FROM product WHERE idproduct = ?`;
-
     return this.database.executeSql(query, [id])
       .then(res => {
         if (res.rows.length > 0) {
           const item = res.rows.item(0);
-          return {
-            idproduct: item.idproduct,
-            nameproduct: item.nameproduct,
-            descriptionproduct: item.descriptionproduct,
-            stockproduct: item.stockproduct,
-            idcategory: item.idcategory,
-            idbrand: item.idbrand,
-            idgender: item.idgender,
-            image: item.image,
-            priceproduct: item.priceproduct
+          return {idproduct: item.idproduct,nameproduct: item.nameproduct,descriptionproduct: item.descriptionproduct,stockproduct: item.stockproduct,idcategory: item.idcategory,idbrand: item.idbrand,idgender: item.idgender,image: item.image,priceproduct: item.priceproduct
           } as Productos;
-        } else {
-          return null; // Producto no encontrado
-        }
+        } else {return null;}
       })
-      .catch(err => {
-        this.presentAlert('Error', 'Error al obtener el producto: ' + JSON.stringify(err));
-        return null;
-      });
+      .catch(err => {this.presentAlert('Error', 'Error al obtener el producto: ' + JSON.stringify(err));return null;});
+  };
+  async insertProductSize(idProduct: number, idSize: number) {
+    try {
+      const res = await this.database.executeSql('INSERT INTO product_size (idproduct, idsize) VALUES (?, ?)',[idProduct, idSize]);
+      this.searchProductSizes();
+    } catch (e) {this.presentAlert('Error', 'Error al insertar talla: ' + JSON.stringify(e));}
   }
-
-  async insertProductSize(idProduct: number, idSize: number){
-    try{
-      const res = await this.database.executeSql(
-        'INSERT INTO product_size (idproduct, idsize) VALUES(?,?)', [idProduct, idSize])
-    }catch(e) {
-      this.presentAlert('Insertar Talla a Producto', 'Error:' + JSON.stringify(e));
-    };
+  async deleteProductSizes(productId: number) {
+    try {
+      const query = `DELETE FROM product_size WHERE idProduct = ?`;
+      const res = await this.database.executeSql(query, [productId]);
+      this.searchProductSizes();
+    } catch(e) {this.presentAlert('Eliminar Tallas', 'Error: ' + JSON.stringify(e));}
   }
   //SELECTS DINAMICOS CON CLASS
-  fetchProducts(): Observable<Productos[]>{
-    return this.listProducts.asObservable();
-  }
-  fetchCard(): Observable<Card[]>{
-    return this.listCards.asObservable();
-  }
-  fetchCardUser(): Observable<CardUsers[]>{
-    return this.listCardsUser.asObservable();
-  }
-  fetchOrder(): Observable<Order[]>{
-    return this.listOrders.asObservable();
-  }
-  fetchOrderHistory(): Observable<OrderHistory[]>{
-    return this.listOrderHistory.asObservable();
-  }
-  fetchComplaint(): Observable<Complaint[]>{
-    return this.listComplaint.asObservable();
-  }
-  fetchFavoriteItems(): Observable<FavoriteItems[]>{
-    return this.listFavoriteItems.asObservable();
-  }
-  fetchFavorite(): Observable<Favoriteslist[]>{
-    return this.listFavorite.asObservable();
-  }
-  fetchProductSizes(): Observable<ProductSizes[]>{
-    return this.listProductSizes.asObservable();
-  }
-  fetchShoppingCart(): Observable<ShoppingCart[]>{
-    return this.listShoppingCart.asObservable();
-  }
-  fetchCartItem(): Observable<CartItem[]>{
-    return this.listCartItem.asObservable();
-  }
-  fetchUsers(): Observable<Users[]>{
-    return this.listUsers.asObservable();
-  }
+  fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
+  fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}
+  fetchCardUser(): Observable<CardUsers[]>{return this.listCardsUser.asObservable();}
+  fetchOrder(): Observable<Order[]>{return this.listOrders.asObservable();}
+  fetchOrderHistory(): Observable<OrderHistory[]>{return this.listOrderHistory.asObservable();}
+  fetchComplaint(): Observable<Complaint[]>{return this.listComplaint.asObservable();}
+  fetchFavoriteItems(): Observable<FavoriteItems[]>{return this.listFavoriteItems.asObservable();}
+  fetchFavorite(): Observable<Favoriteslist[]>{return this.listFavorite.asObservable();}
+  fetchProductSizes(): Observable<ProductSizes[]>{return this.listProductSizes.asObservable();}
+  fetchShoppingCart(): Observable<ShoppingCart[]>{return this.listShoppingCart.asObservable();}
+  fetchCartItem(): Observable<CartItem[]>{return this.listCartItem.asObservable();}
+  fetchUsers(): Observable<Users[]>{return this.listUsers.asObservable();}
   //SELECT ESTATICOS GENDER, ROL, SIZES, BRANDS, CATEGORY, STATE ORDER, ROL
   async fetchBrands() {
     try {
       const res = await this.database.executeSql('SELECT * FROM brand', []);
       let brands: any[] = [];
       if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          brands.push(res.rows.item(i));
-        }
+        for (let i = 0; i < res.rows.length; i++) {brands.push(res.rows.item(i));}
       }
       return brands;
     } catch (e) {
-      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
-      return [];
-    }
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));return [];}
   }
   async fetchCategories() {
     try {
       const res = await this.database.executeSql('SELECT * FROM category', []);
       let categories: any[] = [];
       if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          categories.push(res.rows.item(i));
-        }
+        for (let i = 0; i < res.rows.length; i++) {categories.push(res.rows.item(i));}
       }
       return categories;
-    } catch (e) {
-      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
-      return [];
-    }
+    }catch{return [];}
   }
   async fetchGenders() {
     try {
       const res = await this.database.executeSql('SELECT * FROM gender', []);
       let genders: any[] = [];
       if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          genders.push(res.rows.item(i));
-        }
+        for (let i = 0; i < res.rows.length; i++) {genders.push(res.rows.item(i));}
       }
       return genders;
-    } catch (e) {
-      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
-      return [];
-    }
+    }catch{return [];}
   }
   async fetchSizes() {
     try {
       const res = await this.database.executeSql('SELECT * FROM size', []);
       let sizes: any[] = [];
       if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          sizes.push(res.rows.item(i));
-        }
+        for (let i = 0; i < res.rows.length; i++) {sizes.push(res.rows.item(i));}
       }
       return sizes;
-    } catch (e) {
-      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
-      return [];
-    }
+    } catch{return [];}
   }
   async fetchStateOrders() {
     try {
       const res = await this.database.executeSql('SELECT * FROM state_order', []);
       let stateOrders: any[] = [];
       if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          stateOrders.push(res.rows.item(i));
-        }
+        for (let i = 0; i < res.rows.length; i++) {stateOrders.push(res.rows.item(i));}
       }
       return stateOrders;
-    } catch (e) {
-      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+    } catch{
       return [];
     }
   }
@@ -508,14 +410,9 @@ export class ServiceBDService {
       const res = await this.database.executeSql('SELECT * FROM rol', []);
       let roles: any[] = [];
       if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          roles.push(res.rows.item(i));
-        }
+        for (let i = 0; i < res.rows.length; i++) {roles.push(res.rows.item(i));}
       }
       return roles;
-    } catch (e) {
-      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
-      return [];
-    }
+    } catch{return [];}
   }
 }

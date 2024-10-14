@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
-import {Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-panel-add',
@@ -28,32 +28,21 @@ export class PanelAddPage implements OnInit {
     private router: Router,
     private activedRoute: ActivatedRoute,
     private serviceBD: ServiceBDService
-  ) {
-    this.activedRoute.queryParams.subscribe(param => {
-      if (this.router.getCurrentNavigation()?.extras.state) {
-        //this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
-      }
-    });
-  }
-
+  ) {}
   ngOnInit() {
     this.verificarConexionBD();
   }
   verificarConexionBD() {
     this.serviceBD.dbReady()
-      .pipe(filter(isReady => isReady))  // Filtrar solo cuando el estado es true
+      .pipe(filter(isReady => isReady))
       .subscribe(() => {
         this.selectDataStatic();
       });
   }
-
   irPagina(ruta: string) {
-    let navigationextras: NavigationExtras = {
-      state: {}
-    };
+    let navigationextras: NavigationExtras = { state: {} };
     this.router.navigate([ruta], navigationextras);
   }
-
   resetForm() {
     this.newProducto = {
       name: '',
@@ -80,63 +69,55 @@ export class PanelAddPage implements OnInit {
     if (selectedSizes.length === 0) {
       this.serviceBD.presentAlert('Error', 'Debes seleccionar al menos una talla.');
       return;
-    } else {
-      this.serviceBD.insertProduct(
-        this.newProducto.name,
-        this.newProducto.description,
-        this.newProducto.stock,
-        this.newProducto.idcategory,
-        this.newProducto.idbrand,
-        this.newProducto.idgender,
-        this.imageExample,
-        this.newProducto.priceproduct
-      ).then(productId => {
-        if (productId) {
-          selectedSizes.forEach(sizeId => {
-            this.serviceBD.insertProductSize(productId, sizeId)
-              .catch(err => {
-                this.serviceBD.presentAlert('Error', 'Error al insertar talla: ' + JSON.stringify(err));
-              });
-          });
-          this.serviceBD.presentAlert('Éxito', 'Producto y tallas agregados correctamente.');
-        } else {
-          this.serviceBD.presentAlert('Error', 'No se pudo obtener el ID del producto insertado.');
-        }
-      }).catch(err => {
-        this.serviceBD.presentAlert('Error', 'Error al insertar producto: ' + JSON.stringify(err));
-      });
     }
+    this.serviceBD.insertProduct(
+      this.newProducto.name,
+      this.newProducto.description,
+      this.newProducto.stock,
+      this.newProducto.idcategory,
+      this.newProducto.idbrand,
+      this.newProducto.idgender,
+      this.imageExample,
+      this.newProducto.priceproduct
+    ).then(productId => {
+      if (productId) {
+        selectedSizes.forEach(sizeId => {
+          this.serviceBD.insertProductSize(productId, sizeId)
+            .catch(err => this.serviceBD.presentAlert('Error', 'Error al insertar talla.'));
+        });
+        this.serviceBD.searchProductSizes().then(() => {
+          this.serviceBD.presentAlert('Éxito', 'Producto y tallas agregados correctamente.');
+        });
+      }
+    }).catch(err => {
+      this.serviceBD.presentAlert('Error', 'Error al insertar producto.');
+    });
+
     this.resetForm();
     this.irPagina('/adm-products');
   }
+  selectDataStatic() {
+    this.serviceBD.fetchBrands()
+      .then(data => {
+        this.brandsAvailable = data.length > 0 ? data : [];
+      })
+      .catch(() => this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas.'));
 
-  selectDataStatic(){
-    this.serviceBD.fetchBrands().then(data => {
-      if (data.length > 0) {
-        this.brandsAvailable = data;
-      }}).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas: ' + JSON.stringify(e));
-    });
-    this.serviceBD.fetchCategories().then(data => {
-      if (data.length > 0) {
-        this.categoriesAvailable = data;
-      }}).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las categorias: ' + JSON.stringify(e));
-    });
-    this.serviceBD.fetchSizes().then(data => {
-      if (data.length > 0) {
-        this.sizesAvailable = data.map(size=>({
-          ...size,
-          selected: false
-        }));
-      }}).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas: ' + JSON.stringify(e));
-    });
+    this.serviceBD.fetchCategories()
+      .then(data => {
+        this.categoriesAvailable = data.length > 0 ? data : [];
+      })
+      .catch(() => this.serviceBD.presentAlert('Error', 'Error obteniendo las categorías.'));
+
+    this.serviceBD.fetchSizes()
+      .then(data => {
+        this.sizesAvailable = data.map(size => ({ ...size, selected: false }));
+      })
+      .catch(() => this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas.'));
   }
   onSizeTouched(size: any) {
     size.touched = true;
   }
-
   isAnySizeSelected(): boolean {
     return this.sizesAvailable.some(size => size.selected);
   }

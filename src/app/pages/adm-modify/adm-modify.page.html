@@ -9,78 +9,74 @@
       <mat-card-header>
         <mat-card-title>Modificar Producto</mat-card-title>
       </mat-card-header>
-      <mat-card-content>
+      <mat-card-content *ngIf="productSelected">
         <form [formGroup]="productForm" class="example-form">
 
-          <!-- Nombre del Producto -->
+          <!-- Nombre -->
           <mat-form-field appearance="outline">
             <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name" />
+            <input matInput formControlName="name" [value]="productSelected.nameproduct" />
           </mat-form-field>
 
-          <!-- Descripción del Producto -->
+          <!-- Descripción -->
           <mat-form-field appearance="outline">
             <mat-label>Descripción</mat-label>
-            <textarea matInput formControlName="description"></textarea>
+            <textarea matInput formControlName="description" [value]="productSelected.descriptionproduct"></textarea>
           </mat-form-field>
 
-          <!-- Precio del Producto -->
+          <!-- Precio -->
           <mat-form-field appearance="outline">
             <mat-label>Precio</mat-label>
-            <input matInput type="number" formControlName="price" />
+            <input matInput type="number" formControlName="price" [value]="productSelected.priceproduct" />
           </mat-form-field>
 
-          <!-- Categoría del Producto (Dropdown) -->
+          <!-- Categoría (Dropdown) -->
           <mat-form-field appearance="outline">
             <mat-label>Categoría</mat-label>
-            <mat-select formControlName="category">
+            <mat-select formControlName="category" [value]="productSelected.idcategory">
               <mat-option *ngFor="let category of categoriesAvailable" [value]="category.idcategory">
                 {{ category.namecategory }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <!-- Marca del Producto (Dropdown) -->
+          <!-- Marca (Dropdown) -->
           <mat-form-field appearance="outline">
             <mat-label>Marca</mat-label>
-            <mat-select formControlName="brand">
+            <mat-select formControlName="brand" [value]="productSelected.idbrand">
               <mat-option *ngFor="let brand of brandsAvailable" [value]="brand.idbrand">
                 {{ brand.namebrand }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <!-- Género del Producto (Dropdown) -->
+          <!-- Género (Dropdown) -->
           <mat-form-field appearance="outline">
             <mat-label>Género</mat-label>
-            <mat-select formControlName="gender">
-              <mat-option value="1">Masculino</mat-option>
-              <mat-option value="2">Femenino</mat-option>
+            <mat-select formControlName="gender" [value]="productSelected.idgender">
+              <mat-option *ngFor="let gender of genderAvailable" [value]="gender.idgender">
+                {{ gender.namegender }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <!-- Stock del Producto -->
+          <!-- Stock -->
           <mat-form-field appearance="outline">
             <mat-label>Stock</mat-label>
-            <input matInput type="number" formControlName="stock" />
+            <input matInput type="number" formControlName="stock" [value]="productSelected.stockproduct" />
           </mat-form-field>
 
-          <!-- Tallas del Producto (Checkboxes) -->
+          <!-- Tallas -->
           <ion-item class="sizeForm">
             <ion-label style="width: 20%;">Tallas</ion-label>
             <div class="sizes">
               <div *ngFor="let size of sizesAvailable" class="sizeItem">
-                <ion-checkbox [(ngModel)]="size.selected" [ngModelOptions]="{ standalone: true }">
-                </ion-checkbox>
+                <ion-checkbox [(ngModel)]="size.selected" (ionChange)="onSizeTouched(size)" [ngModelOptions]="{ standalone: true }"></ion-checkbox>
                 <ion-label>{{ size.size }}</ion-label>
               </div>
             </div>
           </ion-item>
-          <div *ngIf="!isAnySizeSelected() && isAnySizeTouched()" class="error-message">
-            Debes seleccionar al menos una talla.
-          </div>
-
-          <!-- Imagen del Producto -->
+          <!-- Imagen -->
           <div class="imageForm">
             <ion-label>Foto actual</ion-label>
             <img class="image" *ngIf="oldImage" [src]="oldImage" alt="Sin imagen" />
@@ -89,12 +85,14 @@
             <img class="image" *ngIf="newImage" [src]="newImage"/>
           </div>
 
-          <!-- Botón para guardar los cambios -->
+          <!-- Botones de acción -->
           <div class="button-container">
-            <button mat-raised-button color="primary" type="submit" class="submit-button" [disabled]="productForm.invalid">
+            <ion-button (click)="onSubmit()" mat-raised-button color="primary" type="submit" class="submit-button" [disabled]="productForm.invalid">
               Guardar Cambios
-            </button>
+            </ion-button>
+            <ion-button (click)="irPagina('/panel-adm')">Volver</ion-button>
           </div>
+
         </form>
       </mat-card-content>
     </mat-card>

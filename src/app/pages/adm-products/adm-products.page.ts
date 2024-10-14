@@ -24,7 +24,6 @@ export class AdmProductsPage {
           this.products = data;
         });
         this.serviceBD.searchProducts();
-        console.log(this.products);
       });
   }
   irPagina( ruta:string ){
@@ -32,9 +31,7 @@ export class AdmProductsPage {
   }
   modificarProducto(productId: number) {
     const navigationExtras: NavigationExtras = {
-      state: {
-        id: productId
-      }
+      state: {id: productId}
     };
     this.router.navigate([`/adm-modify`, productId], navigationExtras);
   }
@@ -63,7 +60,10 @@ export class AdmProductsPage {
     await alert.present();
   }
 
-  eliminarProducto(productId: number){
-    this.serviceBD.deleteProduct(productId);
+  eliminarProducto(productId: number) {
+    this.serviceBD.deleteProduct(productId).then(() => {
+      this.serviceBD.presentAlert('Resultado','Se ha eliminado con exito el producto');
+    }).catch(e => {
+    });
   }
 }
