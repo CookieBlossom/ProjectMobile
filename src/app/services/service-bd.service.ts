@@ -353,8 +353,35 @@ export class ServiceBDService {
     } catch (e) {
       this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
     }
-
   }
+  async getProductById(id: number): Promise<Productos | null> {
+    const query = `SELECT * FROM product WHERE idproduct = ?`;
+
+    return this.database.executeSql(query, [id])
+      .then(res => {
+        if (res.rows.length > 0) {
+          const item = res.rows.item(0);
+          return {
+            idproduct: item.idproduct,
+            nameproduct: item.nameproduct,
+            descriptionproduct: item.descriptionproduct,
+            stockproduct: item.stockproduct,
+            idcategory: item.idcategory,
+            idbrand: item.idbrand,
+            idgender: item.idgender,
+            image: item.image,
+            priceproduct: item.priceproduct
+          } as Productos;
+        } else {
+          return null; // Producto no encontrado
+        }
+      })
+      .catch(err => {
+        this.presentAlert('Error', 'Error al obtener el producto: ' + JSON.stringify(err));
+        return null;
+      });
+  }
+
   async insertProductSize(idProduct: number, idSize: number){
     try{
       const res = await this.database.executeSql(

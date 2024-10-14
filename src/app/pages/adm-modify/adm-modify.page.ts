@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { Productos } from 'src/app/services/productos';
 
 @Component({
   selector: 'app-adm-modify',
@@ -9,22 +13,24 @@ import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 })
 export class AdmModifyPage implements OnInit {
   productForm: FormGroup;
-  Productos: any;
-  productoDetalle: any;
-  productId: any;
+  oldImage: any;
+  newImage: any;
+  productSelected: Productos | undefined;
+  productId: number | null = null;
+  brandsAvailable: any[] = [];
+  sizesAvailable: any[] = [];
+  categoriesAvailable: any[] = [];
 
   constructor(
     private activatedroute: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private serviceBD: ServiceBDService
   ) {
-    if (this.router.getCurrentNavigation()?.extras.state) {
-      this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
-      this.productId = this.activatedroute.snapshot.paramMap.get('id');
-      console.log(this.productId);
-      console.log(this.Productos);
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.productId = navigation.extras.state['id'];
     }
-
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
@@ -38,40 +44,122 @@ export class AdmModifyPage implements OnInit {
   }
 
   ngOnInit() {
-    this.verDetalle();
+    this.verificarConexionBD();
   }
 
-  verDetalle() {
-    this.productoDetalle = this.Productos.find((producto: any) => producto.id == this.productId);
-    if (this.productoDetalle) {
-      console.log('Producto encontrado:', this.productoDetalle);
-      this.productForm.patchValue(this.productoDetalle);
-    } else {
-      console.log('Error: Producto no encontrado');
-    }
+  verificarConexionBD() {
+    this.serviceBD.dbReady()
+      .pipe(filter(isReady => isReady))
+      .subscribe(() => {
+        if (this.productId) {
+          this.cargarProducto(this.productId);  // Cargar el producto por ID
+        }
+        this.selectDataStatic();  // Cargar las marcas, categorías y tallas
+      });
+  }
+
+  // Método para buscar el producto por su ID y rellenar el formulario
+  cargarProducto(id: number) {
+    this.serviceBD.getProductById(id).then((product: Productos | null) => {
+      if (product) {
+        this.productSelected = product;
+        this.productForm.patchValue({
+          name: product.nameproduct,
+          description: product.descriptionproduct,
+          price: product.priceproduct,
+          category: product.idcategory,
+          brand: product.idbrand,
+          gender: product.idgender,
+          stock: product.stockproduct,
+          image: product.image
+        });
+        this.oldImage = product.image;
+      } else {
+        this.serviceBD.presentAlert('Error', 'Producto no encontrado');
+      }
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error cargando el producto: ' + JSON.stringify(e));
+    });
   }
 
   onSubmit() {
-    if (this.productForm.valid) {
-      const index = this.Productos.findIndex((p: any) => p.id == this.productId);
-      if (index !== -1) {
-        this.Productos[index] = { ...this.Productos[index], ...this.productForm.value };
-        alert('Datos del producto cambiados');
+    if (this.productForm.valid && this.productId) {
+      const updatedProduct = {
+        nameproduct: this.productForm.value.name,
+        descriptionproduct: this.productForm.value.description,
+        stockproduct: this.productForm.value.stock,
+        idcategory: this.productForm.value.category,
+        idbrand: this.productForm.value.brand,
+        idgender: this.productForm.value.gender,
+        image: this.newImage,
+        priceproduct: this.productForm.value.price
+      };
+      this.serviceBD.editProduct(
+        this.productId,
+        updatedProduct.nameproduct,
+        updatedProduct.descriptionproduct,
+        updatedProduct.stockproduct,
+        updatedProduct.idcategory,
+        updatedProduct.idbrand,
+        updatedProduct.idgender,
+        updatedProduct.image,
+        updatedProduct.priceproduct
+      ).then(() => {
+        this.serviceBD.presentAlert('Éxito', 'Producto modificado correctamente');
         this.irPagina('/panel-adm');
-      } else {
-        console.error('Producto no encontrado para actualizar');
-      }
+      }).catch(e => {
+        this.serviceBD.presentAlert('Error', 'Error actualizando el producto: ' + JSON.stringify(e));
+      });
     } else {
-      console.error('Formulario inválido');
+      this.serviceBD.presentAlert('Error', 'Formulario inválido');
     }
   }
 
-  irPagina(ruta: string) {
-    let navigationextras: NavigationExtras = {
-      state: {
-        productos: this.Productos,
-      }
-    };
-    this.router.navigate([ruta], navigationextras);
+  selectDataStatic() {
+    this.serviceBD.fetchBrands().then(data => {
+      this.brandsAvailable = data || [];
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas: ' + JSON.stringify(e));
+    });
+
+    this.serviceBD.fetchCategories().then(data => {
+      this.categoriesAvailable = data || [];
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las categorías: ' + JSON.stringify(e));
+    });
+
+    this.serviceBD.fetchSizes().then(data => {
+      this.sizesAvailable = data.map(size => ({
+        ...size,
+        selected: false
+      }));
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas: ' + JSON.stringify(e));
+    });
   }
+
+  onSizeTouched(size: any) {
+    size.touched = true;
+  }
+
+  isAnySizeSelected(): boolean {
+    return this.sizesAvailable.some(size => size.selected);
+  }
+
+  isAnySizeTouched(): boolean {
+    return this.sizesAvailable.some(size => size.touched);
+  }
+
+  irPagina(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
+  takePicture = async () => {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.Uri
+    });
+    this.newImage = image.webPath;
+  };
 }

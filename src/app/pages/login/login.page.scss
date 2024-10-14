@@ -1,11 +1,11 @@
 .header-login {
     display: flex;
     height: 20%;
-    background-color: #212121;
+    background-color: #111111;
     justify-content: center;
     align-items: center;
   }
-  
+
   .icon-login {
     width: 125px;
   }
@@ -18,7 +18,7 @@
     justify-content: center;
     align-items: center;
   }
-  
+
   .form-login {
     background-color: rgb(255, 255, 255);
     display: flex;
@@ -37,41 +37,40 @@
     text-align: center;
     margin: 0;
     margin-top: 100px;
-    color: #110f0f;
+    color: #1b1b1b;
   }
-  
+
   .input-container {
     margin-bottom: 20px;
   }
-  
+
   ion-item {
     margin-bottom: 15px;
   }
-  
+
   .button-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .error-message {
     color: red;
     font-size: 14px;
     margin-top: 5px;
   }
-  
+
   .custom-button {
-    --background: #0A0A0A; /* Gris oscuro */
-    --background-activated: #808080; /* Gris más oscuro al hacer clic */
-    --color: white; /* Color del texto */
-    border-radius: 8px; /* Bordes redondeados */
+    --background: #0A0A0A;
+    --background-activated: #808080;
+    --color: white;
+    border-radius: 8px;
   }
-  
+
   .custom-button-outline {
-    --border-color: #0A0A0A; /* Gris oscuro */
-    --color: #404040; /* Color del texto en el botón outline */
-    --background: transparent; /* Fondo transparente para el outline */
-    --background-activated: rgba(169, 169, 169, 0.2); /* Fondo gris claro al hacer clic */
-    border-radius: 8px; /* Bordes redondeados */
+    --border-color: #0A0A0A;
+    --color: #404040;
+    --background: transparent;
+    --background-activated: rgba(169, 169, 169, 0.2);
+    border-radius: 8px;
   }
-  

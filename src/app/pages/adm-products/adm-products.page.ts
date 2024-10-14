@@ -24,40 +24,46 @@ export class AdmProductsPage {
           this.products = data;
         });
         this.serviceBD.searchProducts();
+        console.log(this.products);
       });
   }
   irPagina( ruta:string ){
     this.router.navigate([ruta]);
   }
   modificarProducto(productId: number) {
-    this.router.navigate(['/adm-modify', productId]);
+    const navigationExtras: NavigationExtras = {
+      state: {
+        id: productId
+      }
+    };
+    this.router.navigate([`/adm-modify`, productId], navigationExtras);
   }
-  // async confirmarEliminacion(product: any) {
-  //   const alert = await this.alertController.create({
-  //     header: 'Confirmar eliminación',
-  //     message: `¿Estás seguro de que deseas eliminar el producto "${product.name}"?`,
-  //     buttons: [
-  //       {
-  //         text: 'Cancelar',
-  //         role: 'cancel',
-  //         handler: () => {
-  //           console.log('Eliminación cancelada');
-  //         }
-  //       },
-  //       {
-  //         text: 'Eliminar',
-  //         handler: () => {
-  //           this.eliminarProducto(product);
-  //         }
-  //       }
-  //     ]
-  //   });
 
-  //   await alert.present();
-  // }
+  async confirmarEliminacion(productId: number) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: `¿Estás seguro de que deseas eliminar el id: "${productId}"?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Eliminación cancelada');
+          }
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.eliminarProducto(productId);
+          }
+        }
+      ]
+    });
 
-  // eliminarProducto(product: any) {
-  //   this.Productos = this.Productos.filter((p: { id: any; }) => p.id !== product.id);
-  //   console.log('Producto eliminado:', product);
-  // }
+    await alert.present();
+  }
+
+  eliminarProducto(productId: number){
+    this.serviceBD.deleteProduct(productId);
+  }
 }
