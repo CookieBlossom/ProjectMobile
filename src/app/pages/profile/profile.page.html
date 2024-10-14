@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true">
   <div class="top">
-    <img class="image-profile" src="/assets/person.svg" alt="">
+    <img *ngIf="imageExample" [src]="imageExample" alt="Sin imagen" style="height: 250px;width: 250px;" />
     <p class="title-profile">Perfil</p>
   </div>
   <div class="bottom">

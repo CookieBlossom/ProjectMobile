@@ -3,6 +3,17 @@ import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Productos } from './productos';
+import { Card } from './card';
+import { CardUsers } from './card-users';
+import { CartItem } from './cart-item';
+import { Complaint } from './complaint';
+import { FavoriteItems } from './favorite-items';
+import { Favoriteslist } from './favoriteslist';
+import { OrderHistory } from './order-history';
+import { Order } from './order';
+import { ProductSizes } from './product-sizes';
+import { ShoppingCart } from './shopping-cart';
+import { Users } from './users';
 @Injectable({
   providedIn: 'root'
 })
@@ -131,8 +142,7 @@ export class ServiceBDService {
     idproduct INTEGER NOT NULL,
     idsize INTEGER NOT NULL,
     FOREIGN KEY (idproduct) REFERENCES product(idproduct),
-    FOREIGN KEY (idsize) REFERENCES size(idsize),
-    UNIQUE (idproduct, idsize)
+    FOREIGN KEY (idsize) REFERENCES size(idsize)
   );`;
   tableFavoriteItem: string = `
   CREATE TABLE IF NOT EXISTS favorite_item (
@@ -164,41 +174,58 @@ export class ServiceBDService {
   );`;
   //inserts iniciales
 
-  registerBrand: string = "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(1, 'Adidas');";
-  registerBrand2: string = "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(2, 'Puma');";
-  registerCategory: string = "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(1, 'Running');";
-  registerCategory2: string = "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(2, 'LifeStyle');";
-  registerSize: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(1, 10);";
-  registerSize2: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(2, 15);";
-  registerSize3: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(3, 20);";
-  registerSize4: string = "INSERT or IGNORE INTO size(idsize, size) VALUES(4, 25);";
-  registerGenderFemale: string = "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(1, 'Femenino');";
-  registerGenderMale: string = "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(2, 'Masculino');";
-  registerStateOrder1: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(1, 'Compra Realizada');";
-  registerStateOrder2: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(2, 'Pendiente a Retiro');";
-  registerStateOrder3: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(3, 'Entregado');";
-  registerStateOrder4: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Pendiente a reclamo');";
-  registerStateOrder5: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Solicitud de reclamo rechazada');";
-  registerStateOrder6: string = "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Solicitud de reclamo aceptada');";
-  registerRolAdmin: string = "INSERT or IGNORE INTO rol(idrol, rol) VALUES(1, 'Admin');";
-  registerRolUser: string = "INSERT or IGNORE INTO rol(idrol, rol) VALUES(2, 'User');";
-  registerComplaint1: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');";
-  registerComplaint2: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');";
-  registerComplaint3: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolucion');";
-  registerComplaint4: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la informacion del producto', 'Devolucion');";
-  registerComplaint5: string = "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Producto defectuoso', 'Devolucion');";
-  registerUser: string = "INSERT or IGNORE INTO user(rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol) VALUES('21737273-9','Maria','Jesus','Vega','Soto','assets/products/sample.png', 'Femenino', 'maria@gmail.com', '123', 932444444, 1);";
+  async insertStaticData():Promise<void>{
+    const inserts = [
+      "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(1, 'Adidas');",
+      "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(2, 'Puma');",
+      "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(1, 'Running');",
+      "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(2, 'LifeStyle');",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(1, 10);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(2, 15);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(3, 20);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(4, 25);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(5, 30);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(6, 35);",
+      "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(1, 'Femenino');",
+      "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(2, 'Masculino');",
+      "INSERT or IGNORE INTO state_order(idstate, state) VALUES(1, 'Compra Realizada');",
+      "INSERT or IGNORE INTO state_order(idstate, state) VALUES(2, 'Pendiente a Retiro');",
+      "INSERT or IGNORE INTO state_order(idstate, state) VALUES(3, 'Entregado');",
+      "INSERT or IGNORE INTO state_order(idstate, state) VALUES(4, 'Pendiente a reclamo');",
+      "INSERT or IGNORE INTO state_order(idstate, state) VALUES(5, 'Solicitud de reclamo rechazada');",
+      "INSERT or IGNORE INTO state_order(idstate, state) VALUES(6, 'Solicitud de reclamo aceptada');",
+      "INSERT or IGNORE INTO rol(idrol, rol) VALUES(1, 'Admin');",
+      "INSERT or IGNORE INTO rol(idrol, rol) VALUES(2, 'User');",
+      "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');",
+      "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');",
+      "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolución');",
+    ];
+    for (let insert of inserts) {
+      await this.database.executeSql(insert, []).catch(e => {
+        this.presentAlert('Error en la inserción', 'Error al insertar datos estáticos: ' + JSON.stringify(e));
+      });
+    }
+  }
 
-  listaProducts = new BehaviorSubject([]);
+  listProducts = new BehaviorSubject([]);
+  listCards = new BehaviorSubject([]);
+  listCardsUser = new BehaviorSubject([]);
+  listOrders = new BehaviorSubject([]);
+  listOrderHistory = new BehaviorSubject([]);
+  listComplaint = new BehaviorSubject([]);
+  listFavoriteItems = new BehaviorSubject([]);
+  listFavorite = new BehaviorSubject([]);
+  listProductSizes = new BehaviorSubject([]);
+  listShoppingCart = new BehaviorSubject([]);
+  listCartItem = new BehaviorSubject([]);
+  listUsers = new BehaviorSubject([]);
+
   // Observable para estado de la BBDD
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
   constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {
     this.createConection();
   }
-  //funciones de retorno de observable para las variables de los selects
-  fetchProducts(): Observable<Productos[]>{
-    return this.listaProducts.asObservable();
-  }
+
   dbReady(){
     return this.isDBReady.asObservable();
   }
@@ -210,21 +237,25 @@ export class ServiceBDService {
     });
     await alert.present();
   }
-
-  createConection() {
-    this.platform.ready().then(() => {
+  createConection(){
+    this.platform.ready().then(()=>{
       this.sqlite.create({
         name: 'shoevault.db',
-        location: 'default',
-      }).then((db: SQLiteObject) => {
+        location: 'default'
+      }).then((db: SQLiteObject)=>{
         this.database = db;
-        this.createTables();
+        this.createTables()
+        this.insertStaticData();
         this.isDBReady.next(true);
-      }).catch(e => {
-        this.presentAlert('Crear conexión', 'Error en crear la BBDD: ' + JSON.stringify(e));
-      });
-    });
+      }).catch(e=>{
+        this.presentAlert('Crear Conexion', 'Error en crear BD: ' + JSON.stringify(e));
+      })
+
+    })
   }
+
+
+
   async createTables() {
     try {
       await this.database.executeSql(this.tableBrand, []);
@@ -249,11 +280,12 @@ export class ServiceBDService {
       this.presentAlert('Crear tabla', 'Error en crear tabla: ' + JSON.stringify(e));
     }
   }
-  searchProducts(){
-    return this.database.executeSql('SELECT * FROM product', []).then(res =>{
+  async searchProducts(){
+    try {
+      const res = await this.database.executeSql('SELECT * FROM product', []);
       let items: Productos[] = [];
-      if(res.rows.length > 0){
-        for(var i = 0; i < res.rows.length; i++){
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
           items.push({
             idproduct: res.rows.item(i).idproduct,
             nameproduct: res.rows.item(i).nameproduct,
@@ -264,40 +296,199 @@ export class ServiceBDService {
             idgender: res.rows.item(i).idgender,
             image: res.rows.item(i).image,
             priceproduct: res.rows.item(i).priceproduct
-          })
+          });
         }
       }
-      this.listaProducts.next(items as any);
-    }).catch(e=>{
+      this.listProducts.next(items as any);
+    } catch (e) {
       this.presentAlert('Select', 'Error:' + JSON.stringify(e));
-    })
+    }
   }
-  insertProduct(nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number){
-    return this.database.executeSql('INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',[nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct]).then(res=>{
-      this.presentAlert("Insertar", "Producto agregado exitosamente");
-      this.searchProducts();
-    }).catch(e=>{
-      this.presentAlert("Insertar", "Error:" + JSON.stringify(e));
-    })
-  }
-  deleteProduct(id: number) {
-    return this.database.executeSql('DELETE FROM product WHERE idproduct = ?', [id]).then(res => {
-      this.presentAlert("Eliminar", "Producto eliminado correctamente");
-      this.searchProducts();
-    }).catch(e => {
-      this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));
-    });
-  }
-  editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
-    return this.database.executeSql(
-      'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
-      [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, id]
-    ).then(res => {
-      this.presentAlert("Modificar", "Producto modificado correctamente");
-      this.searchProducts();
-    }).catch(e => {
-      this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
-    });
+  // async searchCards() {
+  //   try {
+  //     const res = await this.database.executeSql('SELECT * FROM card', []);
+  //     let items: Card[] = [];
+  //     if (res.rows.length > 0) {
+  //       for (let i = 0; i < res.rows.length; i++) {
+  //         items.push({
+  //           idcard: res.rows.item(i).idcard,
+  //           cardname: res.rows.item(i).cardname,
+  //           cardnumber: res.rows.item(i).cardnumber,
+  //           // Otros campos que tengas en la tabla card
+  //         });
+  //       }
+  //     }
+  //     this.listCards.next(items); // Actualiza el BehaviorSubject con los datos encontrados
+  //   } catch (e) {
+  //     this.presentAlert('Select', 'Error al buscar las tarjetas: ' + JSON.stringify(e));
+  //   }
+  // }
 
+  async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number): Promise<number> {
+    const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
+      .then(res => {
+        this.presentAlert("Insertar", "Producto agregado exitosamente");
+        // Devolver el ID del producto insertado
+        return res.insertId;
+      });
+  }
+
+  async deleteProduct(id: number) {
+    try {
+      const res = await this.database.executeSql('DELETE FROM product WHERE idproduct = ?', [id]);
+      this.presentAlert("Eliminar", "Producto eliminado correctamente");
+    } catch (e) {
+      this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));
+    }
+  }
+  async editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
+    try {
+      const res = await this.database.executeSql(
+        'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
+        [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, id]
+      );
+      this.presentAlert("Modificar", "Producto modificado correctamente");
+    } catch (e) {
+      this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
+    }
+
+  }
+  async insertProductSize(idProduct: number, idSize: number){
+    try{
+      const res = await this.database.executeSql(
+        'INSERT INTO product_size (idproduct, idsize) VALUES(?,?)', [idProduct, idSize])
+    }catch(e) {
+      this.presentAlert('Insertar Talla a Producto', 'Error:' + JSON.stringify(e));
+    };
+  }
+  //SELECTS DINAMICOS CON CLASS
+  fetchProducts(): Observable<Productos[]>{
+    return this.listProducts.asObservable();
+  }
+  fetchCard(): Observable<Card[]>{
+    return this.listCards.asObservable();
+  }
+  fetchCardUser(): Observable<CardUsers[]>{
+    return this.listCardsUser.asObservable();
+  }
+  fetchOrder(): Observable<Order[]>{
+    return this.listOrders.asObservable();
+  }
+  fetchOrderHistory(): Observable<OrderHistory[]>{
+    return this.listOrderHistory.asObservable();
+  }
+  fetchComplaint(): Observable<Complaint[]>{
+    return this.listComplaint.asObservable();
+  }
+  fetchFavoriteItems(): Observable<FavoriteItems[]>{
+    return this.listFavoriteItems.asObservable();
+  }
+  fetchFavorite(): Observable<Favoriteslist[]>{
+    return this.listFavorite.asObservable();
+  }
+  fetchProductSizes(): Observable<ProductSizes[]>{
+    return this.listProductSizes.asObservable();
+  }
+  fetchShoppingCart(): Observable<ShoppingCart[]>{
+    return this.listShoppingCart.asObservable();
+  }
+  fetchCartItem(): Observable<CartItem[]>{
+    return this.listCartItem.asObservable();
+  }
+  fetchUsers(): Observable<Users[]>{
+    return this.listUsers.asObservable();
+  }
+  //SELECT ESTATICOS GENDER, ROL, SIZES, BRANDS, CATEGORY, STATE ORDER, ROL
+  async fetchBrands() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM brand', []);
+      let brands: any[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          brands.push(res.rows.item(i));
+        }
+      }
+      return brands;
+    } catch (e) {
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+      return [];
+    }
+  }
+  async fetchCategories() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM category', []);
+      let categories: any[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          categories.push(res.rows.item(i));
+        }
+      }
+      return categories;
+    } catch (e) {
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+      return [];
+    }
+  }
+  async fetchGenders() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM gender', []);
+      let genders: any[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          genders.push(res.rows.item(i));
+        }
+      }
+      return genders;
+    } catch (e) {
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+      return [];
+    }
+  }
+  async fetchSizes() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM size', []);
+      let sizes: any[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          sizes.push(res.rows.item(i));
+        }
+      }
+      return sizes;
+    } catch (e) {
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+      return [];
+    }
+  }
+  async fetchStateOrders() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM state_order', []);
+      let stateOrders: any[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          stateOrders.push(res.rows.item(i));
+        }
+      }
+      return stateOrders;
+    } catch (e) {
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+      return [];
+    }
+  }
+  async fetchRoles() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM rol', []);
+      let roles: any[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          roles.push(res.rows.item(i));
+        }
+      }
+      return roles;
+    } catch (e) {
+      this.presentAlert('Error', 'Error en SELECT: ' + JSON.stringify(e));
+      return [];
+    }
   }
 }

@@ -1,77 +1,126 @@
 <ion-content>
-  <div class="text-header">Añadir Productos</div>
-  <form (ngSubmit)="addProducto()" #productForm="ngForm" class="formulario">
-    
-    <ion-item class="form-container">
-      <ion-label position="floating">Nombre del Producto</ion-label>
-      <ion-input [(ngModel)]="newProducto.name" name="name" required></ion-input>
-    </ion-item>
-    <div *ngIf="productForm.submitted && !newProducto.name" class="error-message">
-      El nombre del producto es obligatorio.
-    </div>
+  <div class="container-page">
+    <h5>Añadir Productos</h5>
+    <form (ngSubmit)="insertarProductos()" #productForm="ngForm" class="formulario">
 
-    <ion-item class="form-container">
-      <ion-label position="floating">Stock</ion-label>
-      <ion-input type="number" [(ngModel)]="newProducto.stock" name="stock" required></ion-input>
-    </ion-item>
-    <div *ngIf="productForm.submitted && newProducto.stock <= 0" class="error-message">
-      El stock debe ser mayor a 0.
-    </div>
+      <!-- Nombre del Producto -->
+      <ion-item class="form-container">
+        <ion-label position="stacked">Nombre del Producto</ion-label>
+        <ion-input [(ngModel)]="newProducto.name" name="name" required #name="ngModel"></ion-input>
+      </ion-item>
+      <div *ngIf="name.invalid && name.touched" class="error-message">
+        El nombre del producto es obligatorio.
+      </div>
 
-    <ion-item class="form-container">
-      <ion-label>Marca</ion-label>
-      <ion-select [(ngModel)]="newProducto.brand" name="brand" required>
-        <ion-select-option value="Adidas">Adidas</ion-select-option>
-        <ion-select-option value="Puma">Puma</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <div *ngIf="productForm.submitted && !newProducto.brand" class="error-message">
-      La marca es obligatoria.
-    </div>
+      <!-- Stock -->
+      <ion-item class="form-container">
+        <ion-label position="stacked">Stock</ion-label>
+        <ion-input type="number" [(ngModel)]="newProducto.stock" name="stock" required #stock="ngModel"></ion-input>
+      </ion-item>
+      <div *ngIf="stock.invalid && stock.touched" class="error-message">
+        El stock es obligatorio
+      </div>
+      <div *ngIf="newProducto.stock <= 0 && stock.touched" class="error-message">
+        El stock debe ser mayor a 0.
+      </div>
+      <!-- Marca (Select Dropdown) -->
+      <ion-item class="form-container">
+        <ion-label>Marca</ion-label>
+        <ion-select [(ngModel)]="newProducto.idbrand" name="brand" required #brand="ngModel">
+          <ion-select-option *ngFor="let brand of brandsAvailable" [value]="brand.idbrand">
+            {{ brand.namebrand }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div *ngIf="brand.invalid && brand.touched" class="error-message">
+        La marca es obligatoria.
+      </div>
 
-    <ion-item class="form-container">
-      <ion-label>Género</ion-label>
-      <ion-select [(ngModel)]="newProducto.gender" name="gender" required>
-        <ion-select-option value="Male">Masculino</ion-select-option>
-        <ion-select-option value="Female">Femenino</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <div *ngIf="productForm.submitted && !newProducto.gender" class="error-message">
-      El género es obligatorio.
-    </div>
+      <!-- Género (Select Dropdown) -->
+      <ion-item class="form-container">
+        <ion-label>Género</ion-label>
+        <ion-select [(ngModel)]="newProducto.idgender" name="gender" required #gender="ngModel">
+          <ion-select-option value="1">Masculino</ion-select-option>
+          <ion-select-option value="2">Femenino</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div *ngIf="gender.invalid && gender.touched" class="error-message">
+        El género es obligatorio.
+      </div>
 
-    <ion-item class="form-container">
-      <ion-label position="floating">Categoría</ion-label>
-      <ion-input [(ngModel)]="newProducto.category" name="category" required></ion-input>
-    </ion-item>
-    <div *ngIf="productForm.submitted && !newProducto.category" class="error-message">
-      La categoría es obligatoria.
-    </div>
+      <!-- Categoría (Select Dropdown) -->
+      <ion-item class="form-container">
+        <ion-label>Categoría</ion-label>
+        <ion-select [(ngModel)]="newProducto.idcategory" name="category" required #category="ngModel">
+          <ion-select-option *ngFor="let category of categoriesAvailable" [value]="category.idcategory">
+            {{ category.namecategory }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <div *ngIf="category.invalid && category.touched" class="error-message">
+        La categoría es obligatoria.
+      </div>
 
-    <ion-item class="form-container">
-      <ion-label position="floating">Descripción</ion-label>
-      <ion-textarea [(ngModel)]="newProducto.description" name="description" required></ion-textarea>
-    </ion-item>
-    <div *ngIf="productForm.submitted && !newProducto.description" class="error-message">
-      La descripción es obligatoria.
-    </div>
+      <!-- Descripción -->
+      <ion-item class="form-container">
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-textarea [(ngModel)]="newProducto.description" name="description" required #description="ngModel"></ion-textarea>
+      </ion-item>
+      <div *ngIf="description.invalid && description.touched" class="error-message">
+        La descripción es obligatoria.
+      </div>
+      <div *ngIf="description.valid && newProducto.description.length > 100" class="error-message">
+        La descripción excede los 100 caracteres.
+      </div>
 
-    <ion-item class="form-container">
-      <ion-label position="floating">Precio</ion-label>
-      <ion-input type="number" [(ngModel)]="newProducto.price" name="price" required></ion-input>
-    </ion-item>
-    <div *ngIf="productForm.submitted && newProducto.price <= 0" class="error-message">
-      El precio debe ser mayor a 0.
-    </div>
+    <!-- Precio -->
+      <ion-item class="form-container">
+        <ion-label position="stacked">Precio</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="newProducto.priceproduct"
+          name="priceproduct"
+          required
+          min="1"
+          #priceproduct="ngModel">
+        </ion-input>
+      </ion-item>
 
-    <ion-item class="form-container">
-      <ion-label position="floating">Imagen</ion-label>
-      <ion-input [(ngModel)]="newProducto.image" name="image" required></ion-input>
-    </ion-item>
-    <div *ngIf="productForm.submitted && !newProducto.image" class="error-message">
-      La imagen es obligatoria.
-    </div>
+      <!-- Mensaje de error si el precio es inválido (campo vacío o no numérico) -->
+      <div *ngIf="priceproduct.invalid && priceproduct.touched" class="error-message">
+        El precio es obligatorio.
+      </div>
 
-    <ion-button expand="full" type="submit">Agregar Producto</ion-button>
-  </form>
+      <!-- Mensaje de error si el precio es menor o igual a 0 -->
+      <div *ngIf="newProducto.priceproduct <= 0 && priceproduct.touched" class="error-message">
+        El precio debe ser mayor a 0.
+      </div>
+
+      <!-- Tallas -->
+      <ion-item class="sizeForm">
+        <ion-label style="width: 20%;">Tallas</ion-label>
+        <div class="sizes">
+          <div *ngFor="let size of sizesAvailable" class="sizeItem">
+            <ion-checkbox [(ngModel)]="size.selected" (ionChange)="onSizeTouched(size)" [ngModelOptions]="{ standalone: true }"></ion-checkbox>
+            <ion-label>{{ size.size }}</ion-label>
+          </div>
+        </div>
+      </ion-item>
+
+      <div *ngIf="!isAnySizeSelected() && isAnySizeTouched()" class="error-message">
+        Debes seleccionar al menos una talla.
+      </div>
+
+      <!-- Imagen -->
+      <ion-item class="imageForm">
+        <ion-label position="fixed">Imagen</ion-label>
+        <ion-button (click)="takePicture()">Subir Foto</ion-button>
+        <div *ngIf="!imageExample && imageTouched" class="error-message">
+          Debes seleccionar una imagen.
+        </div>
+      </ion-item>
+      <img class="image" *ngIf="imageExample" [src]="imageExample" alt="Sin imagen" />
+      <ion-button [disabled]="!productForm.form.valid || !imageExample" class="buttonAdd" expand="block" type="submit">Agregar Producto</ion-button>
+    </form>
+  </div>
 </ion-content>

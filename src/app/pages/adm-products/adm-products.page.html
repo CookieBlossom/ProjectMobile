@@ -12,17 +12,17 @@
       <p>Accion</p>
     </div>
     <div class="products-data">
-      <ng-container *ngFor="let product of Productos">
+      <ng-container *ngFor="let product of products">
         <div class="product grid-table">
-          <p>{{product.id}}</p>
-          <p class="product-name">{{product.name}}</p>
-          <p>{{product.stock}}</p>
-          <p>{{product.price | currency:'CLP'}}</p>
+          <p>{{product.idproduct}}</p>
+          <p class="product-name">{{product.nameproduct}}</p>
+          <p>{{product.stockproduct}}</p>
+          <p>{{product.priceproduct | currency:'CLP'}}</p>
           <div>
-            <ion-button (click)="modificarProducto(product.id)">
+            <ion-button>
               <img class="button-icon" src="/assets/edit.svg">
             </ion-button>
-            <ion-button (click)="confirmarEliminacion(product)">
+            <ion-button>
               <img class="button-icon" src="/assets/trash.svg">
             </ion-button>
           </div>
