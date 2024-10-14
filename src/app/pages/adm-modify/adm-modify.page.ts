@@ -22,8 +22,7 @@ export class AdmModifyPage implements OnInit {
   brandsAvailable: any[] = [];
   sizesAvailable: any[] = [];
   categoriesAvailable: any[] = [];
-  genderAvailable: any[] = [];
-
+  genderAvailable: any[]=[];
   constructor(
     private activatedroute: ActivatedRoute,
     private router: Router,
@@ -45,22 +44,20 @@ export class AdmModifyPage implements OnInit {
       image: ['', Validators.required],
     });
   }
-
   ngOnInit() {
     this.verificarConexionBD();
   }
-
   verificarConexionBD() {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
-        if (this.productId) {
+        if(this.productId){
           this.selectDataStatic();
           this.cargarProducto(this.productId);
+
         }
       });
   }
-
   cargarProducto(id: number) {
     this.serviceBD.getProductById(id).then((product: Productos | null) => {
       if (product) {
@@ -73,13 +70,13 @@ export class AdmModifyPage implements OnInit {
           brand: product.idbrand,
           gender: product.idgender,
           stock: product.stockproduct,
-          image: product.image,
+          image: product.image
         });
         this.oldImage = product.image;
-
         this.serviceBD.fetchProductSizes().subscribe((sizes: ProductSizes[]) => {
           const productSizes = sizes.filter(size => size.idproduct === product.idproduct);
 
+          console.log('Tallas asociadas al producto:', JSON.stringify(productSizes));
           this.sizesAvailable.forEach(size => {
             const isSelected = productSizes.some(ps => ps.idsize === size.idsize);
             size.selected = isSelected;
@@ -89,10 +86,9 @@ export class AdmModifyPage implements OnInit {
         this.serviceBD.presentAlert('Error', 'Producto no encontrado');
       }
     }).catch(e => {
-      this.serviceBD.presentAlert('Error', 'Error cargando el producto');
+      this.serviceBD.presentAlert('Error', 'Error cargando el producto: ' + JSON.stringify(e));
     });
   }
-
   onSubmit() {
     if (this.productForm.valid && this.productId) {
       const imageToSave = this.newImage ? this.newImage : this.oldImage;
@@ -104,16 +100,13 @@ export class AdmModifyPage implements OnInit {
         idbrand: this.productForm.value.brand,
         idgender: this.productForm.value.gender,
         image: imageToSave,
-        priceproduct: this.productForm.value.price,
+        priceproduct: this.productForm.value.price
       };
-
       const selectedSizes = this.sizesAvailable.filter(size => size.selected).map(size => size.idsize);
-
       if (selectedSizes.length === 0) {
         this.serviceBD.presentAlert('Error', 'Debes seleccionar al menos una talla.');
         return;
       }
-
       this.serviceBD.editProduct(
         this.productId!,
         updatedProduct.nameproduct,
@@ -127,61 +120,49 @@ export class AdmModifyPage implements OnInit {
       ).then(() => {
         this.serviceBD.deleteProductSizes(this.productId!).then(() => {
           selectedSizes.forEach(sizeId => {
-            this.serviceBD.insertProductSize(this.productId!, sizeId).catch(err => {
-              this.serviceBD.presentAlert('Error', 'Error al actualizar talla');
-            });
+            this.serviceBD.insertProductSize(this.productId!, sizeId)
+              .catch(err => {
+                this.serviceBD.presentAlert('Error', 'Error al actualizar talla: ' + JSON.stringify(err));
+              });
           });
+          this.serviceBD.searchProductSizes();
           this.irPagina('/panel-adm');
         });
       }).catch(e => {
-        this.serviceBD.presentAlert('Error', 'Error actualizando el producto');
+        this.serviceBD.presentAlert('Error', 'Error actualizando el producto: ' + JSON.stringify(e));
       });
     } else {
       this.serviceBD.presentAlert('Error', 'Formulario inválido');
     }
   }
-
   selectDataStatic() {
     this.serviceBD.fetchBrands().then(data => {
       this.brandsAvailable = data || [];
-    }).catch(() => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas');
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las marcas: ' + JSON.stringify(e));
     });
-
     this.serviceBD.fetchCategories().then(data => {
       this.categoriesAvailable = data || [];
-    }).catch(() => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las categorías');
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las categorías: ' + JSON.stringify(e));
     });
-
     this.serviceBD.fetchSizes().then(data => {
       this.sizesAvailable = data.map(size => ({
         ...size,
-        selected: false,
+        selected: false
       }));
-    }).catch(() => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas');
+      if (this.productId) {
+        this.cargarProducto(this.productId);
+      }
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo las tallas: ' + JSON.stringify(e));
     });
-
     this.serviceBD.fetchGenders().then(data => {
       this.genderAvailable = data || [];
-    }).catch(() => {
-      this.serviceBD.presentAlert('Error', 'Error obteniendo los géneros');
+    }).catch(e => {
+      this.serviceBD.presentAlert('Error', 'Error obteniendo los géneros: ' + JSON.stringify(e));
     });
   }
-
-  irPagina(ruta: string) {
-    this.router.navigate([ruta]);
-  }
-
-  takePicture = async () => {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      resultType: CameraResultType.Uri,
-    });
-    this.newImage = image.webPath;
-  };
   onSizeTouched(size: any) {
     size.touched = true;
   }
@@ -191,4 +172,15 @@ export class AdmModifyPage implements OnInit {
   isAnySizeTouched(): boolean {
     return this.sizesAvailable.some(size => size.touched);
   }
+  irPagina(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+  takePicture = async () => {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.Uri
+    });
+    this.newImage = image.webPath;
+  };
 }
