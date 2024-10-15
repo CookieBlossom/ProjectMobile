@@ -195,6 +195,7 @@ export class ServiceBDService {
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');",
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');",
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolución');",
+      "INSERT or IGNORE INTO user(rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol) VALUES('21.727.238-1', 'Maria', 'Pele', 'Pepe', 'Soto', '', 'Femenino', 'maria23@gmail.com', '123Maria.', 932648837, 1);"
     ];
     for (let insert of inserts) {
       await this.database.executeSql(insert, []).catch(e => {this.presentAlert('Error en la inserción', 'Error al insertar datos estáticos: ' + JSON.stringify(e));});
@@ -288,6 +289,31 @@ export class ServiceBDService {
       this.listProductSizes.next(items as any);
     } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
   }
+
+  async searchUsers() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM user', []);
+      let items: Users[] = [];
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
+          items.push({
+            rut: res.rows.item(i).rut,
+            firstname: res.rows.item(i).firstname,
+            secondname: res.rows.item(i).secondname,
+            firstlastname: res.rows.item(i).firstlastname,
+            secondlastname: res.rows.item(i).secondlastname,
+            imageuser: res.rows.item(i).imageuser,
+            genderuser: res.rows.item(i).genderuser,
+            email: res.rows.item(i).email,
+            password: res.rows.item(i).password,
+            phone: res.rows.item(i).phone,
+            idrol: res.rows.item(i).idrol,
+          });}
+      }
+      this.listUsers.next(items as any);
+    } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
+  }
+
   async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number): Promise<number> {
     const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
@@ -341,31 +367,30 @@ export class ServiceBDService {
 
   async loginUser(email: string, password: string): Promise<Users | null> {
     const query = `SELECT * FROM user WHERE email = ? AND password = ?`;
-    return this.database.executeSql(query, [email, password])
-      .then(res => {
-        if (res.rows.length > 0) {
-          const user = res.rows.item(0);
-          return {
-            rut: user.rut,
-            firstname: user.firstname,
-            secondname: user.secondname,
-            firstlastname: user.firstlastname,
-            secondlastname: user.secondlastname,
-            email: user.email,
-            genderuser: user.genderuser,
-            phone: user.phone,
-            idrol: user.idrol,
-            imageuser: user.imageuser,
-          } as Users;
-        } else {
-          return null;  // Usuario no encontrado
-        }
-      })
-      .catch(err => {
-        console.error('Error al consultar usuario:', err);
-        return null;
-      });
+    try {
+      const res = await this.database.executeSql(query, [email, password]);
+      if (res.rows.length > 0) {
+        const user = res.rows.item(0);
+        return new Users(
+          user.rut,
+          user.firstname,
+          user.secondname,
+          user.firstlastname,
+          user.secondlastname,
+          user.imageuser,
+          user.genderuser,
+          user.email,
+          user.password,
+          user.phone,
+          user.idrol
+        );
+      } else {return null;}
+    } catch (error) {
+      console.error('Error al buscar el usuario:', error);
+      return null;
+    }
   }
+
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
   fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}
@@ -379,7 +404,7 @@ export class ServiceBDService {
   fetchShoppingCart(): Observable<ShoppingCart[]>{return this.listShoppingCart.asObservable();}
   fetchCartItem(): Observable<CartItem[]>{return this.listCartItem.asObservable();}
   fetchUsers(): Observable<Users[]>{return this.listUsers.asObservable();}
-  //SELECT ESTATICOS GENDER, ROL, SIZES, BRANDS, CATEGORY, STATE ORDER, ROL
+  //SELECT ESTATICOS GENDER, ROL, SIZES, BRANDS, CATEGORY, STATE ORDER
   async fetchBrands() {
     try {
       const res = await this.database.executeSql('SELECT * FROM brand', []);

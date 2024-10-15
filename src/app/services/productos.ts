@@ -8,7 +8,6 @@ export class Productos {
     idgender!: number;
     image!: any;
     priceproduct!: number;
-
     constructor(
       idproduct: number,
       nameproduct: string,

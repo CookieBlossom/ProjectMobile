@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import {Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType } from '@capacitor/camera';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { Users } from 'src/app/services/users';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { filter } from 'rxjs/operators';
+import { Productos } from 'src/app/services/productos';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -10,33 +15,56 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 })
 export class ProfilePage implements OnInit {
   imageExample: any;
-  Productos: any;
-  constructor( private router:Router, private activatedroute:ActivatedRoute, private alertController:AlertController, private nativeStorage:NativeStorage) {
-    this.activatedroute.queryParams.subscribe( param => {
-      if(this.router.getCurrentNavigation()?.extras.state){
-        this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
-      }
-    })
-   }
+  userSession: Users | null = null;
+  products: Productos[] = [];
+  constructor(
+    private router: Router,
+    private activatedroute: ActivatedRoute,
+    private alertController: AlertController,
+    private nativeStorage: NativeStorage,
+    private serviceBD: ServiceBDService
+  ) {
+    this.activatedroute.queryParams.subscribe(param => {
+      if (this.router.getCurrentNavigation()?.extras.state) {}
+    });
+  }
 
   ngOnInit() {
+    this.verificarConexionBD();
+    this.nativeStorage.getItem('userSession')
+      .then((userString) => {
+        this.userSession = JSON.parse(userString);
+        console.log('Sesión de usuario recuperada:', this.userSession);
+      })
+      .catch(error => {
+        console.error('Error al recuperar la sesión:', error);
+      });
   }
-  irPagina( ruta:string ){
-    let navigationextras:NavigationExtras = {
-      state:{
-        productos: this.Productos,
-      }
-    }
-    this.router.navigate([ruta], navigationextras);
+
+  verificarConexionBD() {
+    this.serviceBD.dbReady()
+      .pipe(filter(isReady => isReady))
+      .subscribe(() => {
+        this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
+          this.products = data;
+        });
+        this.serviceBD.searchProducts();
+      });
   }
+
+
+  irPagina(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
   async confirmarCierre() {
     const alert = await this.alertController.create({
-      header: 'Confirmar eliminación',
+      header: 'Confirmar cierre de sesión',
       message: `¿Estás seguro?`,
       cssClass: 'alert',
       buttons: [
         {
-          text: 'Si',
+          text: 'Sí',
           role: 'cancel',
           handler: () => {
             this.logout();
@@ -44,9 +72,7 @@ export class ProfilePage implements OnInit {
         },
         {
           text: 'No',
-          handler: () => {
-
-          }
+          handler: () => {}
         }
       ]
     });
@@ -58,12 +84,13 @@ export class ProfilePage implements OnInit {
     this.nativeStorage.remove('userSession')
       .then(() => {
         console.log('Sesión cerrada correctamente!');
-        this.router.navigate(['/login']);  // Redirigir al login o página principal
+        this.router.navigate(['/login']);
       })
       .catch(error => {
         console.error('Error cerrando la sesión', error);
       });
   }
+
   takePicture = async () => {
     const image = await Camera.getPhoto({
       quality: 90,

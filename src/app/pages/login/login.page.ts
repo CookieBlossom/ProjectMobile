@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  EmailValidator,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { filter } from 'rxjs/operators';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
 
 @Component({
@@ -17,43 +13,61 @@ import { ServiceBDService } from 'src/app/services/service-bd.service';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private serviceBD:ServiceBDService, private nativeStorage:NativeStorage) {
-    this.loginForm = this.formBuilder.group({
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private serviceBD: ServiceBDService,
+    private nativeStorage: NativeStorage
+  ) {
+    this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$'),
-        ],
-      ],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*.,]).+$')]]
     });
   }
 
-  ngOnInit() {}
+  ngOnInit(){
+    this.verificarConexionBD();
+  }
 
-  login(email: string, password: string) {
+  get formControls() {
+    return this.loginForm.controls;
+  }
+
+  login() {
+    const email = this.loginForm.get('email')?.value;
+    const password = this.loginForm.get('password')?.value;
     this.serviceBD.loginUser(email, password)
       .then(user => {
         if (user) {
-          this.nativeStorage.setItem('userSession', user)
+          this.serviceBD.presentAlert('Login exitoso', `Bienvenido, ${user.firstname}`);
+          this.nativeStorage.setItem('userSession', JSON.stringify(user))
             .then(() => {
               console.log('Sesión guardada correctamente!');
-              this.router.navigate(['/home']);
+              this.irPagina('/home');
             })
             .catch(error => {
-              this.serviceBD.presentAlert('Login','Error guardando la sesión' + error);
+              console.error('Error guardando la sesión:', error);
             });
         } else {
-          this.serviceBD.presentAlert('Login','Login fallido: usuario no encontrado o contraseña incorrecta.');
+          this.serviceBD.presentAlert('Error de login', 'Usuario no encontrado o contraseña incorrecta.');
         }
+      })
+      .catch(error => {
+        console.error('Error en el login:', error);
       });
   }
-  navigateToRegister() {
-    this.router.navigate(['/register']);
+  verificarConexionBD() {
+    this.serviceBD.dbReady()
+      .pipe(filter(isReady => isReady))
+      .subscribe(() => {
+        this.serviceBD.fetchProducts().subscribe(() => {
+          
+        });
+        this.serviceBD.searchProducts();
+      });
   }
-  get formControls() {
-    return this.loginForm.controls;
+
+  irPagina(ruta: string) {
+    this.router.navigate([ruta]);
   }
 }

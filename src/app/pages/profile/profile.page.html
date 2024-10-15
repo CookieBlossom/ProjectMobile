@@ -22,15 +22,15 @@
           Modificar contraseña
           <img (click)="irPagina('/modify-pass')" src="/assets/arrow-black.svg" alt="">
         </div>
-        <div class="item-list">
+        <div class="item-list" *ngIf="userSession?.idrol == 1">
           Panel de Administrador
           <img (click)="irPagina('/panel-adm')" src="/assets/arrow-black.svg" alt="">
         </div>
       </div>
-      <ion-button (click)="confirmarCierre()">Cerrar Sesion</ion-button>
+      <ion-button (click)="confirmarCierre()">Cerrar Sesión</ion-button>
     </div>
   </div>
 </ion-content>
 <ion-toolbar>
-  <app-tabs [Productos]="Productos"></app-tabs>
+  <app-tabs [Productos]="products"></app-tabs>
 </ion-toolbar>
