@@ -6,6 +6,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +17,7 @@ import { Router } from '@angular/router';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private serviceBD:ServiceBDService, private nativeStorage:NativeStorage) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: [
@@ -31,20 +33,26 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {}
 
-  onLogin() {
-    if (this.loginForm.valid) {
-      // Aquí deberías realizar la lógica de autenticación (llamar a un servicio de autenticación, etc.)
-      console.log('Formulario válido:', this.loginForm.value);
-      // Suponiendo que la autenticación es exitosa:
-      this.router.navigate(['/home']); // Redirige a la página de inicio
-    } else {
-      console.log('Formulario inválido');
-    }
+  login(email: string, password: string) {
+    this.serviceBD.loginUser(email, password)
+      .then(user => {
+        if (user) {
+          this.nativeStorage.setItem('userSession', user)
+            .then(() => {
+              console.log('Sesión guardada correctamente!');
+              this.router.navigate(['/home']);
+            })
+            .catch(error => {
+              this.serviceBD.presentAlert('Login','Error guardando la sesión' + error);
+            });
+        } else {
+          this.serviceBD.presentAlert('Login','Login fallido: usuario no encontrado o contraseña incorrecta.');
+        }
+      });
   }
   navigateToRegister() {
-    this.router.navigate(['/register']); // Redirige a la página de registro
+    this.router.navigate(['/register']);
   }
-
   get formControls() {
     return this.loginForm.controls;
   }

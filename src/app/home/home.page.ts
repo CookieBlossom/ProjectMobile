@@ -4,6 +4,7 @@ import { Productos } from '../services/productos';
 import { ServiceBDService } from '../services/service-bd.service';
 import { filter } from 'rxjs/operators';
 import { Users } from '../services/users';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ export class HomePage {
   categoriesAvailable: any[] = [];
   genderAvailable: any[] = [];
   user: Users[] = [];
-  constructor( private router:Router, private activedRoute:ActivatedRoute, private serviceBD:ServiceBDService){
+  constructor( private router:Router, private activedRoute:ActivatedRoute, private serviceBD:ServiceBDService, private nativeStorage:NativeStorage){
     this.activedRoute.queryParams.subscribe( param => {
       if(this.router.getCurrentNavigation()?.extras.state){
       }
@@ -24,6 +25,13 @@ export class HomePage {
   }
   ngOnInit() {
     this.verificarConexionBD();
+    this.nativeStorage.getItem('userSession')
+    .then((user) => {
+      console.log('Sesión de usuario recuperada:', user);
+    })
+    .catch(error => {
+      console.error('Error al recuperar la sesión:', error);
+    });
   }
 
   verificarConexionBD() {

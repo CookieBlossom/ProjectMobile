@@ -338,6 +338,34 @@ export class ServiceBDService {
       this.searchProductSizes();
     } catch(e) {this.presentAlert('Eliminar Tallas', 'Error: ' + JSON.stringify(e));}
   }
+
+  async loginUser(email: string, password: string): Promise<Users | null> {
+    const query = `SELECT * FROM user WHERE email = ? AND password = ?`;
+    return this.database.executeSql(query, [email, password])
+      .then(res => {
+        if (res.rows.length > 0) {
+          const user = res.rows.item(0);
+          return {
+            rut: user.rut,
+            firstname: user.firstname,
+            secondname: user.secondname,
+            firstlastname: user.firstlastname,
+            secondlastname: user.secondlastname,
+            email: user.email,
+            genderuser: user.genderuser,
+            phone: user.phone,
+            idrol: user.idrol,
+            imageuser: user.imageuser,
+          } as Users;
+        } else {
+          return null;  // Usuario no encontrado
+        }
+      })
+      .catch(err => {
+        console.error('Error al consultar usuario:', err);
+        return null;
+      });
+  }
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
   fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}
