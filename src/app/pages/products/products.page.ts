@@ -29,11 +29,9 @@ export class ProductsPage implements OnInit {
   ) {
     this.activatedroute.queryParams.subscribe(param => {
       if (this.router.getCurrentNavigation()?.extras.state) {
-        // Manejar el estado adicional si es necesario
       }
     });
   }
-
   ngOnInit() {
     this.verificarConexionBD();
   }
@@ -50,8 +48,6 @@ export class ProductsPage implements OnInit {
         this.selectDataStatic();
       });
   }
-
-  // Método para aplicar filtros
   applyFilters() {
     this.filteredProducts = this.products.filter(product => {
       const matchPrice = product.priceproduct <= this.priceRange;

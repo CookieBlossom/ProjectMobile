@@ -2,7 +2,6 @@
   <div class="title">Filtros</div>
   <div class="filters">
     <ion-list>
-      <!-- Rango de Precio -->
       <div class="slider-container">
         <ion-label>Rango de Precio</ion-label>
         <mat-slider class="custom-slider" min="0" max="10000" step="100" thumbLabel tickInterval="1000" [(ngModel)]="priceRange">
@@ -12,8 +11,6 @@
           <span>{{ priceRange }}</span>
         </div>
       </div>
-
-      <!-- Categoría -->
       <mat-form-field appearance="outline">
         <mat-label>Categoría</mat-label>
         <mat-select [(ngModel)]="selectedCategory">
@@ -22,8 +19,6 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <!-- Género -->
       <mat-form-field appearance="outline">
         <mat-label>Género</mat-label>
         <mat-select [(ngModel)]="selectedGender">
@@ -32,13 +27,9 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <!-- Botón Aplicar Filtros -->
       <ion-item lines="none">
         <ion-button class="custom-button" expand="full" (click)="applyFilters()">Aplicar Filtros</ion-button>
       </ion-item>
-
-      <!-- Botón Limpiar Filtros -->
       <ion-item lines="none">
         <ion-button class="custom-button" expand="full" (click)="clearFilters()">Limpiar Filtros</ion-button>
       </ion-item>
@@ -58,7 +49,6 @@
       <img src="/assets/filter.svg" (click)="abrirFiltroMenu()">
     </div>
   </section>
-  <!-- Lista de productos -->
   <section class="section-products">
     <ion-grid>
       <ion-row class="container-products">
