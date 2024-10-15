@@ -1,35 +1,51 @@
 <ion-menu side="end" menuId="filterMenu" contentId="mainContent">
-  <div class="tilte">Filtros</div>
+  <div class="title">Filtros</div>
   <div class="filters">
     <ion-list>
-      <!-- Filtro de rango de precio -->
+      <!-- Rango de Precio -->
       <div class="slider-container">
         <ion-label>Rango de Precio</ion-label>
-        <mat-slider class="custom-slider" min="0" max="10000" step="100" thumbLabel tickInterval="1000" [(ngModel)]="priceRange" aria-label="Rango de Precio"></mat-slider>
+        <mat-slider class="custom-slider" min="0" max="10000" step="100" thumbLabel tickInterval="1000" [(ngModel)]="priceRange">
+          <input matSliderThumb [(ngModel)]="priceRange">
+        </mat-slider>
         <div class="slider-values">
           <span>{{ priceRange }}</span>
         </div>
       </div>
-      <ion-item>
-        <ion-label>Categorías</ion-label>
-        <mat-select class="custom-select" [(ngModel)]="selectedCategory" placeholder="Seleccione una categoría">
-          <mat-option value="Running">Running</mat-option>
-          <mat-option value="Skateboarding">Skateboarding</mat-option>
+
+      <!-- Categoría -->
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select [(ngModel)]="selectedCategory">
+          <mat-option *ngFor="let category of categoriesAvailable" [value]="category.idcategory">
+            {{ category.namecategory }}
+          </mat-option>
         </mat-select>
-      </ion-item>
-      <ion-item>
-        <ion-label>Género</ion-label>
-        <mat-select class="custom-select" [(ngModel)]="selectedGender" placeholder="Seleccione un género">
-          <mat-option value="Male">Masculino</mat-option>
-          <mat-option value="Female">Femenino</mat-option>
+      </mat-form-field>
+
+      <!-- Género -->
+      <mat-form-field appearance="outline">
+        <mat-label>Género</mat-label>
+        <mat-select [(ngModel)]="selectedGender">
+          <mat-option *ngFor="let gender of genderAvailable" [value]="gender.idgender">
+            {{ gender.namegender }}
+          </mat-option>
         </mat-select>
-      </ion-item>
+      </mat-form-field>
+
+      <!-- Botón Aplicar Filtros -->
       <ion-item lines="none">
         <ion-button class="custom-button" expand="full" (click)="applyFilters()">Aplicar Filtros</ion-button>
+      </ion-item>
+
+      <!-- Botón Limpiar Filtros -->
+      <ion-item lines="none">
+        <ion-button class="custom-button" expand="full" (click)="clearFilters()">Limpiar Filtros</ion-button>
       </ion-item>
     </ion-list>
   </div>
 </ion-menu>
+
 <ion-content [fullscreen]="true" id="mainContent">
   <section class="header-products">
     <div class="header">
@@ -42,22 +58,19 @@
       <img src="/assets/filter.svg" (click)="abrirFiltroMenu()">
     </div>
   </section>
+  <!-- Lista de productos -->
   <section class="section-products">
     <ion-grid>
       <ion-row class="container-products">
-        <ng-container *ngFor="let product of Productos">
-          <div class="product" size="1" (click)="verDetalleProducto(product.id)">
-            <img class="favorite-product" 
-                 [src]="product.isFavorite ? '/assets/heart-red.svg' : '/assets/heart.svg'" 
-                 alt="Favorite" 
-                 (click)="toggleFavorite(product); $event.stopPropagation()">
+        <ng-container *ngFor="let product of filteredProducts">
+          <div class="product" size="1" (click)="modificarProducto(product.idproduct)">
             <div class="image-product">
-              <img src="{{product.image}}">
+              <img [src]="product.image">
             </div>
             <div class="content-product">
-              <h4>{{ product.name }}</h4>
-              <p class="stock-product">Disponibles: {{ product.stock }}</p>
-              <p class="price-product">{{ product.price | currency: 'CLP' }}</p>
+              <h4>{{ product.nameproduct }}</h4>
+              <p class="stock-product">Disponibles: {{ product.stockproduct }}</p>
+              <p class="price-product">{{ product.priceproduct | currency: 'CLP' }}</p>
             </div>
           </div>
         </ng-container>
@@ -67,5 +80,5 @@
 </ion-content>
 
 <ion-toolbar>
-  <app-tabs [Productos]="Productos"></app-tabs>
+  <app-tabs [Productos]="products"></app-tabs>
 </ion-toolbar>
