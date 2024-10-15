@@ -1,6 +1,19 @@
-<ion-content [fullscreen]="true">
-  <div class="not-found">
-    <h1>404 NOT FOUND</h1>
-  </div>
+<ion-content class="ion-padding">
+  <div class="container">
+    <ion-icon name="alert-circle-outline" class="error-icon animate-icon"></ion-icon>
 
+    <img src="assets/icon/Error-404.png" class="error-image animate-image"/>
+
+
+    <img class="icon-login" src="/assets/icon/shoeVault-logo2.png" alt="ShoeVault Logo" />
+
+    <h1 class="animate-text">Página No Encontrada</h1>
+
+    <p class="animate-text">Lo sentimos, al parecer no tenemos de esa talla aún.</p>
+
+    <ion-button routerLink="/home" color="gris">
+      <ion-icon name="home" slot="start"></ion-icon>
+      Volver al Inicio
+    </ion-button>
+  </div>
 </ion-content>
