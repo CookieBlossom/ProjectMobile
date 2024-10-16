@@ -12,7 +12,6 @@
           <ion-label position="floating">Correo</ion-label>
           <ion-input type="email" formControlName="email"></ion-input>
         </ion-item>
-        <!-- Mensajes de error para el campo de correo electrónico -->
         <div *ngIf="formControls['email'].invalid && (formControls['email'].dirty || formControls['email'].touched)" class="error-message">
           <p *ngIf="formControls['email'].errors?.['required']">Correo requerido</p>
           <p *ngIf="formControls['email'].errors?.['email']">Por favor ingrese un correo valido</p>

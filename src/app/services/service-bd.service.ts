@@ -82,12 +82,12 @@ export class ServiceBDService {
   tableUser: string = `
   CREATE TABLE IF NOT EXISTS user (
     rut TEXT PRIMARY KEY,
-    firstname TEXT NOT NULL,
-    secondname TEXT NOT NULL,
-    firstlastname TEXT NOT NULL,
-    secondlastname TEXT NOT NULL,
+    firstname TEXT,
+    secondname TEXT,
+    firstlastname TEXT,
+    secondlastname TEXT,
     imageuser BLOB NOT NULL,
-    genderuser TEXT NOT NULL CHECK(genderuser IN ('Femenino', 'Masculino')),
+    genderuser TEXT CHECK(genderuser IN ('Femenino', 'Masculino')),
     email TEXT NOT NULL UNIQUE CHECK(email LIKE '%@gmail.com'),
     password TEXT NOT NULL,
     phone INTEGER,

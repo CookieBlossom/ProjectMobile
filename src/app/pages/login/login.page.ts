@@ -39,10 +39,9 @@ export class LoginPage implements OnInit {
     this.serviceBD.loginUser(email, password)
       .then(user => {
         if (user) {
-          this.serviceBD.presentAlert('Login exitoso', `Bienvenido, ${user.firstname}`);
+          this.serviceBD.presentAlert('Login exitoso', `Bienvenido`);
           this.nativeStorage.setItem('userSession', JSON.stringify(user))
             .then(() => {
-              console.log('Sesión guardada correctamente!');
               this.irPagina('/home');
             })
             .catch(error => {
@@ -61,7 +60,7 @@ export class LoginPage implements OnInit {
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
         this.serviceBD.fetchProducts().subscribe(() => {
-          
+
         });
         this.serviceBD.searchProducts();
       });

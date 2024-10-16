@@ -8,90 +8,59 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { IonicModule } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
+import { Users } from 'src/app/services/users';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
   standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
-    MatSnackBarModule,
-    IonicModule
-  ],
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule, IonicModule],
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
-  Usuarios: any[] = [];
+  Usuarios: Users[] = [];
   newUsuario: any = {
+    rut: '',
     email: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    phone: '',
-    city: '',
-    comuna: '',
-    postalCode: '',
     password: '',
+    idrol: 2
   };
-
-  constructor(
-    private fb: FormBuilder,
-    private snackBar: MatSnackBar,
-    private router: Router
-  ) {
+  constructor(private fb: FormBuilder,private snackBar: MatSnackBar, private router: Router) {
     this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
-      address: ['', [Validators.required]],
-      phone: ['', [Validators.required, Validators.pattern('^[+0-9]{10,15}$')]],
-      city: ['', [Validators.required]],
-      comuna: ['', [Validators.required]],
-      postalCode: ['', [Validators.required, Validators.maxLength(5)]],
-      password: [
-        '', 
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[.!@#$%^&*])[A-Za-z0-9.!@#$%^&*]{8,}$')
-        ]
-      ],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8)]] 
+      rut: ['', [Validators.required, this.rutValidator]],
+      email: ['', [Validators.required, Validators.email, this.gmailValidator]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]], // Password con mayúsculas, números y símbolos especiales
+      confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
   }
 
   ngOnInit() {}
-
   passwordMatchValidator(formGroup: FormGroup) {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
-
+  rutValidator(control: any) {
+    const rutRegex = /^\d{1,2}\.\d{3}\.\d{3}-[0-9kK]{1}$/;
+    return rutRegex.test(control.value) ? null : { invalidRut: true };
+  }
+  gmailValidator(control: any) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+gmail\.com$/;
+    return emailRegex.test(control.value) ? null : { invalidEmail: true };
+  }
   onSubmit() {
     if (this.registerForm.valid) {
       this.newUsuario = {
+        rut: this.registerForm.value.rut,
         email: this.registerForm.value.email,
-        firstName: this.registerForm.value.firstName,
-        lastName: this.registerForm.value.lastName,
-        address: this.registerForm.value.address,
-        phone: this.registerForm.value.phone,
-        city: this.registerForm.value.city,
-        comuna: this.registerForm.value.comuna,
-        postalCode: this.registerForm.value.postalCode,
-        password: this.registerForm.value.password,
+        password: this.registerForm.value.password
       };
 
-      this.Usuarios.push(this.newUsuario);
-      this.showSuccessMessage();
-      this.irAPaginaUsuario(this.newUsuario);
-      
+      // this.Usuarios.push(this.newUsuario);
+      // this.showSuccessMessage();
+      // this.irAPaginaUsuario(this.newUsuario);
+
     } else {
       if (this.registerForm.errors?.['mismatch']) {
         this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {
@@ -109,13 +78,8 @@ export class RegisterPage implements OnInit {
     }
   }
 
-  irAPaginaUsuario(user: any) {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        Usuarios: this.Usuarios
-      }
-    };
-    this.router.navigate(['/login'], navigationExtras);
+  irPagina(ruta:string) {
+    this.router.navigate([ruta]);
   }
 
   showSuccessMessage() {

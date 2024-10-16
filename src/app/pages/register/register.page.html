@@ -4,70 +4,49 @@
       <img class="icon-login" src="/assets/icon/shoeVault-logo2.png" alt="ShoeVault Logo" />
     </div>
   </div>
-  <div class="login-container">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Registro de Usuario</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form class="example-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
-          <mat-form-field class="test" apperance="outline">
-            <mat-label>Correo Electrónico</mat-label>
-            <input matInput formControlName="email" placeholder="Ej. correo@dominio.com">
-          </mat-form-field>
-
-          <mat-form-field class="" apperance="outline">
-            <mat-label>Contraseña</mat-label>
-            <input matInput formControlName="password" placeholder="Ej. Palabra123.">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Confirmar Contraseña</mat-label>
-            <input matInput formControlName="confirmPassword" placeholder=" ">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="firstName" placeholder="Ej. Juan">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Apellido</mat-label>
-            <input matInput formControlName="lastName" placeholder="Ej. Pérez">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Dirección</mat-label>
-            <textarea matInput formControlName="address" placeholder="Ej. Calle Principal 100"></textarea>
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Teléfono</mat-label>
-            <input matInput type="tel" formControlName="phone" placeholder="Ej. +56912345678">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Ciudad</mat-label>
-            <input matInput formControlName="city" placeholder="Ej. santiago">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Comuna</mat-label>
-            <input matInput formControlName="comuna" placeholder="Ej. huechuraba">
-          </mat-form-field>
-
-          <mat-form-field apperance="outline">
-            <mat-label>Código Postal</mat-label>
-            <input matInput formControlName="postalCode" maxlength="5" placeholder="Ej. 94105">
-            <mat-hint>{{ registerForm.get('postalCode')?.value?.length || 0 }} / 5</mat-hint>
-          </mat-form-field>
-
-          <div class="button-container">
-            <button mat-raised-button color="primary" type="submit" class="submit-button">Registrar</button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+  <div class="form-login">
+    <h1>Registro de Usuario</h1>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="input-container">
+        <ion-item>
+          <ion-label position="stacked">Correo Electrónico</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+        <div *ngIf="formControls['email'].invalid && (formControls['email'].dirty || formControls['email'].touched)" class="error-message">
+          <p *ngIf="formControls['email'].errors?.['required']">Correo requerido</p>
+          <p *ngIf="formControls['email'].errors?.['email']">Por favor ingrese un correo válido</p>
+          <p *ngIf="formControls['email'].errors?.['gmail']">El correo debe ser de dominio gmail.com</p>
+        </div>
+        <ion-item>
+          <ion-label position="stacked">Rut</ion-label>
+          <ion-input type="text" formControlName="rut" placeholder="Ej. 12.345.678-9"></ion-input>
+        </ion-item>
+        <div *ngIf="formControls['rut'].invalid && (formControls['rut'].dirty || formControls['rut'].touched)" class="error-message">
+          <p *ngIf="formControls['rut'].errors?.['required']">Rut requerido</p>
+          <p *ngIf="formControls['rut'].errors?.['pattern']">El Rut debe tener un formato válido (Ej. 12.345.678-9)</p>
+        </div>
+        <ion-item>
+          <ion-label position="stacked">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+        <div *ngIf="formControls['password'].invalid && (formControls['password'].dirty || formControls['password'].touched)" class="error-message">
+          <p *ngIf="formControls['password'].errors?.['required']">Contraseña requerida</p>
+          <p *ngIf="formControls['password'].errors?.['minlength']">Debe contener al menos 8 caracteres</p>
+          <p *ngIf="formControls['password'].errors?.['pattern']">Debe contener al menos una letra mayúscula, un número y un símbolo especial</p>
+        </div>
+        <ion-item>
+          <ion-label position="stacked">Confirmar Contraseña</ion-label>
+          <ion-input type="password" formControlName="confirmPassword"></ion-input>
+        </ion-item>
+        <div *ngIf="formControls['confirmPassword'].invalid && (formControls['confirmPassword'].dirty || formControls['confirmPassword'].touched)" class="error-message">
+          <p *ngIf="formControls['confirmPassword'].errors?.['required']">Confirmación de contraseña requerida</p>
+          <p *ngIf="registerForm.errors?.['mismatch']">Las contraseñas no coinciden</p>
+        </div>
+      </div>
+      <div class="button-container">
+        <ion-button expand="block" class="custom-button" type="submit" [disabled]="registerForm.invalid">Registrar</ion-button>
+        <ion-button expand="block" class="custom-button-outline" fill="outline" (click)="irPagina('/login')">Cancelar</ion-button>
+      </div>
+    </form>
   </div>
 </ion-content>
