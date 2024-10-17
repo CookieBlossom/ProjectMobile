@@ -59,10 +59,7 @@ export class LoginPage implements OnInit {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
-        this.serviceBD.fetchProducts().subscribe(() => {
-
-        });
-        this.serviceBD.searchProducts();
+        this.serviceBD.searchUsers();
       });
   }
 
