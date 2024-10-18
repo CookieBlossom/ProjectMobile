@@ -87,8 +87,8 @@ export class ServiceBDService {
     firstlastname TEXT,
     secondlastname TEXT,
     imageuser BLOB NOT NULL,
-    genderuser TEXT CHECK(genderuser IN ('Femenino', 'Masculino')),
-    email TEXT NOT NULL UNIQUE CHECK(email LIKE '%@gmail.com'),
+    genderuser TEXT CHECK(genderuser IN ('Femenino', 'Masculino', '')),
+    email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     phone INTEGER,
     idrol INTEGER NOT NULL,
@@ -226,7 +226,7 @@ export class ServiceBDService {
   createConection(){
     this.platform.ready().then(()=>{
       this.sqlite.create({
-        name: 'shoevault.db',
+        name: 'shoevault100.db',
         location: 'default'
       }).then((db: SQLiteObject)=>{
         this.database = db;
@@ -398,9 +398,27 @@ export class ServiceBDService {
         console.log('Usuario registrado correctamente');
       })
       .catch(error => {
-        console.error('Error registrando usuario:', error);
+        console.error('Error registrando usuario:', JSON.stringify(error));
         throw error;
       });
+  }
+  findUserByEmail(email: string): Promise<boolean> {
+    const query = `SELECT * FROM user WHERE email = ?`;
+    return this.database.executeSql(query, [email]).then((res) => {
+      return res.rows.length > 0;
+    }).catch((error) => {
+      console.error('Error al verificar el email en la base de datos:', error);
+      return false;
+    });
+  }
+  findUserByRut(rut: string): Promise<boolean> {
+    const query = `SELECT * FROM user WHERE rut = ?`;
+    return this.database.executeSql(query, [rut]).then((res) => {
+      return res.rows.length > 0;
+    }).catch((error) => {
+      console.error('Error al verificar el RUT en la base de datos:', error);
+      return false;
+    });
   }
 
 

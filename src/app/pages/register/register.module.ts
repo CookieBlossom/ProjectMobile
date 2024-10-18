@@ -1,14 +1,19 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { RegisterPage } from './register.page'; // Importa el componente standalone
+import { RegisterPageRoutingModule } from './register-routing.module';
+import { RegisterPage } from './register.page';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     IonicModule,
-    RouterModule.forChild([{ path: '', component: RegisterPage }]), // Usa el componente standalone en la configuración de rutas
-  ]
+    RegisterPageRoutingModule
+  ],
+  declarations: [RegisterPage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class RegisterPageModule {}

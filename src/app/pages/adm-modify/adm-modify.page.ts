@@ -23,12 +23,7 @@ export class AdmModifyPage implements OnInit {
   sizesAvailable: any[] = [];
   categoriesAvailable: any[] = [];
   genderAvailable: any[]=[];
-  constructor(
-    private activatedroute: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder,
-    private serviceBD: ServiceBDService
-  ) {
+  constructor(private activatedroute: ActivatedRoute,private router: Router,private fb: FormBuilder,private serviceBD: ServiceBDService){
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
       this.productId = navigation.extras.state['id'];
@@ -75,7 +70,6 @@ export class AdmModifyPage implements OnInit {
         this.oldImage = product.image;
         this.serviceBD.fetchProductSizes().subscribe((sizes: ProductSizes[]) => {
           const productSizes = sizes.filter(size => size.idproduct === product.idproduct);
-
           console.log('Tallas asociadas al producto:', JSON.stringify(productSizes));
           this.sizesAvailable.forEach(size => {
             const isSelected = productSizes.some(ps => ps.idsize === size.idsize);

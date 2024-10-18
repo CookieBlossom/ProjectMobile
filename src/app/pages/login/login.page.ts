@@ -24,15 +24,12 @@ export class LoginPage implements OnInit {
       password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*.,]).+$')]]
     });
   }
-
   ngOnInit(){
     this.verificarConexionBD();
   }
-
   get formControls() {
     return this.loginForm.controls;
   }
-
   login() {
     const email = this.loginForm.get('email')?.value;
     const password = this.loginForm.get('password')?.value;

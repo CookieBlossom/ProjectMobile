@@ -1,39 +1,48 @@
 <ion-menu side="end" menuId="filterMenu" contentId="mainContent">
   <div class="title">Filtros</div>
   <div class="filters">
-    <ion-list>
-      <div class="slider-container">
-        <ion-label>Rango de Precio</ion-label>
-        <mat-slider class="custom-slider" min="0" max="10000" step="100" thumbLabel tickInterval="1000" [(ngModel)]="priceRange">
-          <input matSliderThumb [(ngModel)]="priceRange">
-        </mat-slider>
-        <div class="slider-values">
-          <span>{{ priceRange }}</span>
+    <form [formGroup]="filtersForm" (ngSubmit)="applyFilters()">
+      <ion-list>
+        <div class="slider-container">
+          <ion-label>Rango de Precio</ion-label>
+
+          <!-- Configuración del mat-slider con el input para el control del thumb -->
+          <mat-slider class="example-margin" [min]="0" [max]="10000" [step]="100" thumbLabel>
+            <input matSliderThumb formControlName="priceRange"> <!-- Vinculado al formControlName -->
+          </mat-slider>
         </div>
-      </div>
-      <mat-form-field appearance="outline">
-        <mat-label>Categoría</mat-label>
-        <mat-select [(ngModel)]="selectedCategory">
-          <mat-option *ngFor="let category of categoriesAvailable" [value]="category.idcategory">
-            {{ category.namecategory }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Género</mat-label>
-        <mat-select [(ngModel)]="selectedGender">
-          <mat-option *ngFor="let gender of genderAvailable" [value]="gender.idgender">
-            {{ gender.namegender }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <ion-item lines="none">
-        <ion-button class="custom-button" expand="full" (click)="applyFilters()">Aplicar Filtros</ion-button>
-      </ion-item>
-      <ion-item lines="none">
-        <ion-button class="custom-button" expand="full" (click)="clearFilters()">Limpiar Filtros</ion-button>
-      </ion-item>
-    </ion-list>
+
+        <!-- Visualización del valor del slider -->
+        <div class="slider-values">
+          <span>{{ filtersForm.get('priceRange')?.value }}</span>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="selectedCategory">
+            <mat-option *ngFor="let category of categoriesAvailable" [value]="category.idcategory">
+              {{ category.namecategory }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Género</mat-label>
+          <mat-select formControlName="selectedGender">
+            <mat-option *ngFor="let gender of genderAvailable" [value]="gender.idgender">
+              {{ gender.namegender }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <ion-item lines="none">
+          <ion-button class="custom-button" expand="full" type="submit">Aplicar Filtros</ion-button>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button class="custom-button" expand="full" (click)="clearFilters()">Limpiar Filtros</ion-button>
+        </ion-item>
+      </ion-list>
+    </form>
   </div>
 </ion-menu>
 
@@ -50,6 +59,7 @@
     </div>
   </section>
   <section class="section-products">
+    <ion-spinner *ngIf="isLoading"></ion-spinner>
     <ion-grid>
       <ion-row class="container-products">
         <ng-container *ngFor="let product of filteredProducts">

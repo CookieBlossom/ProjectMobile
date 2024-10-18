@@ -20,10 +20,10 @@ export class AdmProductsPage {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
+        this.serviceBD.searchProducts();
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
           this.products = data;
         });
-        this.serviceBD.searchProducts();
       });
   }
   irPagina( ruta:string ){
@@ -41,22 +41,10 @@ export class AdmProductsPage {
       header: 'Confirmar eliminación',
       message: `¿Estás seguro de que deseas eliminar el id: "${productId}"?`,
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            console.log('Eliminación cancelada');
-          }
-        },
-        {
-          text: 'Eliminar',
-          handler: () => {
-            this.eliminarProducto(productId);
-          }
-        }
+        {text: 'Cancelar',role: 'cancel',handler: () => {console.log('Eliminación cancelada');}},
+        {text: 'Eliminar',handler: () => {this.eliminarProducto(productId);}}
       ]
     });
-
     await alert.present();
   }
 
