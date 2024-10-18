@@ -391,12 +391,15 @@ export class ServiceBDService {
     }
   }
 
-  async registerUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,imageuser: any,genderuser: string,email: string,password: string,phone: number,idrol: number): Promise<string> {
+  async registerUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,imageuser: any,genderuser: string,email: string,password: string,phone: number,idrol: number): Promise<void> {
     const query = `INSERT INTO user (rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     return this.database.executeSql(query, [rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol])
-      .then(res => {
+      .then(() => {
         console.log('Usuario registrado correctamente');
-        return rut; // Devuelve el RUT u otro identificador como confirmación
+      })
+      .catch(error => {
+        console.error('Error registrando usuario:', error);
+        throw error;
       });
   }
 

@@ -13,14 +13,13 @@ import { CommonModule } from '@angular/common';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
 import { filter } from 'rxjs/operators';
 import { ApiService } from 'src/app/services/api.service';
-
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule, IonicModule, CommonModule],
-})
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatSnackBarModule, IonicModule, CommonModule, HttpClientModule],})
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
   Usuarios: Users[] = [];
@@ -41,7 +40,7 @@ export class RegisterPage implements OnInit {
     this.registerForm = this.fb.group({
       rut: ['', [Validators.required, this.rutValidator]],
       email: ['', [Validators.required, Validators.email, this.gmailValidator]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]], // Password con mayúsculas, números y símbolos especiales
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]],
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
   }
@@ -63,33 +62,23 @@ export class RegisterPage implements OnInit {
     const confirmPassword = formGroup.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
+
   rutValidator(control: any) {
-    const rutRegex = /^\d{1,2}\.\d{3}\.\d{3}-[0-9kK]{1}$/;
+    const rutRegex = /^\d{8}-[0-9kK]{1}$/; // RUT sin puntos y con guión, como '12345678-9' o '12345678-K'
     return rutRegex.test(control.value) ? null : { invalidRut: true };
   }
+
   gmailValidator(control: any) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(control.value) ? null : { invalidEmail: true };
   }
   onSubmit() {
     if (this.registerForm.valid) {
-      this.api.getImageRandom().subscribe(
-        (response) => {
+      this.api.getImageRandom().subscribe( (response) => {
           const catImageUrl = response[0]?.url || '';
-          const newUser = new Users(
-            this.registerForm.value.rut,
-            '',
-            '',
-            '',
-            '',
-            catImageUrl,
-            '',
-            this.registerForm.value.email,
-            this.registerForm.value.password,
-            0,
-            2
-          );
-          this.serviceBD.registerUser(newUser.rut, newUser.firstname, newUser.secondname, newUser.firstlastname,newUser.secondlastname,newUser.imageuser, newUser.genderuser,newUser.email, newUser.password, newUser.phone, newUser.idrol)
+          const newUser = new Users(this.registerForm.value.rut,'','','','',catImageUrl,'',this.registerForm.value.email,this.registerForm.value.password,0,2);
+          this.serviceBD.registerUser(newUser.rut, newUser.firstname,newUser.secondname,newUser.firstlastname,newUser.secondlastname,newUser.imageuser,newUser.genderuser,newUser.email,newUser.password,newUser.phone,newUser.idrol
+            )
             .then(() => {
               this.serviceBD.searchUsers();
               this.showSuccessMessage();
@@ -129,6 +118,7 @@ export class RegisterPage implements OnInit {
       }
     }
   }
+
   irPagina(ruta:string) {
     this.router.navigate([ruta]);
   }

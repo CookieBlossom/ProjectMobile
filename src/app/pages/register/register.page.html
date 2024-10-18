@@ -19,11 +19,11 @@
         </div>
         <ion-item>
           <ion-label position="stacked">Rut</ion-label>
-          <ion-input type="text" formControlName="rut" placeholder="Ej. 12.345.678-9"></ion-input>
+          <ion-input type="text" formControlName="rut" placeholder="Ej. 12345678-9"></ion-input>
         </ion-item>
         <div *ngIf="formControls['rut'].invalid && (formControls['rut'].dirty || formControls['rut'].touched)" class="error-message">
           <p *ngIf="formControls['rut'].errors?.['required']">Rut requerido</p>
-          <p *ngIf="formControls['rut'].errors?.['pattern']">El Rut debe tener un formato válido (Ej. 12.345.678-9)</p>
+          <p *ngIf="formControls['rut'].errors?.['invalidRut']">El Rut debe tener un formato válido (Ej. 12345678-9)</p>
         </div>
         <ion-item>
           <ion-label position="stacked">Contraseña</ion-label>
