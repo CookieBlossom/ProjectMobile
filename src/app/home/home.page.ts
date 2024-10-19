@@ -3,8 +3,8 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { Productos } from '../services/productos';
 import { ServiceBDService } from '../services/service-bd.service';
 import { filter } from 'rxjs/operators';
-import { Users } from '../services/users';
-import { SessionService } from '../services/session.service'; // Nuevo servicio para sesión
+import { Users } from '../services/users'; // Nuevo servicio para sesión
+import { UserSessionService } from '../services/user-session.service';
 
 @Component({
   selector: 'app-home',
@@ -18,11 +18,7 @@ export class HomePage {
   genderAvailable: any[] = [];
   userSession: Users | null = null; // Variable para almacenar el usuario de sesión
 
-  constructor(
-    private router: Router,
-    private activedRoute: ActivatedRoute,
-    private serviceBD: ServiceBDService,
-    private sessionService: SessionService // Inyectamos el nuevo servicio de sesión
+  constructor(private router: Router,private activedRoute: ActivatedRoute,private serviceBD: ServiceBDService,private sessionService: UserSessionService // Inyectamos el nuevo servicio de sesión
   ) {
     this.activedRoute.queryParams.subscribe(param => {
       if (this.router.getCurrentNavigation()?.extras.state) {
