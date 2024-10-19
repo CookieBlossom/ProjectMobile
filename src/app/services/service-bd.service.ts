@@ -390,7 +390,6 @@ export class ServiceBDService {
       return null;
     }
   }
-
   async registerUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,imageuser: any,genderuser: string,email: string,password: string,phone: number,idrol: number): Promise<void> {
     const query = `INSERT INTO user (rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     return this.database.executeSql(query, [rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol])
@@ -402,7 +401,7 @@ export class ServiceBDService {
         throw error;
       });
   }
-  findUserByEmail(email: string): Promise<boolean> {
+  async findUserByEmail(email: string): Promise<boolean> {
     const query = `SELECT * FROM user WHERE email = ?`;
     return this.database.executeSql(query, [email]).then((res) => {
       return res.rows.length > 0;
@@ -411,7 +410,7 @@ export class ServiceBDService {
       return false;
     });
   }
-  findUserByRut(rut: string): Promise<boolean> {
+  async findUserByRut(rut: string): Promise<boolean> {
     const query = `SELECT * FROM user WHERE rut = ?`;
     return this.database.executeSql(query, [rut]).then((res) => {
       return res.rows.length > 0;
@@ -420,8 +419,44 @@ export class ServiceBDService {
       return false;
     });
   }
-
-
+  async getUserByRut(rut: string): Promise<Users | null> {
+    const query = `SELECT * FROM user WHERE rut = ?`;
+    return this.database.executeSql(query, [rut])
+      .then(res => {
+        if (res.rows.length > 0) {
+          const item = res.rows.item(0);
+          return {
+            rut: item.rut,
+            firstname: item.firstname,
+            secondname: item.secondname,
+            firstlastname: item.firstlastname,
+            secondlastname: item.secondlastname,
+            imageuser: item.imageuser,
+            genderuser: item.genderuser,
+            email: item.email,
+            password: item.password,
+            phone: item.phone,
+            idrol: item.idrol
+          } as Users;
+        } else {
+          return null;
+        }
+      })
+      .catch(err => {
+        this.presentAlert('Error', 'Error al obtener el usuario: ' + JSON.stringify(err));
+        return null;
+      });
+  }
+  async editUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,genderuser: string,email: string,password: string,phone: number,idrol: number,imageuser: any) {
+    try {
+      const res = await this.database.executeSql('UPDATE user SET firstname = ?, secondname = ?, firstlastname = ?, secondlastname = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[firstname, secondname, firstlastname, secondlastname, genderuser, email, password, phone, idrol, imageuser, rut]
+      );
+      this.presentAlert("Modificar", "Usuario modificado correctamente");
+      this.searchUsers();
+    } catch (e) {
+      this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
+    }
+  }
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
   fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}

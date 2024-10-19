@@ -28,12 +28,7 @@ export class RegisterPage implements OnInit {
     idrol: 2
   };
   constructor(private fb: FormBuilder,private snackBar: MatSnackBar, private router: Router, private serviceBD:ServiceBDService, private api:ApiService) {
-    this.registerForm = this.fb.group({
-      rut: ['', [Validators.required, this.rutValidator]],
-      email: ['', [Validators.required, Validators.email, this.gmailValidator]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validator: this.passwordMatchValidator });
+    this.registerForm = this.fb.group({rut: ['', [Validators.required, this.rutValidator]], email: ['', [Validators.required, Validators.email, this.gmailValidator]], password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]], confirmPassword: ['', [Validators.required]]}, { validator: this.passwordMatchValidator });
   }
   get formControls() {
     return this.registerForm.controls;
@@ -57,7 +52,6 @@ export class RegisterPage implements OnInit {
     const rutRegex = /^\d{8}-[0-9kK]{1}$/;
     return rutRegex.test(control.value) ? null : { invalidRut: true };
   }
-
   gmailValidator(control: any) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(control.value) ? null : { invalidEmail: true };
@@ -67,11 +61,7 @@ export class RegisterPage implements OnInit {
       this.serviceBD.findUserByEmail(this.registerForm.value.email)
         .then((emailExists: boolean) => {
           if (emailExists) {
-            this.snackBar.open('El correo electrónico ya está registrado.', 'Cerrar', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
-            });
+            this.snackBar.open('El correo electrónico ya está registrado.', 'Cerrar', {duration: 3000,horizontalPosition: 'center',verticalPosition: 'bottom',});
           } else {
             this.serviceBD.findUserByRut(this.registerForm.value.rut)
               .then((rutExists: boolean) => {
@@ -83,23 +73,16 @@ export class RegisterPage implements OnInit {
                   });
                 } else {this.api.getImageRandom().subscribe((response) => {
                     const catImageUrl = response[0]?.url || '';
-                    const newUser = new Users(
-                      this.registerForm.value.rut,'','','','',catImageUrl,'',this.registerForm.value.email,this.registerForm.value.password,0,2);
+                    const newUser = new Users(this.registerForm.value.rut,'','','','',catImageUrl,'',this.registerForm.value.email,this.registerForm.value.password,0,2);
                     this.serviceBD.registerUser(newUser.rut,newUser.firstname,newUser.secondname,newUser.firstlastname,newUser.secondlastname,newUser.imageuser,newUser.genderuser,newUser.email,newUser.password,newUser.phone,newUser.idrol
                     ).then(() => {
                       this.serviceBD.searchUsers();
                       this.showSuccessMessage();
                       this.irPagina('/login');
                     }).catch(error => {
-                      console.error('Error registrando usuario:', error);
-                      this.snackBar.open('Error durante el registro. Intente nuevamente.', 'Cerrar', {
-                        duration: 3000,
-                        horizontalPosition: 'center',
-                        verticalPosition: 'bottom',
-                      });
+                      this.snackBar.open('Error durante el registro. Intente nuevamente.', 'Cerrar', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom',});
                     });
                   }, error => {
-                    console.error('Error obteniendo imagen de gato:', error);
                     this.snackBar.open('Error obteniendo la imagen de perfil, intenta nuevamente.', 'Cerrar', {
                       duration: 3000,
                       horizontalPosition: 'center',
@@ -108,63 +91,25 @@ export class RegisterPage implements OnInit {
                   });
                 }
               })
-              .catch(error => {
-                console.error('Error verificando el RUT:', error);
-                this.snackBar.open('Error durante la verificación del RUT. Intente nuevamente.', 'Cerrar', {
-                  duration: 3000,
-                  horizontalPosition: 'center',
-                  verticalPosition: 'bottom',
-                });
-              });
+              .catch(error => {this.snackBar.open('Error durante la verificación del RUT. Intente nuevamente.', 'Cerrar', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom'});});
           }
         })
-        .catch(error => {
-          console.error('Error verificando el email:', error);
-          this.snackBar.open('Error durante la verificación del email. Intente nuevamente.', 'Cerrar', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
-        });
+        .catch(error => {this.snackBar.open('Error durante la verificación del email. Intente nuevamente.', 'Cerrar', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom'});});
     } else {
       if (this.registerForm.errors?.['mismatch']) {
-        this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
+        this.snackBar.open('Las contraseñas no coinciden', 'Cerrar', {duration: 3000, horizontalPosition: 'center',verticalPosition: 'bottom'});
       } else {
-        this.snackBar.open('Por favor, corrige los errores en el formulario', 'Cerrar', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
+        this.snackBar.open('Por favor, corrige los errores en el formulario', 'Cerrar', {duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom',});
       }
     }
   }
   resetForm(){
-    this.structureUser = {
-      rut: '',
-      firstname: '',
-      secondname: '',
-      firstlastname: '',
-      secondlastname: '',
-      imageuser: '',
-      genderuser: '',
-      email: '',
-      password: '',
-      phone: null,
-      idrol: 2
-    };
+    this.structureUser = {rut: '', firstname: '', secondname: '', firstlastname: '', secondlastname: '', imageuser: '', genderuser: '', email: '', password: '', phone: null, idrol: 2};
   }
   irPagina(ruta:string) {
     this.router.navigate([ruta]);
   }
   showSuccessMessage() {
-    this.snackBar.open('Registro exitoso', 'Cerrar', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
+    this.snackBar.open('Registro exitoso', 'Cerrar', {duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom'});
   }
 }

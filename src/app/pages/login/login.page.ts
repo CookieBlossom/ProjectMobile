@@ -13,16 +13,8 @@ import { ServiceBDService } from 'src/app/services/service-bd.service';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private serviceBD: ServiceBDService,
-    private nativeStorage: NativeStorage
-  ) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*.,]).+$')]]
-    });
+  constructor(private fb: FormBuilder,private router: Router,private serviceBD: ServiceBDService,private nativeStorage: NativeStorage){
+    this.loginForm = this.fb.group({email: ['', [Validators.required, Validators.email]],password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*.,]).+$')]]});
   }
   ngOnInit(){
     this.verificarConexionBD();
@@ -59,7 +51,6 @@ export class LoginPage implements OnInit {
         this.serviceBD.searchUsers();
       });
   }
-
   irPagina(ruta: string) {
     this.router.navigate([ruta]);
   }

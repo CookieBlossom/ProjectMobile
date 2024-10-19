@@ -22,7 +22,7 @@ export class ProductsPage implements OnInit {
 
   constructor(private fb: FormBuilder, private serviceBD: ServiceBDService, private router:Router, private menucontroller: MenuController) {
     this.filtersForm = this.fb.group({
-      priceRange: [10000],          // Inicializando el valor
+      priceRange: [10000],
       selectedCategory: [0],
       selectedGender: [0]
     });

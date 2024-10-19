@@ -31,14 +31,6 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.verificarConexionBD();
-    this.nativeStorage.getItem('userSession')
-      .then((userString) => {
-        this.userSession = JSON.parse(userString);
-        console.log('Sesión de usuario recuperada:', this.userSession);
-      })
-      .catch(error => {
-        console.error('Error al recuperar la sesión:', error);
-      });
   }
 
   verificarConexionBD() {
@@ -47,6 +39,14 @@ export class ProfilePage implements OnInit {
       .subscribe(() => {
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
           this.products = data;
+        });
+        this.nativeStorage.getItem('userSession')
+        .then((userString) => {
+          this.userSession = JSON.parse(userString);
+          console.log('Sesión de usuario recuperada:', this.userSession);
+        })
+        .catch(error => {
+          console.error('Error al recuperar la sesión:', error);
         });
         this.serviceBD.searchProducts();
       });
