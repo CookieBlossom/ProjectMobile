@@ -52,7 +52,7 @@ export class ModifyProfilePage implements OnInit {
       .then(userSessionString => {
         try {
           const userSession = JSON.parse(userSessionString);
-          console.log('Sesión de usuario recuperada:', userSession);
+          console.log('Sesión de usuario recuperada:', userSessionString);
           this.user = userSession;
 
           if (this.user) {
@@ -104,8 +104,14 @@ export class ModifyProfilePage implements OnInit {
         updatedUser.idrol,
         updatedUser.imageuser
       ).then(() => {
-        this.serviceBD.presentAlert("Modificar", "Perfil modificado correctamente");
-        this.irPagina('/home');
+        this.nativeStorage.setItem('userSession', JSON.stringify(updatedUser))
+        .then(() => {
+          console.log('Sesión de usuario actualizada:', updatedUser);
+          this.irPagina('/profile');
+        })
+        .catch(error => {
+          console.error('Error actualizando la sesión del usuario en NativeStorage:', error);
+        });
       }).catch(error => {
         this.serviceBD.presentAlert("Error", "Error al modificar el perfil: " + JSON.stringify(error));
       });

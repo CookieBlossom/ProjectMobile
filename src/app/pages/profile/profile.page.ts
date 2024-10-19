@@ -14,21 +14,14 @@ import { Productos } from 'src/app/services/productos';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  imageExample: any;
-  userSession: Users | null = null;
+  imageUser: any;
+  user: Users | null = null;
   products: Productos[] = [];
-  constructor(
-    private router: Router,
-    private activatedroute: ActivatedRoute,
-    private alertController: AlertController,
-    private nativeStorage: NativeStorage,
-    private serviceBD: ServiceBDService
-  ) {
+  constructor(private router: Router,private activatedroute: ActivatedRoute,private alertController: AlertController,private nativeStorage: NativeStorage,private serviceBD: ServiceBDService){
     this.activatedroute.queryParams.subscribe(param => {
       if (this.router.getCurrentNavigation()?.extras.state) {}
     });
   }
-
   ngOnInit() {
     this.verificarConexionBD();
   }
@@ -40,46 +33,39 @@ export class ProfilePage implements OnInit {
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
           this.products = data;
         });
-        this.nativeStorage.getItem('userSession')
-        .then((userString) => {
-          this.userSession = JSON.parse(userString);
-          console.log('Sesión de usuario recuperada:', this.userSession);
-        })
-        .catch(error => {
-          console.error('Error al recuperar la sesión:', error);
-        });
-        this.serviceBD.searchProducts();
+        this.user = null;
+        this.obtenerSesionUsuario();
       });
   }
-
+  obtenerSesionUsuario() {
+    this.nativeStorage.getItem('userSession')
+      .then((userString) => {
+        console.log('Sesión de usuario recuperada:', userString);
+        this.user = JSON.parse(userString);
+        if (this.user?.imageuser) {
+          this.imageUser = this.user.imageuser;
+        }
+      })
+      .catch(error => {
+        console.error('Error al recuperar la sesión:', error);
+      });
+  }
 
   irPagina(ruta: string) {
     this.router.navigate([ruta]);
   }
-
   async confirmarCierre() {
     const alert = await this.alertController.create({
       header: 'Confirmar cierre de sesión',
       message: `¿Estás seguro?`,
       cssClass: 'alert',
       buttons: [
-        {
-          text: 'Sí',
-          role: 'cancel',
-          handler: () => {
-            this.logout();
-          }
-        },
-        {
-          text: 'No',
-          handler: () => {}
-        }
+        {text: 'Sí',role: 'cancel',handler: () => {this.logout();}},
+        {text: 'No',handler: () => {}}
       ]
     });
-
     await alert.present();
   }
-
   logout() {
     this.nativeStorage.remove('userSession')
       .then(() => {
@@ -90,13 +76,12 @@ export class ProfilePage implements OnInit {
         console.error('Error cerrando la sesión', error);
       });
   }
-
   takePicture = async () => {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
       resultType: CameraResultType.Uri
     });
-    this.imageExample = image.webPath;
+    this.imageUser = image.webPath;
   };
 }

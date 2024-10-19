@@ -1,33 +1,35 @@
 <ion-content [fullscreen]="true">
-  <div class="top">
-    <img *ngIf="imageExample" [src]="imageExample" alt="Sin imagen" style="height: 250px;width: 250px;" />
-    <p class="title-profile">Perfil</p>
-  </div>
-  <div class="bottom">
-    <div class="container-list">
-      <div>
-        <div class="item-list">
-          Compras
-          <img (click)="irPagina('/shopping-cart')" src="/assets/arrow-black.svg" alt="">
+  <div class="container-page">
+    <div class="top">
+      <img *ngIf="imageUser" [src]="imageUser" class="image-profile" alt="Sin imagen" style="height: 150px;width: 150px;" />
+      <h2 class="name-profile">{{ user?.firstname }}{{ user?.firstlastname }}</h2>
+    </div>
+    <div class="bottom">
+      <div class="container-list">
+        <div>
+          <div class="item-list">
+            Compras
+            <img (click)="irPagina('/shopping-cart')" src="/assets/arrow-black.svg" alt="">
+          </div>
+          <div class="item-list">
+            Favoritos
+            <img (click)="irPagina('/favorites')" src="/assets/arrow-black.svg" alt="">
+          </div>
+          <div class="item-list">
+            Modificar datos
+            <img (click)="irPagina('/modify-profile')" src="/assets/arrow-black.svg" alt="">
+          </div>
+          <div class="item-list">
+            Modificar contraseña
+            <img (click)="irPagina('/modify-pass')" src="/assets/arrow-black.svg" alt="">
+          </div>
+          <div class="item-list" *ngIf="user?.idrol == 1">
+            Panel de Administrador
+            <img (click)="irPagina('/panel-adm')" src="/assets/arrow-black.svg" alt="">
+          </div>
         </div>
-        <div class="item-list">
-          Favoritos
-          <img (click)="irPagina('/favorites')" src="/assets/arrow-black.svg" alt="">
-        </div>
-        <div class="item-list">
-          Modificar datos
-          <img (click)="irPagina('/modify-profile')" src="/assets/arrow-black.svg" alt="">
-        </div>
-        <div class="item-list">
-          Modificar contraseña
-          <img (click)="irPagina('/modify-pass')" src="/assets/arrow-black.svg" alt="">
-        </div>
-        <div class="item-list" *ngIf="userSession?.idrol == 1">
-          Panel de Administrador
-          <img (click)="irPagina('/panel-adm')" src="/assets/arrow-black.svg" alt="">
-        </div>
+        <ion-button (click)="confirmarCierre()">Cerrar Sesión</ion-button>
       </div>
-      <ion-button (click)="confirmarCierre()">Cerrar Sesión</ion-button>
     </div>
   </div>
 </ion-content>
