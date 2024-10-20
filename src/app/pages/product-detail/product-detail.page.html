@@ -1,8 +1,8 @@
 <ion-content [fullscreen]="true">
   <div class="header-product">
-    <img class="favorite-product" 
-    [src]="productoDetalle.isFavorite ? '/assets/heart-red.svg' : '/assets/heart-white.svg'" 
-    alt="Favorite" 
+    <img class="favorite-product"
+    [src]="productoDetalle.isFavorite ? '/assets/heart-red.svg' : '/assets/heart-white.svg'"
+    alt="Favorite"
     (click)="toggleFavorite(productoDetalle); $event.stopPropagation()">
 
     <img (click)="irPagina('/products')" class="arrow-back" src="/assets/arrow-back.svg">
@@ -18,11 +18,11 @@
     <h4 class="title-size">Tallas</h4>
     <div class="sizes-product">
       <ng-container *ngFor="let size of productoDetalle.sizes">
-        <ion-button 
-          class="size-product" 
-          [ngClass]="{'selected': size === selectedSize}" 
+        <ion-button
+          class="size-product"
+          [ngClass]="{'selected': size === selectedSize}"
           (click)="selectSize(size)"
-          shape="round"> 
+          shape="round">
           {{ size }}
         </ion-button>
       </ng-container>
@@ -45,5 +45,5 @@
     <ion-toast id="toast-message" [message]="toastMessage" [duration]="2000" [isOpen]="isToastOpen" (didDismiss)="isToastOpen = false" position="top"></ion-toast>
   </div>
 <ion-toolbar>
-  <app-tabs [Productos]="Productos"></app-tabs>
+  <app-tabs></app-tabs>
 </ion-toolbar>

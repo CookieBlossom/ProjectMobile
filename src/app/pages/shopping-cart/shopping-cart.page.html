@@ -1,29 +1,33 @@
 <ion-content [fullscreen]="true">
   <div class="header-shopping">
     <img src="/assets/arrow-back.svg" (click)="irPagina('/home')">
-    <p class="items-shopping">Tu cesta de compras (5)</p>
+    <p class="items-shopping"></p>
   </div>
   <div class="content-shopping">
-    <div class="shopping-product" *ngFor="let product of Productos.slice(0,5)">
-      <ion-checkbox alignment="center" (ionChange)="onCheckboxChange($event, product)"></ion-checkbox>
-      <img src="/assets/products/sample.png">
-      <div class="text-product">
-        <p class="title-product">Puma Tracer One Origin</p>
-        <p class="price-product"> CLP 40.120</p>
-        <div class="back-product">
-          <ion-button (click)="decreaseQuantity(product)" shape="round" fill="outline">-</ion-button>
-          <span class="stock-quantity">{{ product.quantity }}</span>
-          <ion-button (click)="increaseQuantity(product)" shape="round" fill="outline">+</ion-button>
+    <div *ngIf="productsInCart.length > 0; else noProductsTemplate">
+      <div class="shopping-product" *ngFor="let product of productsInCart">
+        <ion-checkbox alignment="center" (ionChange)="onCheckboxChange($event, product)"></ion-checkbox>
+        <img [src]="product.image" alt="Imagen del producto">
+        <div class="text-product">
+          <p class="title-product">{{ product.nameproduct }}</p>
+          <p class="price-product">CLP {{ product.priceproduct | number }}</p>
+          <div class="back-product">
+            <ion-button (click)="decreaseQuantity(product)" shape="round" fill="outline">-</ion-button>
+            <span class="stock-quantity"> {{ product.stockproduct}} </span>
+            <ion-button (click)="increaseQuantity(product)" shape="round" fill="outline">+</ion-button>
+          </div>
         </div>
       </div>
     </div>
+    <ng-template #noProductsTemplate>
+      <p>No hay productos en el carrito</p>
+    </ng-template>
   </div>
   <div class="shopping-button">
     <ion-button expand="full" (click)="comprar()" color="dark">Comprar</ion-button>
     <ion-toast id="toast-message" [message]="toastMessage" [duration]="2000" [isOpen]="isToastOpen" (didDismiss)="isToastOpen = false" position="top"></ion-toast>
   </div>
-
 </ion-content>
 <ion-toolbar>
-  <app-tabs [Productos]="Productos"></app-tabs>
+  <app-tabs></app-tabs>
 </ion-toolbar>

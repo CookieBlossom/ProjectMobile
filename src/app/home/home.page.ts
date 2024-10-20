@@ -16,19 +16,16 @@ export class HomePage {
   brandsAvailable: any[] = [];
   categoriesAvailable: any[] = [];
   genderAvailable: any[] = [];
-  userSession: Users | null = null;
+  user: Users | null = null;
   constructor(private router: Router,private activedRoute: ActivatedRoute,private serviceBD: ServiceBDService,private serviceSession: UserSessionService
-  ) {
-    this.activedRoute.queryParams.subscribe(param => {
-      if (this.router.getCurrentNavigation()?.extras.state) {
-      }
-    });
-  }
+  ) {}
   ngOnInit() {
     this.verificarConexionBD();
-    (this.serviceSession.getUserSession()).subscribe((user: Users | null) => {
-      this.userSession = user;
-      console.log('Sesión de usuario recuperada en Home:', this.userSession);
+    this.serviceSession.getUserSession().subscribe(userSession => {
+      if (userSession) {
+        console.log('Sesión de usuario recuperada desde el servicio:', userSession);
+        this.user = userSession;
+      }
     });
   }
 

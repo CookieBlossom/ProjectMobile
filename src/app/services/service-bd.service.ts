@@ -313,7 +313,41 @@ export class ServiceBDService {
       this.listUsers.next(items as any);
     } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
   }
-
+  async searchShoppingCarts() {
+    try {
+      let items: ShoppingCart[] = [];
+      const res = await this.database.executeSql('SELECT * FROM shopping_cart', []);
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          items.push({
+            rut: res.rows.item(i).rut,
+            totalcart: res.rows.item(i).totalcart,
+            idcart: res.rows.item(i).idcart,
+          });
+        }
+      }
+      this.listShoppingCart.next(items as any);
+    } catch (e) {
+      this.presentAlert('Error', 'Error al actualizar carrito de compras: ' + JSON.stringify(e));
+    }
+  }
+  async searchCartItems() {
+    try {
+      let items: CartItem[] = [];
+      const res = await this.database.executeSql('SELECT * FROM cart_item', []);
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          items.push({
+            idcart: res.rows.item(i).idcart,
+            idproduct: res.rows.item(i).idproduct,
+          });
+        }
+      }
+      this.listCartItem.next(items as any);
+    } catch (e) {
+      this.presentAlert('Error', 'Error al actualizar items de carrito de compras: ' + JSON.stringify(e));
+    }
+  }
   async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number): Promise<number> {
     const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
@@ -324,12 +358,8 @@ export class ServiceBDService {
       await this.deleteProductSizes(id);
       const res = await this.database.executeSql('DELETE FROM product WHERE idproduct = ?', [id]);
       this.searchProducts();
-
-    } catch (e) {
-      this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));
-    }
+    } catch (e) {this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));}
   }
-
   async editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
     try {
       const res = await this.database.executeSql(
@@ -372,7 +402,6 @@ export class ServiceBDService {
       const res = await this.database.executeSql(query, [email, password]);
       if (res.rows.length > 0) {
         const user = res.rows.item(0);
-        this.presentAlert("usuario", `${user.rut} ${user.firstname} ${user.secondname}`);
         return new Users(user.rut,user.firstname,user.secondname,user.firstlastname,user.secondlastname,user.imageuser,user.genderuser,user.email,user.password,user.phone,user.idrol);
       } else {return null;}
     } catch (error) {
@@ -415,19 +444,7 @@ export class ServiceBDService {
       .then(res => {
         if (res.rows.length > 0) {
           const item = res.rows.item(0);
-          return {
-            rut: item.rut,
-            firstname: item.firstname,
-            secondname: item.secondname,
-            firstlastname: item.firstlastname,
-            secondlastname: item.secondlastname,
-            imageuser: item.imageuser,
-            genderuser: item.genderuser,
-            email: item.email,
-            password: item.password,
-            phone: item.phone,
-            idrol: item.idrol
-          } as Users;
+          return {rut: item.rut,firstname: item.firstname,secondname: item.secondname,firstlastname: item.firstlastname,secondlastname: item.secondlastname,imageuser: item.imageuser,genderuser: item.genderuser,email: item.email,password: item.password,phone: item.phone,idrol: item.idrol} as Users;
         } else {
           return null;
         }
@@ -439,9 +456,7 @@ export class ServiceBDService {
   }
   async editUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,genderuser: string,email: string,password: string,phone: number,idrol: number,imageuser: any) {
     try {
-      const res = await this.database.executeSql(
-        'UPDATE user SET firstname = ?, secondname = ?, firstlastname = ?, secondlastname = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[firstname, secondname, firstlastname, secondlastname, genderuser, email, password, phone, idrol, imageuser, rut]
-      );
+      const res = await this.database.executeSql('UPDATE user SET firstname = ?, secondname = ?, firstlastname = ?, secondlastname = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[firstname, secondname, firstlastname, secondlastname, genderuser, email, password, phone, idrol, imageuser, rut]);
       if (res.rowsAffected > 0) {
         console.log('Usuario actualizado correctamente en la base de datos.');
         await this.searchUsers();
@@ -455,6 +470,70 @@ export class ServiceBDService {
       this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
       return false;
     }
+  }
+  async createNewCart(rut: string): Promise<number> {
+    const query = `INSERT INTO shopping_cart (rut, totalcart) VALUES (?, ?)`;
+    return this.database.executeSql(query, [rut, 0])
+      .then(res => {this.searchShoppingCarts();return res.insertId;})
+      .catch(error => {console.error('Error al crear un nuevo carrito:', error);throw error;});
+  }
+  async deleteCart(idcart: number) {
+    try {
+      await this.deleteCartItem(idcart);
+      const res = await this.database.executeSql('DELETE FROM shopping_cart WHERE idcart = ?', [idcart]);
+      this.searchShoppingCarts();
+    } catch (e) {
+      this.presentAlert('Eliminar Carrito', 'Error: ' + JSON.stringify(e));
+    }
+  }
+  async getShoppingCartByRut(rut: string): Promise<ShoppingCart | null> {
+    const query = `SELECT * FROM shopping_cart WHERE rut = ?`;
+    try {
+      const res = await this.database.executeSql(query, [rut]);
+      if (res.rows.length > 0) {
+        const cart = res.rows.item(0);
+        return {idcart: cart.idcart,created_at: cart.created_at,rut: cart.rut,totalcart: cart.totalcart,} as ShoppingCart;
+      } else {return null;}
+    } catch (error) {console.error('Error al obtener el carrito de compras por rut:', error); return null;}
+  }
+  async getShoppingCartById(idcart: number): Promise<ShoppingCart | null> {
+    const query = `SELECT * FROM shopping_cart WHERE idcart = ?`;
+    return this.database.executeSql(query, [idcart])
+      .then(res => {
+        if (res.rows.length > 0) {
+          const item = res.rows.item(0);
+          return new ShoppingCart(item.idcart, item.rut, item.totalcart);
+        } else {return null;}
+      })
+      .catch(err => {console.error('Error al obtener el carrito:', err);return null;});
+  }
+  async insertCartItem(idcart: number, idproduct: number): Promise<void> {
+    const query = `INSERT INTO cart_item (idcart, idproduct) VALUES (?, ?)`;
+    return this.database.executeSql(query, [idcart, idproduct])
+      .then(() => {this.searchCartItems();})
+      .catch(error => {console.error('Error al insertar item en el carrito:', error); throw error;});
+  }
+  async deleteCartItem(idcart_item: number): Promise<void> {
+    const query = `DELETE FROM cart_item WHERE idcart_item = ?`;
+    return this.database.executeSql(query, [idcart_item])
+      .then(() => {
+        this.searchCartItems();
+      })
+      .catch(error => {
+        console.error('Error al eliminar item del carrito:', error);
+        throw error;
+      });
+  }
+  async updateCartItem(idcart_item: number, newIdProduct: number): Promise<void> {
+    const query = `UPDATE cart_item SET idproduct = ? WHERE idcart_item = ?`;
+    return this.database.executeSql(query, [newIdProduct, idcart_item])
+      .then(() => {
+        this.searchCartItems();
+      })
+      .catch(error => {
+        console.error('Error al actualizar item en el carrito:', error);
+        throw error;
+      });
   }
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
