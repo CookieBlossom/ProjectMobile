@@ -78,11 +78,54 @@ export class ProfilePage implements OnInit {
       });
   }
   takePicture = async () => {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: false,
-      resultType: CameraResultType.Uri
-    });
-    this.imageUser = image.webPath;
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri
+      });
+      if (image?.webPath) {
+        this.imageUser = image.webPath;
+        const updatedUser = new Users(
+          this.user?.rut || '',
+          this.user?.firstname || '',
+          this.user?.secondname || '',
+          this.user?.firstlastname || '',
+          this.user?.secondlastname || '',
+          this.imageUser, // Nueva imagen
+          this.user?.genderuser || '',
+          this.user?.email || '',
+          this.user?.password || '',
+          this.user?.phone || 0,
+          this.user?.idrol || 2
+        );
+        this.serviceBD.editUser(
+          updatedUser.rut,
+          updatedUser.firstname,
+          updatedUser.secondname,
+          updatedUser.firstlastname,
+          updatedUser.secondlastname,
+          updatedUser.genderuser,
+          updatedUser.email,
+          updatedUser.password,
+          updatedUser.phone,
+          updatedUser.idrol,
+          updatedUser.imageuser
+        ).then(() => {
+          this.serviceSession.setUserSession(updatedUser).then(() => {
+            console.log('Sesión de usuario actualizada con la nueva imagen:', updatedUser);
+            this.irPagina('/profile');
+          }).catch(error => {
+            console.error('Error actualizando la sesión del usuario en el servicio:', error);
+          });
+        }).catch(error => {
+          this.serviceBD.presentAlert("Error", "Error al modificar la imagen del perfil: " + JSON.stringify(error));
+        });
+      } else {
+        console.error('No se obtuvo una imagen válida.');
+      }
+    } catch (error) {
+      console.error('Error al tomar la foto:', error);
+    }
   };
 }

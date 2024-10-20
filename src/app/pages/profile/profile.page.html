@@ -1,8 +1,16 @@
 <ion-content [fullscreen]="true">
   <div class="container-page">
     <div class="top">
-      <img *ngIf="imageUser" [src]="imageUser" class="image-profile" alt="Sin imagen" style="height: 150px;width: 150px;" />
-      <h2 class="name-profile">{{ user?.firstname }}{{ user?.firstlastname }}</h2>
+      <img (click)="takePicture()"  class="camera" src="/assets/camera.svg">
+      <img *ngIf="imageUser" [src]="imageUser" class="image-profile" alt="Sin imagen" style="height: 150px;width: 150px;">
+      <h2 class="name-profile" *ngIf="!user?.firstname || !user?.firstlastname; else nombreCompleto">
+        Bienvenido
+      </h2>
+      <ng-template #nombreCompleto>
+        <h2 class="name-profile">
+          {{ user?.firstname }} {{ user?.firstlastname }}
+        </h2>
+      </ng-template>
     </div>
     <div class="bottom">
       <div class="container-list">

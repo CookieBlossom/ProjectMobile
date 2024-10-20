@@ -26,7 +26,15 @@ export class UserSessionService {
   getUserSession() {
     return this.userSession.asObservable();
   }
-
+  async updateUserSession(updatedUser: Users) {
+    await this.nativeStorage.setItem('userSession', JSON.stringify(updatedUser))
+      .then(() => {
+        console.log('Sesión de usuario actualizada en NativeStorage:', updatedUser);
+      })
+      .catch(error => {
+        console.error('Error al actualizar la sesión en NativeStorage:', error);
+      });
+  }
   deleteUserSession() {
     this.userSession.next(null);
     return this.nativeStorage.remove('userSession')

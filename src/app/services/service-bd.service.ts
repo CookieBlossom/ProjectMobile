@@ -195,7 +195,7 @@ export class ServiceBDService {
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');",
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');",
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolución');",
-      "INSERT or IGNORE INTO user(rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol) VALUES('21.727.238-1', 'Maria', 'Pele', 'Pepe', 'Soto', '', 'Femenino', 'maria23@gmail.com', '123Maria.', 932648837, 1);"
+      "INSERT or IGNORE INTO user(rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol) VALUES('21727238-1', 'Maria', 'Pele', 'Pepe', 'Soto', '', 'Femenino', 'maria23@gmail.com', '123Maria.', 932648837, 1);"
     ];
     for (let insert of inserts) {
       await this.database.executeSql(insert, []).catch(e => {this.presentAlert('Error en la inserción', 'Error al insertar datos estáticos: ' + JSON.stringify(e));});
@@ -366,24 +366,14 @@ export class ServiceBDService {
   }
 
   async loginUser(email: string, password: string): Promise<Users | null> {
+    await this.searchUsers();
     const query = `SELECT * FROM user WHERE email = ? AND password = ?`;
     try {
       const res = await this.database.executeSql(query, [email, password]);
       if (res.rows.length > 0) {
         const user = res.rows.item(0);
-        return new Users(
-          user.rut,
-          user.firstname,
-          user.secondname,
-          user.firstlastname,
-          user.secondlastname,
-          user.imageuser,
-          user.genderuser,
-          user.email,
-          user.password,
-          user.phone,
-          user.idrol
-        );
+        this.presentAlert("usuario", `${user.rut} ${user.firstname} ${user.secondname}`);
+        return new Users(user.rut,user.firstname,user.secondname,user.firstlastname,user.secondlastname,user.imageuser,user.genderuser,user.email,user.password,user.phone,user.idrol);
       } else {return null;}
     } catch (error) {
       console.error('Error al buscar el usuario:', error);
@@ -449,12 +439,21 @@ export class ServiceBDService {
   }
   async editUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,genderuser: string,email: string,password: string,phone: number,idrol: number,imageuser: any) {
     try {
-      const res = await this.database.executeSql('UPDATE user SET firstname = ?, secondname = ?, firstlastname = ?, secondlastname = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[firstname, secondname, firstlastname, secondlastname, genderuser, email, password, phone, idrol, imageuser, rut]
+      const res = await this.database.executeSql(
+        'UPDATE user SET firstname = ?, secondname = ?, firstlastname = ?, secondlastname = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[firstname, secondname, firstlastname, secondlastname, genderuser, email, password, phone, idrol, imageuser, rut]
       );
-      this.presentAlert("Modificar", "Usuario modificado correctamente");
-      this.searchUsers();
+      if (res.rowsAffected > 0) {
+        console.log('Usuario actualizado correctamente en la base de datos.');
+        await this.searchUsers();
+        return true;
+      } else {
+        console.error('No se encontró el usuario con el rut proporcionado.');
+        return false;
+      }
     } catch (e) {
+      console.error('Error al modificar el usuario:', e);
       this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));
+      return false;
     }
   }
   //SELECTS DINAMICOS CON CLASS

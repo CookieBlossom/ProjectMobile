@@ -26,18 +26,20 @@ export class LoginPage implements OnInit {
   login() {
     const email = this.loginForm.get('email')?.value;
     const password = this.loginForm.get('password')?.value;
-
     this.serviceBD.loginUser(email, password)
       .then(user => {
         if (user) {
           this.serviceBD.presentAlert('Login exitoso', `Bienvenido`);
-          this.serviceSession.setUserSession(user)
-            .then(() => {
-              this.irPagina('/home');
-            })
-            .catch(error => {
-              console.error('Error guardando la sesión:', error);
-            });
+          this.serviceSession.setUserSession(user).then(() => {
+            this.nativeStorage.setItem('userSession', JSON.stringify(user))
+              .then(() => {
+                console.log('Sesión actualizada en NativeStorage');
+                this.irPagina('/home');
+              })
+              .catch(error => {
+                console.error('Error actualizando la sesión en NativeStorage:', error);
+              });
+          });
         } else {
           this.serviceBD.presentAlert('Error de login', 'Usuario no encontrado o contraseña incorrecta.');
         }
