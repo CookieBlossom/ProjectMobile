@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { filter } from 'rxjs/operators';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { UserSessionService } from 'src/app/services/user-session.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ import { ServiceBDService } from 'src/app/services/service-bd.service';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder,private router: Router,private serviceBD: ServiceBDService,private nativeStorage: NativeStorage){
+  constructor(private fb: FormBuilder,private router: Router,private serviceBD: ServiceBDService,private nativeStorage: NativeStorage, private serviceSession:UserSessionService){
     this.loginForm = this.fb.group({email: ['', [Validators.required, Validators.email]],password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*.,]).+$')]]});
   }
   ngOnInit(){
@@ -25,11 +26,12 @@ export class LoginPage implements OnInit {
   login() {
     const email = this.loginForm.get('email')?.value;
     const password = this.loginForm.get('password')?.value;
+
     this.serviceBD.loginUser(email, password)
       .then(user => {
         if (user) {
           this.serviceBD.presentAlert('Login exitoso', `Bienvenido`);
-          this.nativeStorage.setItem('userSession', JSON.stringify(user))
+          this.serviceSession.setUserSession(user)
             .then(() => {
               this.irPagina('/home');
             })

@@ -3,7 +3,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { Productos } from '../services/productos';
 import { ServiceBDService } from '../services/service-bd.service';
 import { filter } from 'rxjs/operators';
-import { Users } from '../services/users'; // Nuevo servicio para sesión
+import { Users } from '../services/users';
 import { UserSessionService } from '../services/user-session.service';
 
 @Component({
@@ -16,20 +16,17 @@ export class HomePage {
   brandsAvailable: any[] = [];
   categoriesAvailable: any[] = [];
   genderAvailable: any[] = [];
-  userSession: Users | null = null; // Variable para almacenar el usuario de sesión
-
-  constructor(private router: Router,private activedRoute: ActivatedRoute,private serviceBD: ServiceBDService,private sessionService: UserSessionService // Inyectamos el nuevo servicio de sesión
+  userSession: Users | null = null;
+  constructor(private router: Router,private activedRoute: ActivatedRoute,private serviceBD: ServiceBDService,private serviceSession: UserSessionService
   ) {
     this.activedRoute.queryParams.subscribe(param => {
       if (this.router.getCurrentNavigation()?.extras.state) {
-        // Aquí puedes manejar los parámetros si es necesario
       }
     });
   }
-
   ngOnInit() {
     this.verificarConexionBD();
-    this.sessionService.getUserSession().subscribe((user: Users | null) => {
+    (this.serviceSession.getUserSession()).subscribe((user: Users | null) => {
       this.userSession = user;
       console.log('Sesión de usuario recuperada en Home:', this.userSession);
     });

@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { filter } from 'rxjs/operators';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { UserSessionService } from 'src/app/services/user-session.service';
 import { Users } from 'src/app/services/users';
 
 @Component({
@@ -15,7 +16,7 @@ export class ModifyProfilePage implements OnInit {
   profileForm: FormGroup;
   genderAvailable: any[]=[];
   user: Users | null = null;
-  constructor( private fb: FormBuilder, private router: Router, private activedRoute: ActivatedRoute, private nativeStorage: NativeStorage, private serviceBD: ServiceBDService) {
+  constructor( private fb: FormBuilder, private router: Router, private activedRoute: ActivatedRoute, private nativeStorage: NativeStorage, private serviceBD: ServiceBDService, private serviceSession: UserSessionService) {
     this.profileForm = this.fb.group({
       rut: ['', [Validators.required, this.rutValidator]],
       firstname: ['', Validators.required],
@@ -48,33 +49,14 @@ export class ModifyProfilePage implements OnInit {
       });
   }
   loadUserData() {
-    this.nativeStorage.getItem('userSession')
-      .then(userSessionString => {
-        try {
-          const userSession = JSON.parse(userSessionString);
-          console.log('Sesión de usuario recuperada:', userSessionString);
-          this.user = userSession;
-
-          if (this.user) {
-            this.profileForm.patchValue({
-              rut: this.user.rut,
-              firstname: this.user.firstname,
-              secondname: this.user.secondname,
-              firstlastname: this.user.firstlastname,
-              secondlastname: this.user.secondlastname,
-              genderuser: this.user.genderuser,
-              email: this.user.email,
-              password: this.user.password,
-              phone: this.user.phone
-            });
-          }
-        } catch (error) {
-          console.error('Error al parsear la sesión de usuario:', error);
-        }
-      })
-      .catch(error => {
-        console.error('Error al recuperar la sesión del usuario:', error);
-      });
+    this.serviceSession.getUserSession().subscribe(userSession => {
+      if (userSession) {
+        console.log('Sesión de usuario recuperada desde el servicio:', userSession);
+        this.user = userSession;
+        this.profileForm.patchValue({rut: this.user.rut,firstname: this.user.firstname,secondname: this.user.secondname,firstlastname: this.user.firstlastname,secondlastname: this.user.secondlastname,genderuser: this.user.genderuser,email: this.user.email,password: this.user.password,phone: this.user.phone
+        });
+      }
+    });
   }
   onSubmit() {
     if (this.profileForm.valid) {
@@ -104,13 +86,11 @@ export class ModifyProfilePage implements OnInit {
         updatedUser.idrol,
         updatedUser.imageuser
       ).then(() => {
-        this.nativeStorage.setItem('userSession', JSON.stringify(updatedUser))
-        .then(() => {
-          console.log('Sesión de usuario actualizada:', updatedUser);
+        this.serviceSession.setUserSession(updatedUser).then(() => {
+          console.log('Sesión de usuario actualizada en el servicio:', updatedUser);
           this.irPagina('/profile');
-        })
-        .catch(error => {
-          console.error('Error actualizando la sesión del usuario en NativeStorage:', error);
+        }).catch(error => {
+          console.error('Error actualizando la sesión del usuario en el servicio:', error);
         });
       }).catch(error => {
         this.serviceBD.presentAlert("Error", "Error al modificar el perfil: " + JSON.stringify(error));
