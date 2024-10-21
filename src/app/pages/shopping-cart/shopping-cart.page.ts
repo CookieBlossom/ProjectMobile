@@ -8,7 +8,7 @@ import { Productos } from "src/app/services/productos";
 import { ShoppingCart } from "src/app/services/shopping-cart";
 import { filter } from "rxjs/operators";
 
-type ProductWithQuantity = Productos & { quantity: number };
+type ProductWithQuantity = Productos & { quantity: number; selected?: boolean };
 
 @Component({
   selector: 'app-shopping-cart',
@@ -20,12 +20,13 @@ export class ShoppingCartPage implements OnInit {
   user: Users | null = null;
   cartItem: CartItem[] = [];
   shoppingCart: ShoppingCart | null = null;
-  productList: Productos[] = [];
+  selectedProducts: Set<number> = new Set();  // Para almacenar los idproduct seleccionados
+  toastMessage: string | undefined;
+  isToastOpen: boolean = false;
 
   constructor(private router: Router, private serviceBD: ServiceBDService, private serviceSession: UserSessionService) {}
 
   ngOnInit() {
-    console.log('estoy en carrito compras');
     this.verificarConexionBD();
   }
 
@@ -36,75 +37,91 @@ export class ShoppingCartPage implements OnInit {
         this.serviceSession.getUserSession().subscribe(user => {
           if (user) {
             this.user = user;
-            console.log('Tengo al usuario ' + user.rut);
             this.checkShoppingCart(user.rut);
-          } else {
-            console.error('No se encontró una sesión de usuario activa.');
+            console.log("hola");
           }
         });
       });
   }
+
   async checkShoppingCart(rut: string) {
+    console.log("hola2");
     try {
+      console.log("hola3");
       this.shoppingCart = await this.serviceBD.getShoppingCartByRut(rut);
-      console.log('Tengo el carrito'+ this.shoppingCart);
+      console.log("hol4");
       if (!this.shoppingCart) {
         const newCartId = await this.serviceBD.createNewCart(rut);
         this.shoppingCart = await this.serviceBD.getShoppingCartById(newCartId);
       }
-      // Nos suscribimos a los cambios en los ítems del carrito
       this.serviceBD.fetchCartItems().subscribe(cartItems => {
-        console.log('Tengo los cartItems' + cartItems);
         this.cartItem = cartItems;
+        console.log("hola5");
         this.cargarProductosEnCarrito();
       });
     } catch (error) {
       console.error('Error al verificar o crear el carrito:', error);
     }
   }
-
   cargarProductosEnCarrito() {
-    console.log('sigo teniendo el carrito ' + this.shoppingCart);
+    console.log("hola6");
     if (this.shoppingCart) {
-      console.log('voy a traerme los productos del carrito ' + this.shoppingCart.idcart);
+      console.log("hola7");
       this.serviceBD.getCartItemsByCartId(this.shoppingCart.idcart).then((cartItems) => {
+        console.log("hol8");
         this.cartItem = cartItems;
-        console.log('Items del carrito para el idcart: ', this.cartItem);
-        this.serviceBD.fetchProducts().subscribe(
-          (data: Productos[]) => {
-            this.productList = data;
-            console.log('Productos obtenidos:', this.productList);
-            if (this.productList.length === 0) {
-              console.log('No se han encontrado productos en la base de datos.');
-            }
-            if (this.cartItem.length === 0) {
-              console.log('No se han encontrado ítems en el carrito.');
-            }
-            this.productsInCart = this.productList
-              .filter(product => this.cartItem.some(cart => cart.idproduct === product.idproduct))
-              .map(product => {
-                const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
-                console.log('Producto encontrado en el carrito:', product, 'Cantidad:', cartItem?.quantity);
-                return {
-                  ...product,
-                  quantity: cartItem ? cartItem.quantity : 1
-                } as ProductWithQuantity;
-              });
-
-            console.log('Productos cargados en el carrito:', this.productsInCart);
-          },
-          (error) => {
-            console.error('Error al cargar productos en el carrito:', error);
-          }
-        );
+        this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
+          this.productsInCart = data
+            .filter(product => this.cartItem.some(cart => cart.idproduct === product.idproduct))
+            .map(product => {
+              const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
+              return {
+                ...product,
+                quantity: cartItem ? cartItem.quantity : 1,
+                selected: this.selectedProducts.has(product.idproduct)
+              } as ProductWithQuantity;
+            });
+        });
       }).catch(error => {
         console.error('Error al obtener los ítems del carrito:', error);
       });
     }
   }
 
+  async comprar() {
+    console.log("Entrando a la función comprar");
+    if (this.productsInCart.length > 0 && this.shoppingCart && this.user) {
+      console.log("Hay productos en el carrito, carrito y usuario disponibles");
+      try {
+        for (let product of this.productsInCart) {
+          const totalorder = product.priceproduct * product.quantity;
+          console.log("Procesando producto:", product);
+          const idorder = await this.serviceBD.insertOrder(totalorder, product.idproduct, 1, this.user.rut);
+          await this.serviceBD.insertOrderHistory(idorder, this.user.rut, 1);
+          const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
+          if (cartItem) {
+            await this.serviceBD.deleteCartItem(cartItem.idcart_item);
+          }
+        }
+        this.cargarProductosEnCarrito();
+        this.showToast('Compra realizada con éxito');
+      } catch (error) {
+        console.log("Error durante la compra:", error);
+        this.showToast('Error al realizar la compra: ' + error);
+      }
+    } else {
+      console.log("No hay productos en el carrito para comprar");
+      this.showToast('No hay productos en el carrito para comprar.');
+    }
+  }
 
-  irPagina(ruta:string) {
+
+  showToast(message: string) {
+    this.toastMessage = message;
+    this.isToastOpen = true;
+  }
+
+  irPagina(ruta: string) {
     this.router.navigate([ruta]);
   }
 }

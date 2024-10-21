@@ -19,5 +19,16 @@
       <p>No hay productos en el carrito</p>
     </ng-template>
   </div>
+  <div class="shopping-button">
+    <ion-button expand="full" (click)="comprar()" color="dark">Comprar</ion-button>
+  </div>
+  <ion-toast
+    id="toast-message"
+    [message]="toastMessage"
+    [duration]="2000"
+    [isOpen]="isToastOpen"
+    (didDismiss)="isToastOpen = false"
+    position="top">
+  </ion-toast>
 </ion-content>
 <app-tabs></app-tabs>

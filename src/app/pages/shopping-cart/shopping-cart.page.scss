@@ -1,52 +1,33 @@
-ion-checkbox{
-    --size: 30px;
-    --checkbox-background-checked: #00000000
-}
-ion-button {
-    --background: #F5F5F5;
-    --color: #000000;
-    --box-shadow: 0 2px 6px 0 rgb(0, 0, 0, 0.25);
-    --border-color: #000000;
+ion-checkbox {
+  --size: 30px;
+  --checkbox-background-checked: transparent;
 }
 
-ion-checkbox::part(container) {
-    border-radius: 999px;
-    border: 2px solid #ffff;
+ion-checkbox.selected {
+  --background-checked: #00ff00; // Cambia el color cuando está seleccionado
+  --border-color: #00ff00;
 }
-.header-shopping{
-    display: flex;
-    flex-direction: row;
-    background-color: #FAFAFA;
-    border-radius: 10%;
-    height: 10%;
-    padding: 10px;
-    border-radius: 0% 0% 48% 52% / 10% 18% 7% 7%;
-    align-items: center;
-    justify-content: space-evenly;
-}
-.header-shopping img{
-    width: 28px;
-}
-.items-shopping{
-    font-size: 28px;
-    font-weight: 500;
-    text-align: left;
-    color: black;
-    margin: 0;
-}
+
 .content-shopping {
-  flex-grow: 1; /* Permite que crezca y ocupe todo el espacio disponible */
-  height: calc(100vh - 150px); /* Ajusta la altura dinámica dependiendo del espacio restante en la pantalla */
-  overflow-y: auto; /* Habilita el scroll vertical cuando sea necesario */
-  padding: 15px; /* Espaciado interno */
-  box-sizing: border-box; /* Para incluir el padding dentro de la altura */
+  flex-grow: 1;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding: 15px;
+  box-sizing: border-box;
 }
+
+.shopping-button {
+  padding: 10px;
+  position: sticky;
+  bottom: 60px;
+  z-index: 10;
+}
+
 .shopping-product {
   display: flex;
-  flex-direction: row;
   align-items: center;
   padding: 10px;
-  background-color: #0000006e;
+  background-color: rgba(0, 0, 0, 0.43);
   border-radius: 30px;
   margin: 5px;
 }
@@ -56,50 +37,29 @@ ion-checkbox::part(container) {
   height: 100px;
   padding: 10px;
 }
-.back-product{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.back-product span{
-    font-size: 18px;
-}
-.text-product{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-.title-product{
-    margin: 0;
-    text-align: left;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-.price-product{
-    color: #cfcfcf;
-    font-size: 12px;
-    text-align: center;
-    margin: 0;
-    padding: 5px;
-}
-.shopping-button{
-    width: 100%;
-}
-.checkmark-container {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  position: relative;
-  cursor: pointer;
-  border: 2px solid #ffffff; /* Contorno del checkbox */
-  border-radius: 50%;
+
+.text-product {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.checkmark {
-  width: 100%;
-  height: 100%;
-  background-image: url('/assets/check.svg'); /* Ruta del archivo SVG */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+.title-product {
+  margin: 0;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.price-product {
+  color: #cfcfcf;
+  font-size: 12px;
+  margin: 0;
+  padding: 5px;
+}
+
+.quantity {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #fff;
 }
