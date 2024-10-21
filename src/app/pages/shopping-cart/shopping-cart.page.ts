@@ -1,111 +1,110 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
-import { CartItem } from "src/app/services/cart-item";
-import { Productos } from "src/app/services/productos";
+import { Router } from "@angular/router";
 import { ServiceBDService } from "src/app/services/service-bd.service";
-import { ShoppingCart } from "src/app/services/shopping-cart";
 import { UserSessionService } from "src/app/services/user-session.service";
 import { Users } from "src/app/services/users";
+import { CartItem } from "src/app/services/cart-item";
+import { Productos } from "src/app/services/productos";
+import { ShoppingCart } from "src/app/services/shopping-cart";
+import { filter } from "rxjs/operators";
+
+type ProductWithQuantity = Productos & { quantity: number };
+
 @Component({
   selector: 'app-shopping-cart',
   templateUrl: './shopping-cart.page.html',
   styleUrls: ['./shopping-cart.page.scss'],
 })
 export class ShoppingCartPage implements OnInit {
-  products: Productos[] = [];
-  productsInCart: Productos[] = [];
+  productsInCart: ProductWithQuantity[] = [];
   user: Users | null = null;
   cartItem: CartItem[] = [];
   shoppingCart: ShoppingCart | null = null;
-  isToastOpen = false;
-  selectedProducts = new Set<number>();
-  toastMessage: string = '';
-  constructor(private activatedroute: ActivatedRoute,private router: Router,private serviceBD: ServiceBDService,private serviceSession: UserSessionService) {}
+  productList: Productos[] = [];
+
+  constructor(private router: Router, private serviceBD: ServiceBDService, private serviceSession: UserSessionService) {}
+
   ngOnInit() {
+    console.log('estoy en carrito compras');
     this.verificarConexionBD();
   }
+
   verificarConexionBD() {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
-        this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
-          this.products = data;
+        this.serviceSession.getUserSession().subscribe(user => {
+          if (user) {
+            this.user = user;
+            console.log('Tengo al usuario ' + user.rut);
+            this.checkShoppingCart(user.rut);
+          } else {
+            console.error('No se encontró una sesión de usuario activa.');
+          }
         });
-        this.serviceBD.searchCartItems();
-        this.serviceBD.searchShoppingCarts();
-        this.serviceBD.searchProducts();
-        this.obtenerSesionUsuario();
-        this.serviceBD.searchUsers();
       });
   }
-  obtenerSesionUsuario() {
-    this.serviceSession.getUserSession().subscribe(user => {
-      if (user) {
-        this.user = user;
-        console.log('Rut del usuario recuperado:', this.user?.rut);
-        this.checkShoppingCart(this.user.rut);
-      } else {
-        console.error('No se encontró una sesión de usuario activa.');
-      }
-    });
-  }
   async checkShoppingCart(rut: string) {
-    if (this.user) {
+    try {
       this.shoppingCart = await this.serviceBD.getShoppingCartByRut(rut);
+      console.log('Tengo el carrito'+ this.shoppingCart);
       if (!this.shoppingCart) {
         const newCartId = await this.serviceBD.createNewCart(rut);
-        console.log('Nuevo carrito creado con ID:', newCartId);
         this.shoppingCart = await this.serviceBD.getShoppingCartById(newCartId);
-      } else {
-        console.log('Carrito de compras existente:', this.shoppingCart);
       }
-      await this.cargarCartItems();
+      // Nos suscribimos a los cambios en los ítems del carrito
+      this.serviceBD.fetchCartItems().subscribe(cartItems => {
+        console.log('Tengo los cartItems' + cartItems);
+        this.cartItem = cartItems;
+        this.cargarProductosEnCarrito();
+      });
+    } catch (error) {
+      console.error('Error al verificar o crear el carrito:', error);
     }
   }
-  async cargarCartItems() {
+
+  cargarProductosEnCarrito() {
+    console.log('sigo teniendo el carrito ' + this.shoppingCart);
     if (this.shoppingCart) {
-      this.cartItem = await this.serviceBD.getCartItemsByCartId(this.shoppingCart.idcart);
-      this.productsInCart = this.products.filter(product =>
-        this.cartItem.some(cart => cart.idproduct === product.idproduct)
-      );
+      console.log('voy a traerme los productos del carrito ' + this.shoppingCart.idcart);
+      this.serviceBD.getCartItemsByCartId(this.shoppingCart.idcart).then((cartItems) => {
+        this.cartItem = cartItems;
+        console.log('Items del carrito para el idcart: ', this.cartItem);
+        this.serviceBD.fetchProducts().subscribe(
+          (data: Productos[]) => {
+            this.productList = data;
+            console.log('Productos obtenidos:', this.productList);
+            if (this.productList.length === 0) {
+              console.log('No se han encontrado productos en la base de datos.');
+            }
+            if (this.cartItem.length === 0) {
+              console.log('No se han encontrado ítems en el carrito.');
+            }
+            this.productsInCart = this.productList
+              .filter(product => this.cartItem.some(cart => cart.idproduct === product.idproduct))
+              .map(product => {
+                const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
+                console.log('Producto encontrado en el carrito:', product, 'Cantidad:', cartItem?.quantity);
+                return {
+                  ...product,
+                  quantity: cartItem ? cartItem.quantity : 1
+                } as ProductWithQuantity;
+              });
+
+            console.log('Productos cargados en el carrito:', this.productsInCart);
+          },
+          (error) => {
+            console.error('Error al cargar productos en el carrito:', error);
+          }
+        );
+      }).catch(error => {
+        console.error('Error al obtener los ítems del carrito:', error);
+      });
     }
   }
-  filterProductsInCart() {
-    const productsInCart = this.products.filter(product =>
-      this.cartItem.some(cart => cart.idproduct == product.idproduct)
-    );
-    return productsInCart;
-  }
-  irPagina(ruta:string){
+
+
+  irPagina(ruta:string) {
     this.router.navigate([ruta]);
-  }
-  increaseQuantity(product: any) {
-    if (product.quantity < product.stock) {
-      product.quantity++;
-    }
-  }
-  decreaseQuantity(product: any) {
-    if (product.quantity > 1) {
-      product.quantity--;
-    }
-  }
-  onCheckboxChange(event: any, product: any) {
-    if (event.detail.checked) {
-      this.selectedProducts.add(product.id);
-    } else {
-      this.selectedProducts.delete(product.id);
-    }
-  }
-  comprar() {
-    if (this.selectedProducts.size > 0) {
-      this.showToast('Compra realizada con éxito');
-    } else {
-      this.showToast('Necesita seleccionar al menos 1 producto para continuar');
-    }
-  }
-  showToast(message: string) {
-    this.toastMessage = message;
-    this.isToastOpen = true;
   }
 }

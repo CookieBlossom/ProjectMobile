@@ -18,7 +18,7 @@ export class ModifyProfilePage implements OnInit {
   user: Users | null = null;
   constructor( private fb: FormBuilder, private router: Router, private activedRoute: ActivatedRoute, private nativeStorage: NativeStorage, private serviceBD: ServiceBDService, private serviceSession: UserSessionService) {
     this.profileForm = this.fb.group({
-      rut: ['', [Validators.required, this.rutValidator]],
+      rut: [{ value: this.user?.rut || '', disabled: true }, Validators.required],
       firstname: ['', Validators.required],
       secondname: ['', Validators.required],
       firstlastname: ['', Validators.required],

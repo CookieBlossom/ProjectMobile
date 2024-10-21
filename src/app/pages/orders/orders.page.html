@@ -1,0 +1,26 @@
+<ion-content [fullscreen]="true">
+  <div class="header-orders">
+    <img (click)="irPagina('/home')" src="/assets/arrow-back.svg" alt="Volver">
+    <h3>Órdenes</h3>
+    <img (click)="irPagina('/shopping-cart')" src="/assets/cart.svg" alt="Carrito de compras">
+  </div>
+
+  <div class="content-orders" *ngIf="orders.length > 0; else noOrders">
+    <div class="order" *ngFor="let order of orders">
+      <div class="information-order">
+        <p class="title-information">Orden #{{ order.idorder }}</p>
+        <p class="description">Producto ID: {{ order.idproduct }}</p>
+        <p class="description">Total: {{ order.totalorder | currency: 'CLP' }}</p>
+        <p class="description">Fecha de creación: {{ order.created_at | date:'medium' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noOrders>
+    <p>No tienes órdenes registradas.</p>
+  </ng-template>
+</ion-content>
+
+<ion-toolbar>
+  <app-tabs></app-tabs>
+</ion-toolbar>

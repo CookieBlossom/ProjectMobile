@@ -3,19 +3,15 @@
     <img src="/assets/arrow-back.svg" (click)="irPagina('/home')">
     <p class="items-shopping">Carrito de Compras</p>
   </div>
+
   <div class="content-shopping">
     <div *ngIf="productsInCart.length > 0; else noProductsTemplate">
       <div class="shopping-product" *ngFor="let product of productsInCart">
-        <ion-checkbox alignment="center" (ionChange)="onCheckboxChange($event, product)"></ion-checkbox>
         <img [src]="product.image" alt="Imagen del producto">
         <div class="text-product">
           <p class="title-product">{{ product.nameproduct }}</p>
-          <p class="price-product">CLP {{ product.priceproduct | number }}</p>
-          <div class="back-product">
-            <ion-button (click)="decreaseQuantity(product)" shape="round" fill="outline">-</ion-button>
-            <span class="stock-quantity"> {{ product.stockproduct}} </span>
-            <ion-button (click)="increaseQuantity(product)" shape="round" fill="outline">+</ion-button>
-          </div>
+          <p class="price-product">Total: CLP {{ product.priceproduct * product.quantity | number }}</p>
+          <span class="quantity">Cantidad: {{ product.quantity }}</span>
         </div>
       </div>
     </div>
@@ -23,11 +19,5 @@
       <p>No hay productos en el carrito</p>
     </ng-template>
   </div>
-  <div class="shopping-button">
-    <ion-button expand="full" (click)="comprar()" color="dark">Comprar</ion-button>
-    <ion-toast id="toast-message" [message]="toastMessage" [duration]="2000" [isOpen]="isToastOpen" (didDismiss)="isToastOpen = false" position="top"></ion-toast>
-  </div>
 </ion-content>
-<ion-toolbar>
-  <app-tabs></app-tabs>
-</ion-toolbar>
+<app-tabs></app-tabs>

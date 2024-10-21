@@ -21,9 +21,8 @@ export class ProductDetailPage implements OnInit {
   maxQuantity: number = 0;
   isToastOpen = false;
   toastMessage: string = '';
-  sizesAvailable: any[] = [];
   idlist: number = 1;
-  cartExists: boolean = false;
+
   constructor(
     private activatedroute: ActivatedRoute,
     private router: Router,
@@ -37,28 +36,24 @@ export class ProductDetailPage implements OnInit {
       console.error('Error: No se pudo obtener el productId de la navegación.');
     }
   }
+
   ngOnInit() {
     this.verificarConexionBD();
   }
+
   verificarConexionBD() {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
-        this.serviceBD.searchCartItems();
-        this.serviceBD.searchShoppingCarts();
         this.serviceSession.getUserSession().subscribe(async user => {
           if (user) {
             const cart = await this.serviceBD.getShoppingCartByRut(user.rut);
-            if (cart) {
-              this.cartExists = true;
-              this.shoppingCart = cart;
-            } else {
-              this.cartExists = false;
-            }
+            this.shoppingCart = cart ? cart : null;
           } else {
             console.error('No se encontró una sesión de usuario activa.');
           }
         });
+
         this.activatedroute.params.subscribe(params => {
           this.productId = params['id'];
           if (this.productId) {
@@ -69,14 +64,12 @@ export class ProductDetailPage implements OnInit {
         });
       });
   }
+
   cargarProducto(id: number) {
     this.serviceBD.getProductById(id).then(async (product: Productos | null) => {
       if (product) {
         const isFavorite = await this.serviceBD.isProductInFavorites(this.idlist, product.idproduct);
-        this.productoDetalle = {
-          ...product,
-          isFavorite: isFavorite
-        } as Productos & { isFavorite: boolean };
+        this.productoDetalle = { ...product, isFavorite };
         this.maxQuantity = this.productoDetalle.stockproduct;
         this.cargarTallasProducto(id);
       } else {
@@ -86,56 +79,53 @@ export class ProductDetailPage implements OnInit {
       console.error('Error al cargar el producto:', error);
     });
   }
+
   cargarTallasProducto(idproduct: number) {
-    this.serviceBD.fetchProductSizesByProductId(idproduct).then((sizes: any[]) => {
+    this.serviceBD.fetchProductSizesByProductId(idproduct).then(sizes => {
       this.serviceBD.fetchSizes().then(allSizes => {
         this.productSizes = sizes.map(ps => {
           const matchedSize = allSizes.find(size => size.idsize === ps.idsize);
-          return {
-            ...ps,
-            namesizes: matchedSize ? matchedSize.size : null
-          };
+          return { ...ps, namesizes: matchedSize ? matchedSize.size : null };
         });
       });
     }).catch(error => {
       console.error('Error al cargar las tallas del producto:', error);
     });
   }
-  irPagina(ruta: string) {
-    this.router.navigate([ruta]);
-  }
+
   selectSize(size: number) {
     this.selectedSize = size;
   }
+
   increaseQuantity() {
     if (this.selectedQuantity < this.maxQuantity) {
       this.selectedQuantity++;
     }
   }
+
   decreaseQuantity() {
     if (this.selectedQuantity > 1) {
       this.selectedQuantity--;
     }
   }
-  getOrCreateCart(): Promise<number> {
+
+  async getOrCreateCart(): Promise<number> {
     return new Promise((resolve, reject) => {
       this.serviceSession.getUserSession().subscribe(async user => {
         if (user) {
           try {
-            if (!this.cartExists) {
+            if (!this.shoppingCart) {
               const cart = await this.serviceBD.getShoppingCartByRut(user.rut);
               if (cart) {
-                this.cartExists = true;
                 this.shoppingCart = cart;
                 resolve(this.shoppingCart.idcart);
               } else {
                 const newCartId = await this.serviceBD.createNewCart(user.rut);
                 this.shoppingCart = { idcart: newCartId, rut: user.rut };
-                this.cartExists = true;
                 resolve(newCartId);
               }
             } else {
-              resolve(this.shoppingCart!.idcart);
+              resolve(this.shoppingCart.idcart);
             }
           } catch (error) {
             console.error('Error al obtener o crear el carrito:', error);
@@ -161,19 +151,15 @@ export class ProductDetailPage implements OnInit {
     if (this.productoDetalle) {
       try {
         const idcart = await this.getOrCreateCart();
-        const existingCartItem = await this.serviceBD.getCartItem(idcart, this.productoDetalle.idproduct, this.selectedSize);
+        const existingCartItem = await this.serviceBD.getCartItem(idcart, this.productoDetalle.idproduct, this.selectedSize); // Verificar si ya existe el producto en el carrito
         let totalQuantity = this.selectedQuantity;
         if (existingCartItem) {
           totalQuantity += existingCartItem.quantity;
-        }
-        if (totalQuantity > this.productoDetalle.stockproduct) {
-          this.showToast('No puedes agregar más de la cantidad disponible en stock.');
-          return;
-        }
-
-        // Insertar o actualizar el producto en el carrito
-        if (existingCartItem) {
-          await this.serviceBD.updateCartItemQuantity(idcart, this.productoDetalle.idproduct, this.selectedSize, totalQuantity);
+          if (totalQuantity > this.productoDetalle.stockproduct) {
+            this.showToast('No puedes agregar más de la cantidad disponible en stock.');
+            return;
+          }
+          await this.serviceBD.updateCartItemQuantityWithSize(idcart, this.productoDetalle.idproduct, this.selectedSize, totalQuantity);
         } else {
           await this.serviceBD.insertCartItem(idcart, this.productoDetalle.idproduct, this.selectedSize, this.selectedQuantity);
         }
@@ -183,10 +169,10 @@ export class ProductDetailPage implements OnInit {
         this.showToast('Error al agregar el producto al carrito: ' + error);
         console.error('Error al agregar el producto al carrito:', error);
       }
-    } else {
-      console.log('hay algún error en productoDetalle');
     }
   }
+
+
 
   async toggleFavorite(producto: Productos & { isFavorite: boolean }) {
     if (producto.isFavorite) {
@@ -205,8 +191,12 @@ export class ProductDetailPage implements OnInit {
       }
     }
   }
+
   showToast(message: string) {
     this.toastMessage = message;
     this.isToastOpen = true;
+  }
+  irPagina( ruta:string ){
+    this.router.navigate([ruta]);
   }
 }

@@ -321,19 +321,29 @@ export class ServiceBDService {
       this.presentAlert('Error', 'Error al actualizar carrito de compras: ' + JSON.stringify(e));
     }
   }
-  async searchCartItems() {
-    try {
-      let items: CartItem[] = [];
-      const res = await this.database.executeSql('SELECT * FROM cart_item', []);
-      if (res.rows.length > 0) {
-        for (let i = 0; i < res.rows.length; i++) {
-          items.push({idcart: res.rows.item(i).idcart, idproduct: res.rows.item(i).idproduct, size: res.rows.item(i).size, quantity: res.rows.item(i).quantity});
+    async searchCartItems(idcart: number) {
+      try {
+        const res = await this.database.executeSql('SELECT * FROM cart_item WHERE idcart = ?', [idcart]);
+        let items: CartItem[] = [];
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            const row = res.rows.item(i);
+            items.push({
+              idcart_item: row.idcart_item,
+              idcart: row.idcart,
+              idproduct: row.idproduct,
+              size: row.size,
+              quantity: row.quantity
+            });
+          }
         }
+        this.listCartItem.next(items as any);  // Actualizamos el observable
+      } catch (error) {
+        console.error('Error al actualizar items de carrito de compras:', error);
       }
-      this.listCartItem.next(items as any);
-    } catch (e) {
-      this.presentAlert('Error', 'Error al actualizar items de carrito de compras: ' + JSON.stringify(e));
     }
+    fetchCartItems() {
+      return this.listCartItem.asObservable();
   }
   async searchFavorites() {
     try {
@@ -486,11 +496,10 @@ export class ServiceBDService {
     const query = `INSERT INTO shopping_cart (rut) VALUES (?)`;
     try {
       const res = await this.database.executeSql(query, [rut]);
-      return res.insertId;
+      return res.insertId;  // Devolvemos el id del carrito creado
     } catch (error) {
       console.error('Error al crear un nuevo carrito:', error);
-      this.presentAlert('Error', 'Error al crear un nuevo carrito: ' + JSON.stringify(error)); // Asegúrate de ver todos los detalles del error
-      throw error; // Para mantener el error propagado
+      throw error;
     }
   }
   async deleteCart(idcart: number) {
@@ -508,22 +517,30 @@ export class ServiceBDService {
       const res = await this.database.executeSql(query, [idcart, idproduct, size]);
       if (res.rows.length > 0) {
         const item = res.rows.item(0);
-        return {idcart: item.idcart,idproduct: item.idproduct,size: item.size,quantity: item.quantity} as CartItem;
+        return {
+          idcart_item: item.idcart_item,
+          idcart: item.idcart,
+          idproduct: item.idproduct,
+          size: item.size,
+          quantity: item.quantity
+        } as CartItem;
       } else {
         return null;
       }
-    } catch (error) {console.error('Error al obtener el ítem del carrito:', error);throw error;}
+    } catch (error) {
+      console.error('Error al obtener el ítem del carrito:', error);
+      throw error;
+    }
   }
   async getCartItemsByCartId(idcart: number): Promise<CartItem[]> {
     const query = `SELECT * FROM cart_item WHERE idcart = ?`;
     try {
       const res = await this.database.executeSql(query, [idcart]);
-      const items: CartItem[] = [];
+      let items: CartItem[] = [];
       if (res.rows.length > 0) {
-        // Iterar sobre los resultados y mapearlos a un array de CartItem
         for (let i = 0; i < res.rows.length; i++) {
-          const item = res.rows.item(i);
-          items.push({idcart: item.idcart,idproduct: item.idproduct,size: item.size,quantity: item.quantity} as CartItem);
+          const row = res.rows.item(i);
+          items.push(new CartItem(row.idcart, row.idproduct, row.quantity, row.size, row.idcart_item)); // Pasar idcart_item
         }
       }
       return items;
@@ -538,9 +555,17 @@ export class ServiceBDService {
       const res = await this.database.executeSql(query, [rut]);
       if (res.rows.length > 0) {
         const cart = res.rows.item(0);
-        return {idcart: cart.idcart,rut: cart.rut,} as ShoppingCart;
-      } else {return null;}
-    } catch (error) {console.error('Error al obtener el carrito de compras por rut:', error); return null;}
+        return {
+          idcart: cart.idcart,
+          rut: cart.rut,
+        } as ShoppingCart;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener el carrito de compras por rut:', error);
+      return null;
+    }
   }
   async getShoppingCartById(idcart: number): Promise<ShoppingCart | null> {
     const query = `SELECT * FROM shopping_cart WHERE idcart = ?`;
@@ -558,7 +583,7 @@ export class ServiceBDService {
     return this.database.executeSql(query, [idcart, idproduct, selectedSize, quantity])
       .then(() => {
         console.log('Se ejecuto la query, vamos bien');
-        this.searchCartItems(); // Actualizar los ítems del carrito después de la inserción
+        this.searchCartItems(idcart);
       })
       .catch(error => {
         console.error('Error al insertar item en el carrito:', error);
@@ -567,26 +592,36 @@ export class ServiceBDService {
   }
   async deleteCartItem(idcart_item: number): Promise<void> {
     const query = `DELETE FROM cart_item WHERE idcart_item = ?`;
-    return this.database.executeSql(query, [idcart_item])
-      .then(() => {
-        this.searchCartItems();
-      })
-      .catch(error => {
-        console.error('Error al eliminar item del carrito:', error);
-        throw error;
-      });
+    try {
+      await this.database.executeSql(query, [idcart_item]);
+      console.log('Item eliminado del carrito:', idcart_item);
+    } catch (error) {
+      console.error('Error al eliminar el item del carrito:', JSON.stringify(error));
+      throw error;
+    }
   }
-  async updateCartItemQuantity(idcart: number, idproduct: number, size: number, newQuantity: number): Promise<void> {
+  async updateCartItemQuantity(idcart: number, idcart_item: number, quantity: number): Promise<void> {
+    const query = `UPDATE cart_item SET quantity = ? WHERE idcart_item = ?`;
+    try {
+      await this.database.executeSql(query, [quantity, idcart_item]);
+      console.log(`Cantidad actualizada a ${quantity} para el item ${idcart_item}`);
+      this.searchCartItems(idcart);
+    } catch (error) {
+      console.error('Error al actualizar la cantidad en cart_item:', error);
+    }
+  }
+  async updateCartItemQuantityWithSize(idcart: number, idproduct: number, selectedSize: number, totalQuantity: number): Promise<void> {
     const query = `UPDATE cart_item SET quantity = ? WHERE idcart = ? AND idproduct = ? AND size = ?`;
-    return this.database.executeSql(query, [newQuantity, idcart, idproduct, size])
-      .then(() => {
-        this.searchCartItems();
-      })
-      .catch(error => {
-        console.error('Error al actualizar la cantidad del ítem en el carrito:', error);
-        throw error;
-      });
+    try {
+      await this.database.executeSql(query, [totalQuantity, idcart, idproduct, selectedSize]);
+      console.log(`Cantidad actualizada a ${totalQuantity} para el producto ${idproduct} con talla ${selectedSize} en el carrito ${idcart}`);
+      this.searchCartItems(idcart);
+    } catch (error) {
+      console.error('Error al actualizar la cantidad en cart_item con talla:', error);
+      throw error;
+    }
   }
+
   async getFavoriteListsByRut(rut: string): Promise<Favoriteslist[]> {
     const query = `SELECT * FROM favorites_list WHERE rut = ?`;
     try {
@@ -632,6 +667,17 @@ export class ServiceBDService {
       }
     } catch (error) {console.error('Error al obtener la lista de favoritos "All":', error);return null;}
   }
+  fetchCartItemByCartId(idcart: number) {
+    const query = `SELECT * FROM cart_item WHERE idcart = ?`;
+    return this.database.executeSql(query, [idcart])
+      .then((res: any) => {
+        let cartItems: CartItem[] = [];
+        for (let i = 0; i < res.rows.length; i++) {
+          cartItems.push(res.rows.item(i));
+        }
+        return cartItems;
+      });
+  }
   async addFavoriteItem(idlist: number, idproduct: number): Promise<void> {
     const query = `INSERT INTO favorite_item (idlist, idproduct) VALUES (?, ?)`;
     try {
@@ -657,6 +703,71 @@ export class ServiceBDService {
     const res = await this.database.executeSql(query, [idlist, idproduct]);
     return res.rows.length > 0; // Devuelve true si el producto está en favoritos
   }
+  async insertOrder(totalorder: number, idproduct: number, idcard: number, rut: string): Promise<number> {
+    const query = `
+      INSERT INTO "order" (totalorder, idproduct, idcard, rut)
+      VALUES (?, ?, ?, ?);
+    `;
+    try {
+      const result = await this.database.executeSql(query, [totalorder, idproduct, idcard, rut]);
+      return result.insertId;
+    } catch (error) {
+      console.error('Error al insertar la orden:', error);
+      throw error;
+    }
+  }
+  async insertOrderHistory(idorder: number, rut: string, idstate: number): Promise<void> {
+    const query = `
+      INSERT INTO order_history (idorder, rut, idstate)
+      VALUES (?, ?, ?);
+    `;
+    try {
+      await this.database.executeSql(query, [idorder, rut, idstate]);
+    } catch (error) {
+      console.error('Error al insertar en el historial de órdenes:', error);
+      throw error;
+    }
+  }
+  async getOrdersByRut(rut: string): Promise<Order[]> {
+    const query = `SELECT * FROM "order" WHERE rut = ?`;
+    try {
+      const res = await this.database.executeSql(query, [rut]);
+      let orders: Order[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          orders.push({ idorder: res.rows.item(i).idorder, created_at: res.rows.item(i).created_at, totalorder: res.rows.item(i).totalorder, idproduct: res.rows.item(i).idproduct, idcard: res.rows.item(i).idcard, idcomplaint: res.rows.item(i).idcomplaint, rut: res.rows.item(i).rut,
+          } as Order);
+        }
+      }
+      return orders;
+    } catch (error) {
+      console.error('Error al obtener las órdenes por rut:', error);
+      return [];
+    }
+  }
+  async getOrderHistoryByRut(rut: string): Promise<OrderHistory[]> {
+    const query = `SELECT * FROM order_history WHERE rut = ?`;
+    try {
+      const res = await this.database.executeSql(query, [rut]);
+      let orderHistory: OrderHistory[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          orderHistory.push({
+            idhistory: res.rows.item(i).idhistory,
+            idorder: res.rows.item(i).idorder,
+            rut: res.rows.item(i).rut,
+            idstate: res.rows.item(i).idstate,
+            change_date: res.rows.item(i).change_date,
+          } as OrderHistory);
+        }
+      }
+      return orderHistory;
+    } catch (error) {
+      console.error('Error al obtener el historial de órdenes:', error);
+      return [];
+    }
+  }
+
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
   fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}
@@ -734,4 +845,5 @@ export class ServiceBDService {
       return roles;
     } catch{return [];}
   }
+
 }

@@ -52,10 +52,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/adm-modify/adm-modify.module').then( m => m.AdmModifyPageModule)
   },
   {
-    path: 'modify-pass',
-    loadChildren: () => import('./pages/modify-pass/modify-pass.module').then( m => m.ModifyPassPageModule)
-  },
-  {
     path: 'modify-profile',
     loadChildren: () => import('./pages/modify-profile/modify-profile.module').then( m => m.ModifyProfilePageModule)
   },
@@ -64,9 +60,14 @@ const routes: Routes = [
     loadChildren: () => import('./pages/panel-add/panel-add.module').then( m => m.PanelAddPageModule)
   },
   {
+    path: 'orders',
+    loadChildren: () => import('./pages/orders/orders.module').then( m => m.OrdersPageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/error-page/error-page.module').then( m => m.ErrorPagePageModule)
   },
+
 ];
 
 @NgModule({

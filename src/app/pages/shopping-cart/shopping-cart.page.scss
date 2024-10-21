@@ -52,7 +52,8 @@ ion-checkbox::part(container) {
 }
 
 .shopping-product img {
-  width: 140px;
+  width: 100px;
+  height: 100px;
   padding: 10px;
 }
 .back-product{
@@ -83,4 +84,22 @@ ion-checkbox::part(container) {
 }
 .shopping-button{
     width: 100%;
+}
+.checkmark-container {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid #ffffff; /* Contorno del checkbox */
+  border-radius: 50%;
+}
+
+.checkmark {
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/check.svg'); /* Ruta del archivo SVG */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }

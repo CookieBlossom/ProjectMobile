@@ -1,0 +1,70 @@
+.header-orders {
+  display: flex;
+  background-color: #F5F5F5;
+  height: 6%;
+  width: 100%;
+  align-items: center;
+  padding: 10px;
+  justify-content: space-between;
+}
+.header-orders h3 {
+  margin: 0;
+  text-align: center;
+  color: black;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: "Noto Sans", sans-serif;
+  letter-spacing: 2px;
+}
+.header-orders img {
+  width: 30px;
+}
+
+.content-orders {
+  height: 90%;
+}
+
+.order {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.information-order {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.information-order p {
+  margin: 0;
+}
+
+.title-information {
+  font-size: 20px;
+  font-weight: bold;
+  color: #b4b4b4;
+}
+
+.description {
+  color: #cecece;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: 500;
+  margin-top: 5px;
+  font-size: 18px;
+  color: #000;
+}
+
+ng-template p {
+  text-align: center;
+  font-size: 30px;
+  color: #cecece;
+  padding: 20px;
+}
