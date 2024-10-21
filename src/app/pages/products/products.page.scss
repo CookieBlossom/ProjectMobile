@@ -46,11 +46,17 @@ ion-col {
     margin: 0;
     font-size: 20px;
 }
-.container-products{
-    height: 100%;
+.section-products{
+  height: 100%;
+  width: 100%;
+}
+.container-products {
+    height: auto; /* Permite que el contenedor crezca con el contenido */
+    max-height: 100vh; /* Establece una altura máxima en función del viewport */
+    overflow-y: auto; /* Habilita el scroll vertical si el contenido excede la altura máxima */
     display: flex;
     flex-direction: row;
-    align-items: center;
+    flex-wrap: wrap; /* Para que los productos se ajusten automáticamente en nuevas filas */
     justify-content: space-around;
 }
 .product{
@@ -64,9 +70,6 @@ ion-col {
     background-color: #262626;
     border: solid 1px black;
     overflow: hidden;
-}
-.section-products{
-    margin: 5px;
 }
 .image-product img{
     width: 100%;
