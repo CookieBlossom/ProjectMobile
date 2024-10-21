@@ -70,9 +70,10 @@ ion-button {
   justify-content: space-evenly;
   flex-grow: 1;
 }
-.size-product.selected {
-  --background: #3b3b3b;
-  --color: #f5f5f5;
+.sizes-product button.selected {
+  background-color: #3b3b3b;
+  color: #f5f5f5;
+  border: 2px solid #f5f5f5;
 }
 .sizes-product button {
   background-color: #f5f5f5;

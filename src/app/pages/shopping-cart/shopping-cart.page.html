@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="true">
   <div class="header-shopping">
     <img src="/assets/arrow-back.svg" (click)="irPagina('/home')">
-    <p class="items-shopping"></p>
+    <p class="items-shopping">Carrito de Compras</p>
   </div>
   <div class="content-shopping">
     <div *ngIf="productsInCart.length > 0; else noProductsTemplate">

@@ -1,8 +1,12 @@
 export class CartItem {
   idcart!:number;
   idproduct!:number;
-  constructor(idcart: number, idproduct: number){
+  quantity!: number;
+  size!:number;
+  constructor(idcart: number, idproduct: number, quantity: number, size:number){
     this.idcart = idcart;
+    this.quantity = quantity;
+    this.size = size;
     this.idproduct = idproduct;
   }
 }

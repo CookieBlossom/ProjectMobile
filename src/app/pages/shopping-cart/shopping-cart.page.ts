@@ -18,15 +18,12 @@ export class ShoppingCartPage implements OnInit {
   user: Users | null = null;
   cartItem: CartItem[] = [];
   shoppingCart: ShoppingCart | null = null;
-  selectedQuantity: number = 1;
-  maxQuantity: number = 12;
   isToastOpen = false;
   selectedProducts = new Set<number>();
   toastMessage: string = '';
   constructor(private activatedroute: ActivatedRoute,private router: Router,private serviceBD: ServiceBDService,private serviceSession: UserSessionService) {}
   ngOnInit() {
     this.verificarConexionBD();
-    this.obtenerSesionUsuario();
   }
   verificarConexionBD() {
     this.serviceBD.dbReady()
@@ -35,7 +32,11 @@ export class ShoppingCartPage implements OnInit {
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
           this.products = data;
         });
+        this.serviceBD.searchCartItems();
+        this.serviceBD.searchShoppingCarts();
         this.serviceBD.searchProducts();
+        this.obtenerSesionUsuario();
+        this.serviceBD.searchUsers();
       });
   }
   obtenerSesionUsuario() {
@@ -43,29 +44,37 @@ export class ShoppingCartPage implements OnInit {
       if (user) {
         this.user = user;
         console.log('Rut del usuario recuperado:', this.user?.rut);
-        this.checkShoppingCart();
+        this.checkShoppingCart(this.user.rut);
       } else {
         console.error('No se encontró una sesión de usuario activa.');
       }
     });
   }
-  async checkShoppingCart() {
+  async checkShoppingCart(rut: string) {
     if (this.user) {
-      this.shoppingCart = await this.serviceBD.getShoppingCartByRut(this.user.rut);
+      this.shoppingCart = await this.serviceBD.getShoppingCartByRut(rut);
       if (!this.shoppingCart) {
-        const newCartId = await this.serviceBD.createNewCart(this.user.rut);
+        const newCartId = await this.serviceBD.createNewCart(rut);
         console.log('Nuevo carrito creado con ID:', newCartId);
         this.shoppingCart = await this.serviceBD.getShoppingCartById(newCartId);
       } else {
         console.log('Carrito de compras existente:', this.shoppingCart);
       }
+      await this.cargarCartItems();
+    }
+  }
+  async cargarCartItems() {
+    if (this.shoppingCart) {
+      this.cartItem = await this.serviceBD.getCartItemsByCartId(this.shoppingCart.idcart);
+      this.productsInCart = this.products.filter(product =>
+        this.cartItem.some(cart => cart.idproduct === product.idproduct)
+      );
     }
   }
   filterProductsInCart() {
     const productsInCart = this.products.filter(product =>
-      this.cartItem.some(cart => cart.idproduct === product.idproduct)
+      this.cartItem.some(cart => cart.idproduct == product.idproduct)
     );
-
     return productsInCart;
   }
   irPagina(ruta:string){
