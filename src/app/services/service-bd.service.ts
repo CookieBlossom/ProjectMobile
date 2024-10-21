@@ -263,16 +263,7 @@ export class ServiceBDService {
       let items: Productos[] = [];
       if (res.rows.length > 0) {
         for (var i = 0; i < res.rows.length; i++) {
-          items.push({
-            idproduct: res.rows.item(i).idproduct,
-            nameproduct: res.rows.item(i).nameproduct,
-            descriptionproduct: res.rows.item(i).descriptionproduct,
-            stockproduct: res.rows.item(i).stockproduct,
-            idcategory: res.rows.item(i).idcategory,
-            idbrand: res.rows.item(i).idbrand,
-            idgender: res.rows.item(i).idgender,
-            image: res.rows.item(i).image,
-            priceproduct: res.rows.item(i).priceproduct});
+          items.push({idproduct: res.rows.item(i).idproduct,nameproduct: res.rows.item(i).nameproduct,descriptionproduct: res.rows.item(i).descriptionproduct,stockproduct: res.rows.item(i).stockproduct,idcategory: res.rows.item(i).idcategory,idbrand: res.rows.item(i).idbrand,idgender: res.rows.item(i).idgender,image: res.rows.item(i).image,priceproduct: res.rows.item(i).priceproduct});
         }
       }
       this.listProducts.next(items as any);
@@ -289,26 +280,28 @@ export class ServiceBDService {
       this.listProductSizes.next(items as any);
     } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
   }
+  async fetchProductSizesByProductId(idproduct: number): Promise<ProductSizes[]> {
+    try {
+      const query = `SELECT * FROM product_size WHERE idproduct = ?`;
+      const res = await this.database.executeSql(query, [idproduct]);
+      let productSizes: ProductSizes[] = [];
 
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          productSizes.push({idproduct_size: res.rows.item(i).idproduct_size,idproduct: res.rows.item(i).idproduct,idsize: res.rows.item(i).idsize});
+        }
+      }
+      return productSizes;
+    } catch (error) {console.error('Error al obtener las tallas asociadas al producto:', error); throw error;
+    }
+  }
   async searchUsers() {
     try {
       const res = await this.database.executeSql('SELECT * FROM user', []);
       let items: Users[] = [];
       if (res.rows.length > 0) {
         for (var i = 0; i < res.rows.length; i++) {
-          items.push({
-            rut: res.rows.item(i).rut,
-            firstname: res.rows.item(i).firstname,
-            secondname: res.rows.item(i).secondname,
-            firstlastname: res.rows.item(i).firstlastname,
-            secondlastname: res.rows.item(i).secondlastname,
-            imageuser: res.rows.item(i).imageuser,
-            genderuser: res.rows.item(i).genderuser,
-            email: res.rows.item(i).email,
-            password: res.rows.item(i).password,
-            phone: res.rows.item(i).phone,
-            idrol: res.rows.item(i).idrol,
-          });}
+          items.push({rut: res.rows.item(i).rut,firstname: res.rows.item(i).firstname,secondname: res.rows.item(i).secondname,firstlastname: res.rows.item(i).firstlastname,secondlastname: res.rows.item(i).secondlastname,imageuser: res.rows.item(i).imageuser,genderuser: res.rows.item(i).genderuser,email: res.rows.item(i).email,password: res.rows.item(i).password,phone: res.rows.item(i).phone,idrol: res.rows.item(i).idrol,});}
       }
       this.listUsers.next(items as any);
     } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
@@ -319,11 +312,7 @@ export class ServiceBDService {
       const res = await this.database.executeSql('SELECT * FROM shopping_cart', []);
       if (res.rows.length > 0) {
         for (let i = 0; i < res.rows.length; i++) {
-          items.push({
-            rut: res.rows.item(i).rut,
-            totalcart: res.rows.item(i).totalcart,
-            idcart: res.rows.item(i).idcart,
-          });
+          items.push({rut: res.rows.item(i).rut,totalcart: res.rows.item(i).totalcart,idcart: res.rows.item(i).idcart,});
         }
       }
       this.listShoppingCart.next(items as any);
@@ -337,10 +326,7 @@ export class ServiceBDService {
       const res = await this.database.executeSql('SELECT * FROM cart_item', []);
       if (res.rows.length > 0) {
         for (let i = 0; i < res.rows.length; i++) {
-          items.push({
-            idcart: res.rows.item(i).idcart,
-            idproduct: res.rows.item(i).idproduct,
-          });
+          items.push({idcart: res.rows.item(i).idcart,idproduct: res.rows.item(i).idproduct,});
         }
       }
       this.listCartItem.next(items as any);

@@ -1,113 +1,118 @@
 ion-button {
-    --background: #F5F5F5;
-    --color: #000000;
-    --box-shadow: 0 2px 6px 0 rgb(0, 0, 0, 0.25);
-    --border-color: #000000;
+  --background: #F5F5F5;
+  --color: #000000;
+  --box-shadow: 0 2px 6px 0 rgb(0, 0, 0, 0.25);
+  --border-color: #000000;
 }
 .favorite-product{
-    position: absolute;
-    width: 50px;
-    transform: translateX(350px) translateY(5px);
-    background: #000000;
-    border-radius: 50%;
-    padding: 5px;
+  position: absolute;
+  width: 45px;
+  transform: translateX(160px) translateY(-80px);
+  background: #000000;
+  border-radius: 50%;
+  padding: 5px;
 }
 .arrow-back{
-    position: absolute;
-    width: 45px;
-    transform: translateY(5px);
+  position: absolute;
+  width: 45px;
+  transform: translateX(-160px) translateY(-80px);
 }
 .header-product{
-    width: 100%;
-    height: 30%;
-    background-color: #F5F5F5;
-    border-radius: 0% 0% 48% 52% / 10% 18% 15% 17% 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30vh;
+  background-color: #F5F5F5;
+  border-radius: 0% 0% 48% 52% / 10% 18% 15% 17%
 }
 .image-product{
-    position: absolute;
-    width: 60%;
-    border-radius: 50%;
-    transform: translateX(80px) translateY(70px);
-    box-shadow: 0px 1px 20px 0px rgba(0, 0, 0, 0.47);
-}
-.image-product img{
-    border-radius: 50%;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  box-shadow: 0px 1px 20px 0px rgba(0, 0, 0, 0.47);
 }
 .information-product{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 57%;
-    margin-top: 60px;
-    background-color: linear-gradient(180deg, #1b1b1b, #464545);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 70vw;
+  margin-top: 10px;
+  background-color: linear-gradient(180deg, #1b1b1b, #464545);
 }
-
 .information-product h3{
-    margin: 0;
-    line-height: 1.2;
-    text-align: center;
-    font-size: 40px;
-    font-family: "New Amsterdam", sans-serif;
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+  font-size: 60px;
+  font-family: "Pompiere", sans-serif;
 }
 .title-size{
-    text-align: center;
-    font-size: 25px;
-    letter-spacing: 5px;
-    margin: 0px;
+  text-align: center;
+  font-size: 25px;
+  letter-spacing: 5px;
+  margin: 0px;
 }
 .sizes-product{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 60px;
 }
 .size-product.selected {
-    --background: #3b3b3b;
-    --color: #f5f5f5;
+  --background: #3b3b3b;
+  --color: #f5f5f5;
+}
+.sizes-product button {
+  background-color: #f5f5f5;
+  border: 2px solid #3b3b3b;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 16px;
+  color: #000;
+  cursor: pointer;
 }
 .description-product p{
-    text-align: center;
-    padding: 10px;
-    font-size: 15px;
-    color: #e2e2e2;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+  color: #e2e2e2;
 }
-
 .description-product h4{
-    text-align: center;
-    font-size: 25px;
-    letter-spacing: 5px;
-    margin: 0px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 5px;
+  margin: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
 .stock-product{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
-
 .price-product{
-    font-size: 30px;
-    text-align: center;
-    margin: 0;
-    font-weight: 500;
-    font-family: "Titillium Web", sans-serif;
+  font-size: 30px;
+  text-align: center;
+  margin: 0;
+  font-weight: 500;
+  font-family: "Titillium Web", sans-serif;
 }
 .stock-selector{
-    background-color: #1b1b1b;
-    display: flex;
-    align-items: center;
-    border-radius: 999px;
-    width: 170px;
-    height: 40px;
-    justify-content: space-between;
+  background-color: #1b1b1b;
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  width: 170px;
+  height: 40px;
+  justify-content: space-between;
 }
-
 .stock-selector span{
-    font-size: 18px;
+  font-size: 18px;
 }
 .addToCart{
-    margin-top: 40px;
+  margin-top: 40px;
 }

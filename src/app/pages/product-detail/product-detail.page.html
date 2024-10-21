@@ -1,41 +1,27 @@
 <ion-content [fullscreen]="true">
   <div class="header-product">
-    <img class="favorite-product"
-    [src]="productoDetalle.isFavorite ? '/assets/heart-red.svg' : '/assets/heart-white.svg'"
-    alt="Favorite"
-    (click)="toggleFavorite(productoDetalle); $event.stopPropagation()">
-
+    <!-- Ícono para marcar como favorito (comentado por ahora) -->
     <img (click)="irPagina('/products')" class="arrow-back" src="/assets/arrow-back.svg">
-
- <div class="image-product">
-    </div>
-    <div class="image-product">
-      <img src="/assets/products/sample.png" alt="">
-    </div>
+    <img class="image-product" [src]="productoDetalle?.image" alt="Imagen del producto">
+    <img class="favorite-product" src="/assets/heart-red.svg">
   </div>
   <div class="information-product">
-    <h3>{{productoDetalle.name}}</h3>
+    <h3>{{ productoDetalle?.nameproduct }}</h3>
     <h4 class="title-size">Tallas</h4>
     <div class="sizes-product">
-      <ng-container *ngFor="let size of productoDetalle.sizes">
-        <ion-button
-          class="size-product"
-          [ngClass]="{'selected': size === selectedSize}"
-          (click)="selectSize(size)"
-          shape="round">
-          {{ size }}
-        </ion-button>
+      <ng-container *ngFor="let size of productSizes">
+        <button [class.selected]="size.idsize === selectedSize" (click)="selectSize(size.idsize)">{{ size.namesizes }}</button>
       </ng-container>
     </div>
     <div class="description-product">
       <h4>Descripción</h4>
-      <p>{{productoDetalle.description}}</p>
+      <p>{{ productoDetalle?.descriptionproduct }}</p>
     </div>
     <div class="stock-product">
-      <p class="price-product">{{productoDetalle.price | currency:'CLP'}}</p>
+      <p class="price-product">{{ productoDetalle?.priceproduct | currency:'CLP' }}</p>
       <div class="stock-selector">
         <ion-button (click)="decreaseQuantity()" shape="round" fill="outline">-</ion-button>
-          <span class="stock-quantity">{{ selectedQuantity }}</span>
+        <span class="stock-quantity">{{ selectedQuantity }}</span>
         <ion-button (click)="increaseQuantity()" shape="round" fill="outline">+</ion-button>
       </div>
     </div>
@@ -44,6 +30,7 @@
     </div>
     <ion-toast id="toast-message" [message]="toastMessage" [duration]="2000" [isOpen]="isToastOpen" (didDismiss)="isToastOpen = false" position="top"></ion-toast>
   </div>
+</ion-content>
 <ion-toolbar>
   <app-tabs></app-tabs>
 </ion-toolbar>
