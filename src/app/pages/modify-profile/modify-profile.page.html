@@ -57,8 +57,8 @@
             <mat-error *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched">Teléfono inválido</mat-error>
           </mat-form-field>
           <div class="button-container">
-            <ion-button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid">Guardar Cambios</ion-button>
-            <ion-button (click)="irPagina('/profile')">Volver</ion-button>
+            <ion-button class="grey-button" mat-raised-button type="submit" [disabled]="profileForm.invalid">Guardar Cambios</ion-button>
+            <ion-button class="grey-button" (click)="irPagina('/profile')">Volver</ion-button>
           </div>
         </form>
       </mat-card-content>

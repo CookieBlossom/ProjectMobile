@@ -8,7 +8,7 @@ mat-form-field {
     padding: 0;
     width: 100%;
   }
-  
+
   mat-card-content {
     padding: 0px;
   }
@@ -16,13 +16,13 @@ mat-form-field {
     padding: 0;
     margin: 0;
   }
-  
+
   .header-login{
     height: 120px;
     display: flex;
     justify-content: center;
   }
-  
+
   .icon-container{
     display: flex;
     justify-content: center;
@@ -31,7 +31,7 @@ mat-form-field {
     width: 140px;
     align-items: center;
   }
-  
+
   .icon-container img{
     height: 100px;
     width: 100px;
@@ -40,13 +40,13 @@ mat-form-field {
     display: flex;
     padding: 5px;
     text-align: center;
-    justify-content: center; 
+    justify-content: center;
   }
-  
+
   mat-label{
     font-size: 15px;
   }
-  
+
   .login-container {
     display: flex;
     justify-content: center;
@@ -54,17 +54,23 @@ mat-form-field {
     padding: 5px;
     max-width: 100%;
   }
-    
-  
+
+
   .example-full-width {
     width: 100%;
   }
-  
+
   .button-container {
     display: flex;
     justify-content: center;
   }
-  
+
   .submit-button {
     width: 100%;
   }
+
+  .grey-button {
+    --background: grey;
+    --color: white;
+  }
+  
