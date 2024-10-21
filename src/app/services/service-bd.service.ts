@@ -590,6 +590,31 @@ export class ServiceBDService {
       }
     } catch (error) {console.error('Error al obtener la lista de favoritos "All":', error);return null;}
   }
+  async addFavoriteItem(idlist: number, idproduct: number): Promise<void> {
+    const query = `INSERT INTO favorite_item (idlist, idproduct) VALUES (?, ?)`;
+    try {
+      await this.database.executeSql(query, [idlist, idproduct]);
+      console.log('Producto agregado a la lista de favoritos en la base de datos');
+    } catch (error) {
+      console.error('Error al agregar el producto a la lista de favoritos:', error);
+      throw error;
+    }
+  }
+  async deleteFavoriteItem(idlist: number, idproduct: number): Promise<void> {
+    const query = `DELETE FROM favorite_item WHERE idlist = ? AND idproduct = ?`;
+    try {
+      await this.database.executeSql(query, [idlist, idproduct]);
+      console.log('Producto eliminado de la lista de favoritos en la base de datos');
+    } catch (error) {
+      console.error('Error al eliminar el producto de la lista de favoritos:', error);
+      throw error;
+    }
+  }
+  async isProductInFavorites(idlist: number, idproduct: number): Promise<boolean> {
+    const query = `SELECT * FROM favorite_item WHERE idlist = ? AND idproduct = ?`;
+    const res = await this.database.executeSql(query, [idlist, idproduct]);
+    return res.rows.length > 0; // Devuelve true si el producto está en favoritos
+  }
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
   fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}

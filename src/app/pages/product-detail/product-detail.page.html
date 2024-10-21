@@ -1,10 +1,10 @@
 <ion-content [fullscreen]="true">
   <div class="header-product">
-    <!-- Ícono para marcar como favorito (comentado por ahora) -->
     <img (click)="irPagina('/products')" class="arrow-back" src="/assets/arrow-back.svg">
     <img class="image-product" [src]="productoDetalle?.image" alt="Imagen del producto">
-    <img class="favorite-product" src="/assets/heart-red.svg">
-  </div>
+    <img class="favorite-product" [src]="productoDetalle?.isFavorite ? '/assets/heart-red.svg' : '/assets/heart-white.svg'" alt="Favorite" (click)="productoDetalle && toggleFavorite(productoDetalle); $event.stopPropagation()">
+ </div>
+
   <div class="information-product">
     <div class="title">
       <h3>{{ productoDetalle?.nameproduct }}</h3>
