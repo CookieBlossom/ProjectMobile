@@ -6,12 +6,16 @@
     <img class="favorite-product" src="/assets/heart-red.svg">
   </div>
   <div class="information-product">
-    <h3>{{ productoDetalle?.nameproduct }}</h3>
-    <h4 class="title-size">Tallas</h4>
-    <div class="sizes-product">
-      <ng-container *ngFor="let size of productSizes">
-        <button [class.selected]="size.idsize === selectedSize" (click)="selectSize(size.idsize)">{{ size.namesizes }}</button>
-      </ng-container>
+    <div class="title">
+      <h3>{{ productoDetalle?.nameproduct }}</h3>
+    </div>
+    <div class="size">
+      <h4 class="title-size">Tallas</h4>
+      <div class="sizes-product">
+        <ng-container *ngFor="let size of productSizes">
+          <button [class.selected]="size.idsize === selectedSize" (click)="selectSize(size.idsize)">{{ size.namesizes }}</button>
+        </ng-container>
+      </div>
     </div>
     <div class="description-product">
       <h4>Descripción</h4>
