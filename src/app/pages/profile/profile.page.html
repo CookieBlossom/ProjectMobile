@@ -31,10 +31,6 @@
             Modificar datos
             <img (click)="irPagina('/modify-profile')" src="/assets/arrow-black.svg" alt="">
           </div>
-          <div class="item-list">
-            Modificar contraseña
-            <img (click)="irPagina('/modify-pass')" src="/assets/arrow-black.svg" alt="">
-          </div>
           <div class="item-list" *ngIf="user?.idrol == 1">
             Panel de Administrador
             <img (click)="irPagina('/panel-adm')" src="/assets/arrow-black.svg" alt="">
