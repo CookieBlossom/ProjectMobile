@@ -1,85 +1,24 @@
 <ion-content [fullscreen]="true">
   <div class="header-favorites">
     <img (click)="irPagina('/home')" src="/assets/arrow-back.svg" alt="">
-    <h3>Lista de favoritos</h3>
+    <h3>Favoritos</h3>
     <img (click)="irPagina('/shopping-cart')" src="/assets/cart.svg" alt="">
   </div>
-  <div class="content-favorites">
-    <ion-segment color="light" [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
-      <ion-segment-button value="All">
-        <ion-label>Todos</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="Lists">
-        <ion-label>Mis listas (2)</ion-label>
-      </ion-segment-button>
-    </ion-segment>
 
-    <div *ngIf="selectedSegment === 'All'">
-      <div class="product">
-        <img src="/assets/products/sample.png">
-        <div class="information-product">
-          <p class="title-information">Adidas Strike 10</p>
-          <p class="description">Una Zapatilla comoda con la cual podras recorrer los distintos sitios donde no tendras ningun impedimento</p>
-          <p class="price">CLP 30.900</p>
-        </div>
-      </div>
-      <div class="product">
-        <img src="/assets/products/sample.png">
-        <div class="information-product">
-          <p class="title-information">Adidas Strike 10</p>
-          <p class="description">Una Zapatilla comoda con la cual podras recorrer los distintos sitios donde no tendras ningun impedimento</p>
-          <p class="price">CLP 30.900</p>
-        </div>
-      </div>
-      <div class="product">
-        <img src="/assets/products/sample.png">
-        <div class="information-product">
-          <p class="title-information">Adidas Strike 10</p>
-          <p class="description">Una Zapatilla comoda con la cual podras recorrer los distintos sitios donde no tendras ningun impedimento</p>
-          <p class="price">CLP 30.900</p>
-        </div>
-      </div>
-      <div class="product">
-        <img src="/assets/products/sample.png">
-        <div class="information-product">
-          <p class="title-information">Adidas Strike 10</p>
-          <p class="description">Una Zapatilla comoda con la cual podras recorrer los distintos sitios donde no tendras ningun impedimento</p>
-          <p class="price">CLP 30.900</p>
-        </div>
+  <div class="content-favorites" *ngIf="productsFavorite.length > 0; else noFavorites">
+    <div class="product" *ngFor="let product of productsFavorite">
+      <img [src]="product.image" alt="{{ product.nameproduct }}">
+      <div class="information-product">
+        <p class="title-information">{{ product.nameproduct }}</p>
+        <p class="description">{{ product.descriptionproduct }}</p>
+        <p class="price">{{ product.priceproduct | currency: 'CLP' }}</p>
       </div>
     </div>
-    <div *ngIf="selectedSegment === 'Lists'">
-      <div class="list-one">
-        <div class="header-list-one">
-          <p class="title-list-one">Puma</p>
-          <img src="/assets/arrow.svg" alt="">
-        </div>
-        <p class="list-one-qty">1 articulo</p>
-        <div class="content-list-one">
-          <img src="/assets/products/sample.png">
-          <p class="price-list-one">CLP 46.678</p>
-        </div>
-      </div>
-      <div class="list-one">
-        <div class="header-list-one">
-          <p class="title-list-one">Lista 2</p>
-          <img src="/assets/arrow.svg" alt="">
-        </div>
-        <p class="list-one-qty">2 articulo</p>
-        <div class="content-list-two">
-          <div class="product-list">
-            <img src="/assets/products/sample.png">
-            <p class="price-list-one">CLP 46.678</p>
-          </div>
-          <div class="product-list">
-            <img src="/assets/products/sample.png">
-            <p class="price-list-one">CLP 46.678</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
+
+  <ng-template #noFavorites>
+    <p>No tienes productos en favoritos.</p>
+  </ng-template>
 </ion-content>
 <ion-toolbar>
   <app-tabs></app-tabs>

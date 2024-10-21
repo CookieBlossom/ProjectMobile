@@ -5,7 +5,6 @@ import { ServiceBDService } from 'src/app/services/service-bd.service';
 import { filter } from 'rxjs/operators';
 import { NavigationExtras, Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
-
 @Component({
   selector: 'app-products',
   templateUrl: './products.page.html',
@@ -27,11 +26,9 @@ export class ProductsPage implements OnInit {
       selectedGender: [0]
     });
   }
-
   ngOnInit() {
     this.verificarConexionBD();
   }
-
   verificarConexionBD() {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
@@ -45,7 +42,6 @@ export class ProductsPage implements OnInit {
         this.selectDataStatic();
       });
   }
-
   applyFilters() {
     const { priceRange, selectedCategory, selectedGender } = this.filtersForm.value;
 
@@ -56,7 +52,6 @@ export class ProductsPage implements OnInit {
       return matchPrice && matchCategory && matchGender;
     });
   }
-
   clearFilters() {
     this.filtersForm.reset({ priceRange: 10000, selectedCategory: 0, selectedGender: 0 });
     this.filteredProducts = this.products;

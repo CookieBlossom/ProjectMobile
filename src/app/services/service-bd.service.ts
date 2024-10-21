@@ -334,6 +334,30 @@ export class ServiceBDService {
       this.presentAlert('Error', 'Error al actualizar items de carrito de compras: ' + JSON.stringify(e));
     }
   }
+  async searchFavorites() {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM favorites_list', []);
+      let items: any[] = [];
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
+          items.push({idlist: res.rows.item(i).idlist,rut: res.rows.item(i).rut,list_name: res.rows.item(i).list_name,created_at: res.rows.item(i).created_at});
+        }
+      }
+      this.listFavorite.next(items as any);
+    } catch (e) {this.presentAlert('Select', 'Error: ' + JSON.stringify(e));}
+  }
+  async searchFavoriteItem(idlist: number) {
+    try {
+      const res = await this.database.executeSql('SELECT * FROM favorite_item WHERE idlist = ?', [idlist]);
+      let items: any[] = [];
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
+          items.push({idfavorite_item: res.rows.item(i).idfavorite_item,idlist: res.rows.item(i).idlist,idproduct: res.rows.item(i).idproduct,added_at: res.rows.item(i).added_at});
+        }
+      }
+      this.listFavoriteItems.next(items as any); // Actualizamos el observable con los resultados
+    } catch (e) {this.presentAlert('Select', 'Error: ' + JSON.stringify(e));}
+  }
   async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number): Promise<number> {
     const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
@@ -520,6 +544,51 @@ export class ServiceBDService {
         console.error('Error al actualizar item en el carrito:', error);
         throw error;
       });
+  }
+  async getFavoriteListsByRut(rut: string): Promise<Favoriteslist[]> {
+    const query = `SELECT * FROM favorites_list WHERE rut = ?`;
+    try {
+      const res = await this.database.executeSql(query, [rut]);
+      let lists: Favoriteslist[] = [];
+      if (res.rows.length > 0) {
+        for (let i = 0; i < res.rows.length; i++) {
+          lists.push({idlist: res.rows.item(i).idlist,rut: res.rows.item(i).rut,list_name: res.rows.item(i).list_name} as Favoriteslist);
+        }
+      }
+      return lists;
+    } catch (error) {console.error('Error al obtener las listas de favoritos:', error); return [];}
+  }
+  async getFavoriteItemsByListId(idlist: number): Promise<any[] | null> {
+    const query = `SELECT * FROM favorite_item WHERE idlist = ?`;
+    try {
+      const res = await this.database.executeSql(query, [idlist]);
+      if (res.rows.length > 0) {
+        let items: any[] = [];
+        for (let i = 0; i < res.rows.length; i++) {
+          items.push(res.rows.item(i));
+        }
+        return items;
+      } else {return null;}
+    } catch (error) {console.error('Error al obtener los ítems de la lista de favoritos:', error);return null;
+    }
+  }
+  async createFavoriteList(rut: string, listName: string): Promise<number | null> {
+    const query = `INSERT INTO favorites_list (rut, list_name) VALUES (?, ?)`;
+    try {
+      const res = await this.database.executeSql(query, [rut, listName]);
+      return res.insertId;
+    } catch (error) {console.error('Error al crear la lista "All":', error);return null;}
+  }
+  async getFavoriteListByRutAndName(rut: string, listName: string): Promise<any | null> {
+    const query = `SELECT * FROM favorites_list WHERE rut = ? AND list_name = ?`;
+    try {
+      const res = await this.database.executeSql(query, [rut, listName]);
+      if (res.rows.length > 0) {
+        return res.rows.item(0);
+      } else {
+        return null;
+      }
+    } catch (error) {console.error('Error al obtener la lista de favoritos "All":', error);return null;}
   }
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}

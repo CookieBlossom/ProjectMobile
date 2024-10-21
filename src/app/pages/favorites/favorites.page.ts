@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Productos } from 'src/app/services/productos';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { UserSessionService } from 'src/app/services/user-session.service';
+import { Users } from 'src/app/services/users';
 
 @Component({
   selector: 'app-favorites',
@@ -7,33 +12,66 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
   styleUrls: ['./favorites.page.scss'],
 })
 export class FavoritesPage implements OnInit {
-  Productos: any;
-  Usuarios: any;
-  selectedSegment: string = 'All';
-  constructor( private router:Router, private activedRoute:ActivatedRoute){
-    this.activedRoute.queryParams.subscribe( param => {
-      if(this.router.getCurrentNavigation()?.extras.state){
-        this.Productos = this.router.getCurrentNavigation()?.extras?.state?.['productos'];
-        this.Usuarios = this.router.getCurrentNavigation()?.extras?.state?.['usuarios'];
-      }
-    })
-  }
-
+  productsFavorite: Productos[] = [];
+  user: Users | null = null;
+  favoriteListId: number | null = null;
+  constructor(private router: Router,private serviceBD: ServiceBDService,private serviceSession: UserSessionService) {}
   ngOnInit() {
+    this.loadUserData();
   }
-  irPagina( ruta:string ){
-    console.log(this.Productos, this.Usuarios);
-    let navigationextras:NavigationExtras = {
-      state:{
-        productos: this.Productos,
-        usuarios: this.Usuarios,
+  loadUserData() {
+    this.serviceSession.getUserSession().subscribe(userSession => {
+      if (userSession) {
+        console.log('Sesión de usuario recuperada:', userSession);
+        this.user = userSession;
+        this.checkFavoriteList();
+      }
+    });
+  }
+  async checkFavoriteList() {
+    if (this.user) {
+      try {
+        const res = await this.serviceBD.getFavoriteListByRutAndName(this.user.rut, 'Todos');
+        if (res) {
+          console.log('Lista de favoritos "Todos" encontrada:', res);
+          this.favoriteListId = res.idlist;
+        } else {
+          this.favoriteListId = await this.createFavoriteList(this.user.rut, 'Todos');
+          console.log('Lista "Todos" creada con ID:', this.favoriteListId);
+        }
+        this.loadFavoriteItems(this.favoriteListId!);
+      } catch (error) {
+        console.error('Error al verificar o crear la lista "Todos":', error);
       }
     }
-    this.router.navigate([ruta], navigationextras);
+  }
+  async createFavoriteList(rut: string, listName: string): Promise<number | null> {
+    try {
+      const newListId = await this.serviceBD.createFavoriteList(rut, listName);
+      return newListId;
+    } catch (error) {
+      console.error('Error al crear la lista "Todos":', error);
+      return null;
+    }
   }
 
-  segmentChanged(event: any) {
-    console.log('Segmento seleccionado:', this.selectedSegment);
-    // Puedes manejar otros cambios aquí si es necesario
+  async loadFavoriteItems(idlist: number) {
+    try {
+      const favoriteItems = await this.serviceBD.getFavoriteItemsByListId(idlist);
+      if (favoriteItems) {
+        let products: Productos[] = [];
+        for (let item of favoriteItems) {
+          const product = await this.serviceBD.getProductById(item.idproduct);
+          if (product) {products.push(product);}
+        }
+        this.productsFavorite = products;
+        console.log('Productos favoritos cargados:', this.productsFavorite);
+      }
+    } catch (error) {
+      console.error('Error al cargar los productos favoritos:', error);
+    }
+  }
+  irPagina(ruta: string) {
+    this.router.navigate([ruta]);
   }
 }
