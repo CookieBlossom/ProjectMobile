@@ -227,7 +227,7 @@ export class ServiceBDService {
   createConection(){
     this.platform.ready().then(()=>{
       this.sqlite.create({
-        name: 'shoevaultexample1.db',
+        name: 'shoeVaultProduc.db',
         location: 'default'
       }).then((db: SQLiteObject)=>{
         this.database = db;
