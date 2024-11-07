@@ -9,8 +9,12 @@
         </activity>
         <provider android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+            <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDYk7v7e-rRKhp6r_wwCDLQuMecw2L__5A"/>
         </provider>
+
     </application>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>
