@@ -32,6 +32,10 @@
             <img (click)="irPagina('/modify-profile')" src="/assets/arrow-black.svg" alt="">
           </div>
           <div class="item-list" *ngIf="user?.idrol == 1">
+            Acerca de la empresa
+            <img (click)="irPagina('/maps')" src="/assets/arrow-black.svg" alt="">
+          </div>
+          <div class="item-list" *ngIf="user?.idrol == 1">
             Panel de Administrador
             <img (click)="irPagina('/panel-adm')" src="/assets/arrow-black.svg" alt="">
           </div>
@@ -42,5 +46,5 @@
   </div>
 </ion-content>
 <ion-toolbar>
-  <app-tabs [Productos]="products"></app-tabs>
+  <app-tabs></app-tabs>
 </ion-toolbar>

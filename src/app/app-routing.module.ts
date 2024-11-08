@@ -64,9 +64,16 @@ const routes: Routes = [
     loadChildren: () => import('./pages/orders/orders.module').then( m => m.OrdersPageModule)
   },
   {
+    path: 'maps',
+    loadChildren: () => import('./pages/maps/maps.module').then( m => m.MapsPageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/error-page/error-page.module').then( m => m.ErrorPagePageModule)
   },
+
+
+
 
 ];
 
