@@ -7,6 +7,7 @@ export class Productos {
     idbrand!: number;
     idgender!: number;
     image!: any;
+    status!: string;
     priceproduct!: number;
     constructor(
       idproduct: number,
@@ -17,6 +18,7 @@ export class Productos {
       idbrand: number,
       idgender: number,
       image: any,
+      status: string,
       priceproduct: number){
       this.idproduct = idproduct;
       this.nameproduct = nameproduct;
@@ -26,6 +28,7 @@ export class Productos {
       this.idbrand = idbrand;
       this.idgender = idgender;
       this.image = image;
+      this.status = status;
       this.priceproduct = priceproduct;
     }
   }

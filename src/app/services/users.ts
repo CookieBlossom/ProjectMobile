@@ -1,9 +1,6 @@
 export class Users {
   rut!: string;
-  firstname!: string;
-  secondname!: string;
-  firstlastname!: string;
-  secondlastname!: string;
+  name!: string;
   imageuser!: any;
   genderuser!: string;
   email!: string;
@@ -12,10 +9,7 @@ export class Users {
   idrol!: number;
   constructor(
     rut: string,
-    firstname: string,
-    secondname: string,
-    firstlastname: string,
-    secondlastname: string,
+    name: string,
     imageuser: any,
     genderuser: string,
     email: string,
@@ -23,10 +17,7 @@ export class Users {
     phone: number,
     idrol: number){
     this.rut = rut;
-    this.firstname = firstname;
-    this.secondname = secondname;
-    this.firstlastname = firstlastname;
-    this.secondlastname = secondlastname;
+    this.name = name;
     this.imageuser = imageuser;
     this.genderuser = genderuser;
     this.email = email;

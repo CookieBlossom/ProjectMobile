@@ -74,6 +74,7 @@ export class ServiceBDService {
     idbrand INTEGER NOT NULL,
     idgender INTEGER NOT NULL,
     image BLOB NOT NULL,
+    status TEXT NOT NULL,
     priceproduct INTEGER CHECK(priceproduct > 0) NOT NULL,
     FOREIGN KEY (idcategory) REFERENCES category(idcategory),
     FOREIGN KEY (idbrand) REFERENCES brand(idbrand),
@@ -82,10 +83,7 @@ export class ServiceBDService {
   tableUser: string = `
   CREATE TABLE IF NOT EXISTS user (
     rut TEXT PRIMARY KEY,
-    firstname TEXT,
-    secondname TEXT,
-    firstlastname TEXT,
-    secondlastname TEXT,
+    name TEXT,
     imageuser BLOB NOT NULL,
     genderuser TEXT CHECK(genderuser IN ('Femenino', 'Masculino', '')),
     email TEXT NOT NULL UNIQUE,
@@ -177,12 +175,12 @@ export class ServiceBDService {
       "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(2, 'Puma');",
       "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(1, 'Running');",
       "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(2, 'LifeStyle');",
-      "INSERT or IGNORE INTO size(idsize, size) VALUES(1, 10);",
-      "INSERT or IGNORE INTO size(idsize, size) VALUES(2, 15);",
-      "INSERT or IGNORE INTO size(idsize, size) VALUES(3, 20);",
-      "INSERT or IGNORE INTO size(idsize, size) VALUES(4, 25);",
-      "INSERT or IGNORE INTO size(idsize, size) VALUES(5, 30);",
-      "INSERT or IGNORE INTO size(idsize, size) VALUES(6, 35);",
+      "INSERT or IGNORE INTO size(size) VALUES(10);",
+      "INSERT or IGNORE INTO size(size) VALUES(15);",
+      "INSERT or IGNORE INTO size(size) VALUES(20);",
+      "INSERT or IGNORE INTO size(size) VALUES(25);",
+      "INSERT or IGNORE INTO size(size) VALUES(30);",
+      "INSERT or IGNORE INTO size(size) VALUES(35);",
       "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(1, 'Femenino');",
       "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(2, 'Masculino');",
       "INSERT or IGNORE INTO state_order(idstate, state) VALUES(1, 'Compra Realizada');",
@@ -196,7 +194,7 @@ export class ServiceBDService {
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(1, 'No hay reclamo', 'Ninguno');",
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(2, 'Producto Incorrecto', 'Cambio de producto');",
       "INSERT or IGNORE INTO complaint(idcomplaint, namecomplaint, type_complaint) VALUES(3, 'Error en la autenticidad', 'Devolución');",
-      "INSERT or IGNORE INTO user(rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol) VALUES('21727238-1', 'Maria', 'Pele', 'Pepe', 'Soto', '', 'Femenino', 'maria23@gmail.com', '123Maria.', 932648837, 1);"
+      "INSERT or IGNORE INTO user(rut, name, imageuser, genderuser, email, password, phone, idrol) VALUES('21727238-1', 'Maria Jesus Vega Soto', '', 'Femenino', 'maria23@gmail.com', '123Maria.', 932648837, 1);"
     ];
     for (let insert of inserts) {
       await this.database.executeSql(insert, []).catch(e => {this.presentAlert('Error en la inserción', 'Error al insertar datos estáticos: ' + JSON.stringify(e));});
@@ -227,7 +225,7 @@ export class ServiceBDService {
   createConection(){
     this.platform.ready().then(()=>{
       this.sqlite.create({
-        name: 'shoeVaultProduc.db',
+        name: 'shoeVaultFixed1.db',
         location: 'default'
       }).then((db: SQLiteObject)=>{
         this.database = db;
@@ -264,7 +262,7 @@ export class ServiceBDService {
       let items: Productos[] = [];
       if (res.rows.length > 0) {
         for (var i = 0; i < res.rows.length; i++) {
-          items.push({idproduct: res.rows.item(i).idproduct,nameproduct: res.rows.item(i).nameproduct,descriptionproduct: res.rows.item(i).descriptionproduct,stockproduct: res.rows.item(i).stockproduct,idcategory: res.rows.item(i).idcategory,idbrand: res.rows.item(i).idbrand,idgender: res.rows.item(i).idgender,image: res.rows.item(i).image,priceproduct: res.rows.item(i).priceproduct});
+          items.push({idproduct: res.rows.item(i).idproduct,nameproduct: res.rows.item(i).nameproduct,descriptionproduct: res.rows.item(i).descriptionproduct,stockproduct: res.rows.item(i).stockproduct,idcategory: res.rows.item(i).idcategory, idbrand: res.rows.item(i).idbrand, idgender: res.rows.item(i).idgender, image: res.rows.item(i).image, status: res.rows.item(i).status ,priceproduct: res.rows.item(i).priceproduct});
         }
       }
       this.listProducts.next(items as any);
@@ -302,7 +300,7 @@ export class ServiceBDService {
       let items: Users[] = [];
       if (res.rows.length > 0) {
         for (var i = 0; i < res.rows.length; i++) {
-          items.push({rut: res.rows.item(i).rut,firstname: res.rows.item(i).firstname,secondname: res.rows.item(i).secondname,firstlastname: res.rows.item(i).firstlastname,secondlastname: res.rows.item(i).secondlastname,imageuser: res.rows.item(i).imageuser,genderuser: res.rows.item(i).genderuser,email: res.rows.item(i).email,password: res.rows.item(i).password,phone: res.rows.item(i).phone,idrol: res.rows.item(i).idrol,});}
+          items.push({rut: res.rows.item(i).rut, name: res.rows.item(i).name ,imageuser: res.rows.item(i).imageuser,genderuser: res.rows.item(i).genderuser,email: res.rows.item(i).email,password: res.rows.item(i).password,phone: res.rows.item(i).phone,idrol: res.rows.item(i).idrol,});}
       }
       this.listUsers.next(items as any);
     } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
@@ -369,17 +367,18 @@ export class ServiceBDService {
       this.listFavoriteItems.next(items as any); // Actualizamos el observable con los resultados
     } catch (e) {this.presentAlert('Select', 'Error: ' + JSON.stringify(e));}
   }
-  async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number): Promise<number> {
-    const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number, status: string = "available"): Promise<number> {
+    const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, status, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
       .then(res => {this.searchProducts(); return res.insertId;});
   }
   async deleteProduct(id: number) {
     try {
-      await this.deleteProductSizes(id);
-      const res = await this.database.executeSql('DELETE FROM product WHERE idproduct = ?', [id]);
+      const res = await this.database.executeSql('UPDATE product SET status = "not available" WHERE idproduct = ?', [id]);
       this.searchProducts();
-    } catch (e) {this.presentAlert('Eliminar', 'Error: ' + JSON.stringify(e));}
+    } catch (e) {
+      this.presentAlert('Actualizar Estado', 'Error: ' + JSON.stringify(e));
+    }
   }
   async editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
     try {
@@ -387,7 +386,7 @@ export class ServiceBDService {
         'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
         [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, id]);
       this.presentAlert("Modificar", "Producto modificado correctamente");
-      this.searchProducts();  // Actualizar el observable después de editar
+      this.searchProducts();
     } catch (e) {this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));}
   }
   async getProductById(id: number): Promise<Productos | null> {
@@ -423,16 +422,16 @@ export class ServiceBDService {
       const res = await this.database.executeSql(query, [email, password]);
       if (res.rows.length > 0) {
         const user = res.rows.item(0);
-        return new Users(user.rut,user.firstname,user.secondname,user.firstlastname,user.secondlastname,user.imageuser,user.genderuser,user.email,user.password,user.phone,user.idrol);
+        return new Users(user.rut, user.name, user.imageuser, user.genderuser, user.email, user.password, user.phone , user.idrol);
       } else {return null;}
     } catch (error) {
       console.error('Error al buscar el usuario:', error);
       return null;
     }
   }
-  async registerUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,imageuser: any,genderuser: string,email: string,password: string,phone: number,idrol: number): Promise<void> {
-    const query = `INSERT INTO user (rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    return this.database.executeSql(query, [rut, firstname, secondname, firstlastname, secondlastname, imageuser, genderuser, email, password, phone, idrol])
+  async registerUser(rut: string, name: string, imageuser: any, genderuser: string, email: string, password: string, phone: number, idrol: number): Promise<void> {
+    const query = `INSERT INTO user (rut, name, imageuser, genderuser, email, password, phone, idrol)VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    return this.database.executeSql(query, [rut, name, imageuser, genderuser, email, password, phone, idrol])
       .then(() => {
         console.log('Usuario registrado correctamente');
       })
@@ -465,7 +464,7 @@ export class ServiceBDService {
       .then(res => {
         if (res.rows.length > 0) {
           const item = res.rows.item(0);
-          return {rut: item.rut,firstname: item.firstname,secondname: item.secondname,firstlastname: item.firstlastname,secondlastname: item.secondlastname,imageuser: item.imageuser,genderuser: item.genderuser,email: item.email,password: item.password,phone: item.phone,idrol: item.idrol} as Users;
+          return {rut: item.rut, name: item.name, imageuser: item.imageuser, genderuser: item.genderuser, email: item.email, password: item.password, phone: item.phone, idrol: item.idrol} as Users;
         } else {
           return null;
         }
@@ -475,9 +474,9 @@ export class ServiceBDService {
         return null;
       });
   }
-  async editUser(rut: string,firstname: string,secondname: string,firstlastname: string,secondlastname: string,genderuser: string,email: string,password: string,phone: number,idrol: number,imageuser: any) {
+  async editUser(rut: string, name: string, genderuser: string, email: string, password: string, phone: number, idrol: number, imageuser: any) {
     try {
-      const res = await this.database.executeSql('UPDATE user SET firstname = ?, secondname = ?, firstlastname = ?, secondlastname = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[firstname, secondname, firstlastname, secondlastname, genderuser, email, password, phone, idrol, imageuser, rut]);
+      const res = await this.database.executeSql('UPDATE user SET name = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[name, genderuser, email, password, phone, idrol, imageuser, rut]);
       if (res.rowsAffected > 0) {
         console.log('Usuario actualizado correctamente en la base de datos.');
         await this.searchUsers();
@@ -667,7 +666,7 @@ export class ServiceBDService {
       }
     } catch (error) {console.error('Error al obtener la lista de favoritos "All":', error);return null;}
   }
-  fetchCartItemByCartId(idcart: number) {
+  async fetchCartItemByCartId(idcart: number) {
     const query = `SELECT * FROM cart_item WHERE idcart = ?`;
     return this.database.executeSql(query, [idcart])
       .then((res: any) => {

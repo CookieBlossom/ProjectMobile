@@ -3,12 +3,12 @@
     <div class="top">
       <img (click)="takePicture()"  class="camera" src="/assets/camera.svg">
       <img *ngIf="imageUser" [src]="imageUser" class="image-profile" alt="Sin imagen" style="height: 150px;width: 150px;">
-      <h2 class="name-profile" *ngIf="!user?.firstname || !user?.firstlastname; else nombreCompleto">
+      <h2 class="name-profile" *ngIf="!user?.name; else nombreCompleto">
         Bienvenido
       </h2>
       <ng-template #nombreCompleto>
         <h2 class="name-profile">
-          {{ user?.firstname }} {{ user?.firstlastname }}
+          {{ user?.name }}
         </h2>
       </ng-template>
     </div>

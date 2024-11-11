@@ -17,22 +17,9 @@
             <mat-error *ngIf="profileForm.get('rut')?.invalid && profileForm.get('rut')?.touched">Rut inválido</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Primer Nombre</mat-label>
-            <input matInput formControlName="firstname" placeholder="Ej. Juan"/>
-            <mat-error *ngIf="profileForm.get('firstname')?.invalid && profileForm.get('firstname')?.touched">Nombre requerido</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Segundo Nombre</mat-label>
-            <input matInput formControlName="secondname" placeholder="Ej. Pablo"/>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Primer Apellido</mat-label>
-            <input matInput formControlName="firstlastname" placeholder="Ej. Pérez"/>
-            <mat-error *ngIf="profileForm.get('firstlastname')?.invalid && profileForm.get('firstlastname')?.touched">Apellido requerido</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Segundo Apellido</mat-label>
-            <input matInput formControlName="secondlastname" placeholder="Ej. González"/>
+            <mat-label>Nombre Completo</mat-label>
+            <input matInput formControlName="name" placeholder="Ej. Juan Andres Gonzalez Vega"/>
+            <mat-error *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">Nombre requerido</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Género</mat-label>
@@ -45,11 +32,6 @@
             <mat-label>Email</mat-label>
             <input matInput type="email" formControlName="email" placeholder="Ej. juan.perez@gmail.com"/>
             <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">Email inválido</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Contraseña</mat-label>
-            <input matInput type="password" formControlName="password" placeholder="Nueva contraseña (opcional)" />
-            <mat-error *ngIf="profileForm.get('password')?.invalid && profileForm.get('password')?.touched">Contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un símbolo</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Teléfono</mat-label>

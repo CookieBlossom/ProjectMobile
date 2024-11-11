@@ -19,13 +19,9 @@ export class ModifyProfilePage implements OnInit {
   constructor( private fb: FormBuilder, private router: Router, private activedRoute: ActivatedRoute, private nativeStorage: NativeStorage, private serviceBD: ServiceBDService, private serviceSession: UserSessionService) {
     this.profileForm = this.fb.group({
       rut: [{ value: this.user?.rut || '', disabled: true }, Validators.required],
-      firstname: ['', Validators.required],
-      secondname: ['', Validators.required],
-      firstlastname: ['', Validators.required],
-      secondlastname: ['', Validators.required],
+      name: ['', Validators.required],
       genderuser: ['', Validators.required],
       email: ['', [Validators.required, Validators.email, this.gmailValidator]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*.,]).+$')]],
       phone: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{9,12}$')]]
     });
   }
@@ -48,44 +44,23 @@ export class ModifyProfilePage implements OnInit {
         this.serviceBD.searchUsers();
       });
   }
-  loadUserData() {
-    this.serviceSession.getUserSession().subscribe(userSession => {
+  async loadUserData() {
+    this.serviceSession.getUserSession().subscribe(async (userSession) => {
       if (userSession) {
-        console.log('Sesión de usuario recuperada desde el servicio:', userSession);
-        this.user = userSession;
-        this.profileForm.patchValue({rut: this.user.rut,firstname: this.user.firstname,secondname: this.user.secondname,firstlastname: this.user.firstlastname,secondlastname: this.user.secondlastname,genderuser: this.user.genderuser,email: this.user.email,password: this.user.password,phone: this.user.phone
-        });
+        const user = await this.serviceBD.getUserByRut(userSession.rut);
+        if (user) {
+          console.log('Datos completos del usuario recuperados desde la base de datos:', user);
+          this.user = user;
+          this.profileForm.patchValue({rut: this.user.rut,name: this.user.name,genderuser: this.user.genderuser,email: this.user.email,phone: this.user.phone});
+        }
       }
     });
   }
   onSubmit() {
     if (this.profileForm.valid) {
-      const updatedUser = new Users(
-        this.profileForm.value.rut,
-        this.profileForm.value.firstname,
-        this.profileForm.value.secondname,
-        this.profileForm.value.firstlastname,
-        this.profileForm.value.secondlastname,
-        this.user?.imageuser,
-        this.profileForm.value.genderuser,
-        this.profileForm.value.email,
-        this.profileForm.value.password,
-        this.profileForm.value.phone,
-        this.user?.idrol || 2
+      const updatedUser = new Users(this.profileForm.value.rut,this.profileForm.value.name,this.user?.imageuser,this.profileForm.value.genderuser,this.profileForm.value.email,this.user?.password || '',this.profileForm.value.phone,this.user?.idrol || 2
       );
-      this.serviceBD.editUser(
-        updatedUser.rut,
-        updatedUser.firstname,
-        updatedUser.secondname,
-        updatedUser.firstlastname,
-        updatedUser.secondlastname,
-        updatedUser.genderuser,
-        updatedUser.email,
-        updatedUser.password,
-        updatedUser.phone,
-        updatedUser.idrol,
-        updatedUser.imageuser
-      ).then(() => {
+      this.serviceBD.editUser(updatedUser.rut,updatedUser.name,updatedUser.genderuser,updatedUser.email,updatedUser.password,updatedUser.phone,updatedUser.idrol,updatedUser.imageuser).then(() => {
         this.serviceSession.setUserSession(updatedUser).then(() => {
           console.log('Sesión de usuario actualizada en el servicio:', updatedUser);
           this.irPagina('/profile');

@@ -88,10 +88,7 @@ export class ProfilePage implements OnInit {
         this.imageUser = image.webPath;
         const updatedUser = new Users(
           this.user?.rut || '',
-          this.user?.firstname || '',
-          this.user?.secondname || '',
-          this.user?.firstlastname || '',
-          this.user?.secondlastname || '',
+          this.user?.name || '',
           this.imageUser, // Nueva imagen
           this.user?.genderuser || '',
           this.user?.email || '',
@@ -101,10 +98,7 @@ export class ProfilePage implements OnInit {
         );
         this.serviceBD.editUser(
           updatedUser.rut,
-          updatedUser.firstname,
-          updatedUser.secondname,
-          updatedUser.firstlastname,
-          updatedUser.secondlastname,
+          updatedUser.name,
           updatedUser.genderuser,
           updatedUser.email,
           updatedUser.password,

@@ -16,10 +16,7 @@ export class RegisterPage implements OnInit {
   Usuarios: Users[] = [];
   structureUser: any = {
     rut: '',
-    firstname: '',
-    secondname: '',
-    firstlastname: '',
-    secondlastname: '',
+    name: '',
     imageuser: '',
     genderuser: '',
     email: '',
@@ -73,8 +70,8 @@ export class RegisterPage implements OnInit {
                   });
                 } else {this.api.getImageRandom().subscribe((response) => {
                     const catImageUrl = response[0]?.url || '';
-                    const newUser = new Users(this.registerForm.value.rut,'','','','',catImageUrl,'',this.registerForm.value.email,this.registerForm.value.password,0,2);
-                    this.serviceBD.registerUser(newUser.rut,newUser.firstname,newUser.secondname,newUser.firstlastname,newUser.secondlastname,newUser.imageuser,newUser.genderuser,newUser.email,newUser.password,newUser.phone,newUser.idrol
+                    const newUser = new Users(this.registerForm.value.rut, '',catImageUrl,'',this.registerForm.value.email,this.registerForm.value.password,0,2);
+                    this.serviceBD.registerUser(newUser.rut, newUser.name ,newUser.imageuser,newUser.genderuser,newUser.email,newUser.password,newUser.phone,newUser.idrol
                     ).then(() => {
                       this.serviceBD.searchUsers();
                       this.showSuccessMessage();
@@ -104,7 +101,7 @@ export class RegisterPage implements OnInit {
     }
   }
   resetForm(){
-    this.structureUser = {rut: '', firstname: '', secondname: '', firstlastname: '', secondlastname: '', imageuser: '', genderuser: '', email: '', password: '', phone: null, idrol: 2};
+    this.structureUser = {rut: '', name: '', imageuser: '', genderuser: '', email: '', password: '', phone: null, idrol: 2};
   }
   irPagina(ruta:string) {
     this.router.navigate([ruta]);
