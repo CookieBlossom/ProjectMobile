@@ -33,13 +33,11 @@ export class ForgotPassPage implements OnInit {
   resetpass() {
     const email = this.forgotForm.get('email')?.value;
     if (this.forgotForm.valid) {
-      // Verificar si el email existe
       this.serviceBD.findUserByEmail(email).then((exists) => {
         if (exists) {
           this.serviceBD.presentAlert('Usuario encontrado', 'Se ha encontrado el usuario por su correo.');
           this.serviceBD.getUserByEmail(email).then((user) => {
             if (user) {
-              // Setear la sesión del usuario
               this.userSession.setUserSession(user).then(() => {
                 console.log('Sesión del usuario establecida:', user);
                 this.router.navigate(['/modify-pass'], {
