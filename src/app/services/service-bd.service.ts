@@ -3,8 +3,6 @@ import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Productos } from './productos';
-import { Card } from './card';
-import { CardUsers } from './card-users';
 import { CartItem } from './cart-item';
 import { Complaint } from './complaint';
 import { FavoriteItems } from './favorite-items';
@@ -47,14 +45,6 @@ export class ServiceBDService {
   CREATE TABLE IF NOT EXISTS rol (
     idrol INTEGER PRIMARY KEY AUTOINCREMENT,
     rol TEXT NOT NULL
-  );`;
-  tableCard: string = `
-  CREATE TABLE IF NOT EXISTS card (
-    idcard INTEGER PRIMARY KEY AUTOINCREMENT,
-    nrocard TEXT CHECK(LENGTH(nrocard) = 16 AND nrocard GLOB '[0-9]*') NOT NULL,
-    datecard TEXT NOT NULL,
-    namecard TEXT NOT NULL,
-    cvvcard TEXT CHECK(LENGTH(cvvcard) = 3 AND cvvcard GLOB '[0-9]*') NOT NULL
   );`;
   tableComplaint: string = `
   CREATE TABLE IF NOT EXISTS complaint (
@@ -122,14 +112,6 @@ export class ServiceBDService {
     FOREIGN KEY (idproduct) REFERENCES product(idproduct)
   );`;
   // Tablas intermediarias
-  tableUserCards: string = `
-  CREATE TABLE IF NOT EXISTS user_card (
-    iduser_card INTEGER PRIMARY KEY AUTOINCREMENT,
-    idcard INTEGER NOT NULL,
-    rut TEXT NOT NULL,
-    FOREIGN KEY (idcard) REFERENCES card(idcard),
-    FOREIGN KEY (rut) REFERENCES user(rut)
-  );`;
   tableProductSize: string = `
   CREATE TABLE IF NOT EXISTS product_size (
     idproduct_size INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -202,8 +184,6 @@ export class ServiceBDService {
   };
   listProducts = new BehaviorSubject([]);
   listProductSizes = new BehaviorSubject([]);
-  listCards = new BehaviorSubject([]);
-  listCardsUser = new BehaviorSubject([]);
   listOrders = new BehaviorSubject([]);
   listOrderHistory = new BehaviorSubject([]);
   listComplaint = new BehaviorSubject([]);
@@ -242,14 +222,12 @@ export class ServiceBDService {
       await this.database.executeSql(this.tableGender, []);
       await this.database.executeSql(this.tableStateOrder, []);
       await this.database.executeSql(this.tableRol, []);
-      await this.database.executeSql(this.tableCard, []);
       await this.database.executeSql(this.tableComplaint, []);
       await this.database.executeSql(this.tableUser, []);
       await this.database.executeSql(this.tableProduct, []);
       await this.database.executeSql(this.tableFavoritesList, []);
       await this.database.executeSql(this.tableShoppingCart, []);
       await this.database.executeSql(this.tableOrder, []);
-      await this.database.executeSql(this.tableUserCards, []);
       await this.database.executeSql(this.tableProductSize, []);
       await this.database.executeSql(this.tableFavoriteItem, []);
       await this.database.executeSql(this.tableCartItem, []);
@@ -474,18 +452,26 @@ export class ServiceBDService {
         return null;
       });
   }
-  async getUserPasswordByEmail(email: string): Promise<string | null> {
-    const query = `SELECT password FROM user WHERE email = ?`;
+  async getUserByEmail(email: string): Promise<Users | null> {
+    const query = `SELECT * FROM user WHERE email = ?`;
     return this.database.executeSql(query, [email])
       .then(res => {
         if (res.rows.length > 0) {
-          return res.rows.item(0).password;
-        } else {
-          return null;
-        }
+          const item = res.rows.item(0);
+          return {
+            rut: item.rut,
+            name: item.name,
+            imageuser: item.imageuser,
+            genderuser: item.genderuser,
+            email: item.email,
+            password: item.password,
+            phone: item.phone,
+            idrol: item.idrol,
+          } as Users;
+        } else { return null; }
       })
       .catch(err => {
-        this.presentAlert('Error', 'Error al obtener la contraseña: ' + JSON.stringify(err));
+        console.error('Error al obtener el usuario:', err);
         return null;
       });
   }
@@ -510,7 +496,7 @@ export class ServiceBDService {
     const query = `INSERT INTO shopping_cart (rut) VALUES (?)`;
     try {
       const res = await this.database.executeSql(query, [rut]);
-      return res.insertId;  // Devolvemos el id del carrito creado
+      return res.insertId;
     } catch (error) {
       console.error('Error al crear un nuevo carrito:', error);
       throw error;
@@ -715,7 +701,7 @@ export class ServiceBDService {
   async isProductInFavorites(idlist: number, idproduct: number): Promise<boolean> {
     const query = `SELECT * FROM favorite_item WHERE idlist = ? AND idproduct = ?`;
     const res = await this.database.executeSql(query, [idlist, idproduct]);
-    return res.rows.length > 0; // Devuelve true si el producto está en favoritos
+    return res.rows.length > 0;
   }
   async insertOrder(totalorder: number, idproduct: number, idcard: number, rut: string): Promise<number> {
     const query = `
@@ -755,9 +741,7 @@ export class ServiceBDService {
       }
       return orders;
     } catch (error) {
-      console.error('Error al obtener las órdenes por rut:', error);
-      return [];
-    }
+      console.error('Error al obtener las órdenes por rut:', error); return [];}
   }
   async getOrderHistoryByRut(rut: string): Promise<OrderHistory[]> {
     const query = `SELECT * FROM order_history WHERE rut = ?`;
@@ -777,15 +761,10 @@ export class ServiceBDService {
       }
       return orderHistory;
     } catch (error) {
-      console.error('Error al obtener el historial de órdenes:', error);
-      return [];
-    }
+      console.error('Error al obtener el historial de órdenes:', error);return [];}
   }
-
   //SELECTS DINAMICOS CON CLASS
   fetchProducts(): Observable<Productos[]>{return this.listProducts.asObservable();}
-  fetchCard(): Observable<Card[]>{return this.listCards.asObservable();}
-  fetchCardUser(): Observable<CardUsers[]>{return this.listCardsUser.asObservable();}
   fetchOrder(): Observable<Order[]>{return this.listOrders.asObservable();}
   fetchOrderHistory(): Observable<OrderHistory[]>{return this.listOrderHistory.asObservable();}
   fetchComplaint(): Observable<Complaint[]>{return this.listComplaint.asObservable();}
@@ -845,9 +824,7 @@ export class ServiceBDService {
         for (let i = 0; i < res.rows.length; i++) {stateOrders.push(res.rows.item(i));}
       }
       return stateOrders;
-    } catch{
-      return [];
-    }
+    } catch{return [];}
   }
   async fetchRoles() {
     try {
@@ -859,5 +836,4 @@ export class ServiceBDService {
       return roles;
     } catch{return [];}
   }
-
 }

@@ -11,7 +11,7 @@ import { UserSessionService } from 'src/app/services/user-session.service';
 })
 export class ForgotPassPage implements OnInit {
   forgotForm: FormGroup;
-  constructor(private router: Router, private serviceBD:ServiceBDService, private fb: FormBuilder) {
+  constructor(private router: Router, private serviceBD:ServiceBDService, private fb: FormBuilder, private userSession:UserSessionService) {
     this.forgotForm = this.fb.group({email: ['', [Validators.required, Validators.email]]});
   }
   get formControls() {
@@ -32,40 +32,40 @@ export class ForgotPassPage implements OnInit {
   }
   resetpass() {
     const email = this.forgotForm.get('email')?.value;
-
     if (this.forgotForm.valid) {
+      // Verificar si el email existe
       this.serviceBD.findUserByEmail(email).then((exists) => {
         if (exists) {
           this.serviceBD.presentAlert('Usuario encontrado', 'Se ha encontrado el usuario por su correo.');
-          this.serviceBD.getUserPasswordByEmail(email).then((password) => {
-            if (password) {
-              this.router.navigate(['/reset-password'], {
-                queryParams: {
-                  email,
-                  actualPassword: password,
-                  fromForgotPassword: true,
-                },
+          this.serviceBD.getUserByEmail(email).then((user) => {
+            if (user) {
+              // Setear la sesión del usuario
+              this.userSession.setUserSession(user).then(() => {
+                console.log('Sesión del usuario establecida:', user);
+                this.router.navigate(['/modify-pass'], {
+                  queryParams: {
+                    email: user.email,
+                    actualPassword: user.password,
+                    fromForgotPassword: true,
+                  },
+                });
+              }).catch((error) => {
+                console.error('Error al establecer la sesión del usuario:', error);
               });
             } else {
-              // Manejo de error si no se encuentra la contraseña
-              console.error('No se pudo recuperar la contraseña.');
+              console.error('No se pudo obtener los datos del usuario.');
             }
           }).catch((error) => {
-            // Manejo de error en getUserPasswordByEmail
-            console.error('Error al obtener la contraseña:', error);
+            console.error('Error al obtener los datos del usuario:', error);
           });
         } else {
-          // El email no existe
           console.log('El email no está registrado.');
+          this.serviceBD.presentAlert('Error', 'El correo electrónico no está registrado.');
         }
       }).catch((error) => {
-        // Manejo de error en findUserByEmail
         console.error('Error al buscar el email:', error);
+        this.serviceBD.presentAlert('Error', 'Error al buscar el correo electrónico.');
       });
-    } else {
-      // Formulario inválido
-      console.log('El formulario no es válido.');
     }
   }
-
 }

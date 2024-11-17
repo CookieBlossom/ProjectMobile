@@ -21,5 +21,8 @@
       </div>
       <p class="new-account" (click)="irPagina('/register')">¿Necesitas crear una cuenta?</p>
     </div>
+    <div class="button-container">
+      <ion-button expand="block" fill="outline"  type="submit" [disabled]="forgotForm.invalid">Enviar</ion-button>
+    </div>
   </form>
 </ion-content>
