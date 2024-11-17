@@ -474,6 +474,21 @@ export class ServiceBDService {
         return null;
       });
   }
+  async getUserPasswordByEmail(email: string): Promise<string | null> {
+    const query = `SELECT password FROM user WHERE email = ?`;
+    return this.database.executeSql(query, [email])
+      .then(res => {
+        if (res.rows.length > 0) {
+          return res.rows.item(0).password;
+        } else {
+          return null;
+        }
+      })
+      .catch(err => {
+        this.presentAlert('Error', 'Error al obtener la contraseña: ' + JSON.stringify(err));
+        return null;
+      });
+  }
   async editUser(rut: string, name: string, genderuser: string, email: string, password: string, phone: number, idrol: number, imageuser: any) {
     try {
       const res = await this.database.executeSql('UPDATE user SET name = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[name, genderuser, email, password, phone, idrol, imageuser, rut]);

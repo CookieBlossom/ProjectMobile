@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="forgotForm" (ngSubmit)="resetpass()">
+    <div class="logo-back">
+      <img class="logo" src="/assets/icon/shoeVault-logo2.png" alt="ShoeVault Logo" alt="">
+    </div>
+    <div class=" form-top">
+      <h5>¿Has olvidado tu contraseña?</h5>
+      <p>No te preocupes, te enviaremos un correo con instrucciones</p>
+    </div>
+    <div class="input-container">
+      <ion-item>
+        <ion-label position="floating">Correo</ion-label>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <div *ngIf="formControls['email'].invalid && (formControls['email'].dirty || formControls['email'].touched)" class="error-message">
+        <p *ngIf="formControls['email'].errors?.['required']" class="error-message">Correo requerido</p>
+        <p *ngIf="formControls['email'].errors?.['email']" class="error-message">Por favor ingrese un correo valido</p>
+      </div>
+      <p class="new-account" (click)="irPagina('/register')">¿Necesitas crear una cuenta?</p>
+    </div>
+  </form>
+</ion-content>

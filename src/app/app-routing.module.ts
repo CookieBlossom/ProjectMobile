@@ -68,13 +68,17 @@ const routes: Routes = [
     loadChildren: () => import('./pages/maps/maps.module').then( m => m.MapsPageModule)
   },
   {
+    path: 'modify-pass',
+    loadChildren: () => import('./pages/modify-pass/modify-pass.module').then( m => m.ModifyPassPageModule)
+  },
+  {
+    path: 'forgot-pass',
+    loadChildren: () => import('./pages/forgot-pass/forgot-pass.module').then( m => m.ForgotPassPageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/error-page/error-page.module').then( m => m.ErrorPagePageModule)
   },
-
-
-
-
 ];
 
 @NgModule({

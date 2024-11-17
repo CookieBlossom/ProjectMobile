@@ -26,10 +26,12 @@
           <p *ngIf="formControls['password'].errors?.['minlength']">Contraseña debe contener al menos 8 caracteres</p>
           <p *ngIf="formControls['password'].errors?.['pattern']">La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial(e.g., !&#64;#$%^&*.,).</p>
         </div>
+        <div>
+          <p class="forgot-pass" (click)="irPagina('/forgot-pass')" >¿Has olvidado tu contraseña?</p>
+        </div>
       </div>
-
       <div class="button-container">
-        <ion-button expand="block" class="custom-button" type="submit" [disabled]="loginForm.invalid">Login</ion-button>
+        <ion-button expand="block" class="custom-button-outline" fill="outline"  type="submit" [disabled]="loginForm.invalid">Login</ion-button>
         <ion-button expand="block" class="custom-button-outline" fill="outline" (click)="irPagina('/register')">Registro</ion-button>
       </div>
     </form>
