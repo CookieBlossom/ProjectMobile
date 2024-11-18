@@ -1,8 +1,10 @@
 
 <ion-content [fullscreen]="true">
-  <div class="form-pass">
+  <div class="form-header">
     <h1>Cambiar contraseña</h1>
-    <form [formGroup]="modifyForm" (ngSubmit)="updatePassword()">
+  </div>
+  <div class="">
+    <form class="form-pass" [formGroup]="modifyForm" (ngSubmit)="updatePassword()">
       <div class="input-container">
         <div class="actualpass">
           <ion-item>

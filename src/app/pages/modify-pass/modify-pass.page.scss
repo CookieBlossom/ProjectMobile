@@ -1,0 +1,50 @@
+ion-content{
+  --display: flex;
+  --justify-content: center;
+}
+ion-item{
+  padding-bottom: 10px;
+}
+ion-button{
+  --color: white;
+  --border-color: white;
+}
+.form-header{
+  width: 100vw;
+  height: 20vh;
+}
+.form-pass{
+  height: 70vh;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 20px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.33);
+  border-radius: 10px;
+  border: 1px solid rgb(255, 255, 255);
+}
+h1{
+  display: flex;
+  font-size: 24px;
+  text-align: center;
+  height: 100%;
+  margin: 0px;
+  justify-content: center;
+  align-items: center;
+  font-family: "Noto Sans";
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+
+}
+.error-message{
+  color: red;
+  font-size: 12px;
+  text-align: end;
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
