@@ -475,6 +475,20 @@ export class ServiceBDService {
         return null;
       });
   }
+  async getUserPasswordByEmail(email: string): Promise<Users | null>{
+    const query = `SELECT password FROM user WHERE email = ?`;
+    return this.database.executeSql(query, [email])
+      .then(res => {
+        if (res.rows.length > 0) {
+          const item = res.rows.item(0);
+          return {password: item.password} as Users;
+        } else { return null; }
+      })
+      .catch(err => {
+        console.error('Error al obtener el usuario:', err);
+        return null;
+      });
+  }
   async editUser(rut: string, name: string, genderuser: string, email: string, password: string, phone: number, idrol: number, imageuser: any) {
     try {
       const res = await this.database.executeSql('UPDATE user SET name = ?, genderuser = ?, email = ?, password = ?, phone = ?, idrol = ?, imageuser = ? WHERE rut = ?',[name, genderuser, email, password, phone, idrol, imageuser, rut]);
@@ -540,7 +554,7 @@ export class ServiceBDService {
       if (res.rows.length > 0) {
         for (let i = 0; i < res.rows.length; i++) {
           const row = res.rows.item(i);
-          items.push(new CartItem(row.idcart, row.idproduct, row.quantity, row.size, row.idcart_item)); // Pasar idcart_item
+          items.push(new CartItem(row.idcart, row.idproduct, row.quantity, row.size, row.idcart_item));
         }
       }
       return items;

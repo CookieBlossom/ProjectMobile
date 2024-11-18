@@ -5,7 +5,7 @@
     </div>
   </div>
   <div class="form-login">
-    <h1>Log in</h1>
+    <h1>Iniciar Sesion</h1>
     <form [formGroup]="loginForm" (ngSubmit)="login()">
       <div class="input-container">
         <ion-item>
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="button-container">
-        <ion-button expand="block" class="custom-button-outline" fill="outline"  type="submit" [disabled]="loginForm.invalid">Login</ion-button>
+        <ion-button expand="block" class="custom-button-outline" fill="outline"  type="submit" [disabled]="loginForm.invalid">Ingresar</ion-button>
         <ion-button expand="block" class="custom-button-outline" fill="outline" (click)="irPagina('/register')">Registro</ion-button>
       </div>
     </form>

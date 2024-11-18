@@ -1,13 +1,45 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>modify-pass</ion-title>
-  </ion-toolbar>
-</ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">modify-pass</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="form-pass">
+    <h1>Cambiar contraseña</h1>
+    <form [formGroup]="modifyForm" (ngSubmit)="updatePassword()">
+      <div class="input-container">
+        <div class="actualpass">
+          <ion-item>
+            <ion-label position="floating">Actual contraseña</ion-label>
+            <ion-input type="actualpassword" formControlName="actualpassword"></ion-input>
+          </ion-item>
+          <div *ngIf="formControls['actualpassword'].invalid && (formControls['actualpassword'].dirty || formControls['actualpassword'].touched)" class="error-message">
+            <p *ngIf="formControls['actualpassword'].errors?.['required']">Contraseña requerida</p>
+            <p *ngIf="formControls['actualpassword'].errors?.['minlength']">Contraseña debe contener al menos 8 caracteres</p>
+            <p *ngIf="formControls['actualpassword'].errors?.['pattern']">La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial(e.g., !&#64;#$%^&*.,).</p>
+          </div>
+        </div>
+        <div class="newpass">
+          <ion-item>
+            <ion-label position="floating">Nueva contraseña</ion-label>
+            <ion-input type="newpassword" formControlName="newpassword"></ion-input>
+          </ion-item>
+          <div *ngIf="formControls['newpassword'].invalid && (formControls['newpassword'].dirty || formControls['newpassword'].touched)" class="error-message">
+            <p *ngIf="formControls['newpassword'].errors?.['required']">Contraseña requerida</p>
+            <p *ngIf="formControls['newpassword'].errors?.['minlength']">Contraseña debe contener al menos 8 caracteres</p>
+            <p *ngIf="formControls['newpassword'].errors?.['pattern']">La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial(e.g., !&#64;#$%^&*.,).</p>
+          </div>
+        </div>
+        <div class="confirmpass">
+          <ion-item>
+            <ion-label position="floating">Confirma la nueva contraseña</ion-label>
+            <ion-input type="confirmpass" formControlName="confirmpass"></ion-input>
+          </ion-item>
+          <div *ngIf="formControls['confirmpass'].invalid && (formControls['confirmpass'].dirty || formControls['newpassword'].touched)" class="error-message">
+            <p *ngIf="formControls['confirmpass'].errors?.['required']">Contraseña requerida</p>
+            <div *ngIf="formControls['confirmpass'].errors?.['notMatching']">Las contraseñas no coinciden.</div>
+          </div>
+        </div>
+      </div>
+      <div class="button-container">
+        <ion-button expand="block" class="custom-button-outline" fill="outline"  type="submit" [disabled]="modifyForm.invalid">Cambiar contraseña</ion-button>
+      </div>
+    </form>
+  </div>
 </ion-content>

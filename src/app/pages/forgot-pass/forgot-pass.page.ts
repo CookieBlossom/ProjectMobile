@@ -12,7 +12,7 @@ import { UserSessionService } from 'src/app/services/user-session.service';
 export class ForgotPassPage implements OnInit {
   forgotForm: FormGroup;
   constructor(private router: Router, private serviceBD:ServiceBDService, private fb: FormBuilder, private userSession:UserSessionService) {
-    this.forgotForm = this.fb.group({email: ['', [Validators.required, Validators.email]]});
+    this.forgotForm = this.fb.group({email: ['', [Validators.required, Validators.email]]});;
   }
   get formControls() {
     return this.forgotForm.controls;
