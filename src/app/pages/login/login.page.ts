@@ -24,6 +24,7 @@ export class LoginPage implements OnInit {
     return this.loginForm.controls;
   }
   login() {
+    this.serviceBD.searchUsers();
     const email = this.loginForm.get('email')?.value;
     const password = this.loginForm.get('password')?.value;
     this.serviceBD.loginUser(email, password)

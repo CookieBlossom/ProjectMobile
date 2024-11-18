@@ -72,12 +72,13 @@ export class ModifyPassPage implements OnInit {
       });
       this.serviceBD.editUser(this.user.rut,this.user.name,this.user.genderuser,this.user.email,newPassword,this.user.phone,this.user.idrol,this.user.imageuser).then((success) => {
         if (success) {
-          console.log('Contraseña actualizada con éxito.');
           const updatedUser = { ...this.user, password: newPassword } as Users;
           this.userSession.setUserSession(updatedUser).then(() => {
-            console.log('Sesión del usuario actualizada.');
             this.serviceBD.searchUsers();
           });
+          this.serviceBD.presentAlert('Cambio de Contraseña', 'Exitoso');
+          this.modifyForm.reset();
+          this.irPagina('/profile');
         } else {
           console.error('No se pudo actualizar el usuario en la base de datos.');
         }

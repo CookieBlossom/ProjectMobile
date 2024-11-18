@@ -193,7 +193,7 @@ export class ServiceBDService {
   listCartItem = new BehaviorSubject([]);
   listUsers = new BehaviorSubject([]);
   private isDBReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {this.createConection();}
+  constructor(private sqlite: SQLite, private platform: Platform, private alertController: AlertController) {this.createConnection();}
   dbReady(){return this.isDBReady.asObservable();};
   async presentAlert(title: string, message: string) {
     const alert = await this.alertController.create({
@@ -201,19 +201,21 @@ export class ServiceBDService {
       message: message,
       buttons: ['OK'],
     });
-    await alert.present();}
-  createConection(){
-    this.platform.ready().then(()=>{
-      this.sqlite.create({
-        name: 'shoeVaultFixed1.db',
-        location: 'default'
-      }).then((db: SQLiteObject)=>{
+    await alert.present();
+  }
+  async createConnection() {
+    await this.platform.ready().then(async () =>{
+      const db = await this.sqlite.create({
+        name: 'shoeVault111.db',
+        location: 'default',
+      }).then(async (db: SQLiteObject) =>{
         this.database = db;
-        this.createTables()
-        this.insertStaticData();
+        await this.createTables();
+        await this.insertStaticData();
         this.isDBReady.next(true);
-      }).catch(e=>{this.presentAlert('Crear Conexion', 'Error en crear BD: ' + JSON.stringify(e));})})
-  };
+      }).catch(e=>{this.presentAlert('Crear Conexion', 'Error en crear BD: '+ JSON.stringify(e))})
+    });
+  }
   async createTables() {
     try {
       await this.database.executeSql(this.tableBrand, []);

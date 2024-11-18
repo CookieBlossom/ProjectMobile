@@ -1,9 +1,31 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Sobre Nosotros</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <capacitor-google-map id="map"></capacitor-google-map>
+  <div class="header">
+    <img (click)="irPagina('/profile')"  src="/assets/arrow-back.svg" alt="Volver">
+    <h3 class="title">Sobre Nosotros</h3>
+  </div>
+  <div class="map">
+    <capacitor-google-map id="map"></capacitor-google-map>
+  </div>
+  <div class="footer">
+    <div class="footer-content">
+      <h4>Sobre ShoeVault</h4>
+      <p>
+        ShoeVault es tu destino definitivo para encontrar las zapatillas más auténticas y exclusivas del mercado. Nos dedicamos a ofrecer productos de la más alta calidad, asegurándonos de que cada cliente tenga una experiencia excepcional.
+      </p>
+      <h5>Nuestra Visión</h5>
+      <p>
+        Convertirnos en el referente global en la venta de zapatillas, siendo reconocidos por nuestra autenticidad, innovación y excelencia en cada paso.
+      </p>
+      <h5>Nuestra Misión</h5>
+      <p>
+        Proveer a nuestros clientes con zapatillas únicas y de calidad, destacándonos por nuestro compromiso con la atención al cliente y la pasión por el diseño.
+      </p>
+      <h5>Valores</h5>
+      <ul>
+        <li><strong>Autenticidad:</strong> Cada zapatilla que vendemos es original y verificada.</li>
+        <li><strong>Calidad:</strong> Nos aseguramos de que nuestros productos cumplan con los más altos estándares.</li>
+        <li><strong>Atención al Cliente:</strong> Tu satisfacción es nuestra prioridad.</li>
+      </ul>
+    </div>
+  </div>
 </ion-content>

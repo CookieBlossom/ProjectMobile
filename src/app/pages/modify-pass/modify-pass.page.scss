@@ -46,5 +46,6 @@ h1{
 }
 .button-container {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: flex-end
 }

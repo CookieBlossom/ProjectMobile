@@ -27,9 +27,12 @@ ion-card{
 .header-home{
   position: relative;
   width: 100%;
+  display: flex;
   background-color: rgb(245, 245, 245);
   height: 70px;
   border-radius: 0% 0% 15% 15%;
+  justify-content: center;
+  align-items: center;
 }
 .title-home{
   display: flex;
