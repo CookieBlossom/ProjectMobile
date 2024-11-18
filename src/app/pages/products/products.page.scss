@@ -51,12 +51,12 @@ ion-col {
   width: 100%;
 }
 .container-products {
-    height: auto; /* Permite que el contenedor crezca con el contenido */
-    max-height: 100vh; /* Establece una altura máxima en función del viewport */
-    overflow-y: auto; /* Habilita el scroll vertical si el contenido excede la altura máxima */
+    height: auto;
+    max-height: 100vh;
+    overflow-y: auto;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap; /* Para que los productos se ajusten automáticamente en nuevas filas */
+    flex-wrap: wrap;
     justify-content: space-around;
 }
 .product{

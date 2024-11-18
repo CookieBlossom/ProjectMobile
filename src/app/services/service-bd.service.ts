@@ -157,12 +157,12 @@ export class ServiceBDService {
       "INSERT or IGNORE INTO brand(idbrand, namebrand) VALUES(2, 'Puma');",
       "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(1, 'Running');",
       "INSERT or IGNORE INTO category(idcategory, namecategory) VALUES(2, 'LifeStyle');",
-      "INSERT or IGNORE INTO size(size) VALUES(10);",
-      "INSERT or IGNORE INTO size(size) VALUES(15);",
-      "INSERT or IGNORE INTO size(size) VALUES(20);",
-      "INSERT or IGNORE INTO size(size) VALUES(25);",
-      "INSERT or IGNORE INTO size(size) VALUES(30);",
-      "INSERT or IGNORE INTO size(size) VALUES(35);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(1, 10);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(2, 15);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(3, 20);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(4, 25);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(5, 30);",
+      "INSERT or IGNORE INTO size(idsize, size) VALUES(6, 35);",
       "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(1, 'Femenino');",
       "INSERT or IGNORE INTO gender(idgender, namegender) VALUES(2, 'Masculino');",
       "INSERT or IGNORE INTO state_order(idstate, state) VALUES(1, 'Compra Realizada');",
@@ -206,7 +206,7 @@ export class ServiceBDService {
   async createConnection() {
     await this.platform.ready().then(async () =>{
       const db = await this.sqlite.create({
-        name: 'shoeVault111.db',
+        name: 'shoeVault112.db',
         location: 'default',
       }).then(async (db: SQLiteObject) =>{
         this.database = db;
@@ -829,6 +829,7 @@ export class ServiceBDService {
       if (res.rows.length > 0) {
         for (let i = 0; i < res.rows.length; i++) {sizes.push(res.rows.item(i));}
       }
+      console.log(JSON.stringify(sizes));
       return sizes;
     } catch{return [];}
   }
