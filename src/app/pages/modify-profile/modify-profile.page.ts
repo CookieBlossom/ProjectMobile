@@ -21,7 +21,7 @@ export class ModifyProfilePage implements OnInit {
       rut: [{ value: this.user?.rut || '', disabled: true }, Validators.required],
       name: ['', Validators.required],
       genderuser: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email, this.gmailValidator]],
+      email: [{ value: this.user?.email || '', disabled: true }, [Validators.required, Validators.email, this.gmailValidator]],
       phone: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{9,12}$')]]
     });
   }
