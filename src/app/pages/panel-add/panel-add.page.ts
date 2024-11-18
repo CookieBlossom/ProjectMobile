@@ -19,6 +19,7 @@ export class PanelAddPage implements OnInit {
     idbrand: 0,
     idgender: 0,
     image: this.imageExample,
+    status: 'Available',
     priceproduct: 0
   };
   brandsAvailable: any[] = [];
@@ -52,7 +53,8 @@ export class PanelAddPage implements OnInit {
       idbrand: 0,
       idgender: 0,
       image: this.imageExample,
-      priceproduct: 0
+      priceproduct: 0,
+      status: 'available'
     };
   }
   takePicture = async () => {
@@ -78,7 +80,8 @@ export class PanelAddPage implements OnInit {
       this.newProducto.idbrand,
       this.newProducto.idgender,
       this.imageExample,
-      this.newProducto.priceproduct
+      this.newProducto.status,
+      this.newProducto.priceproduct,
     ).then(productId => {
       if (productId) {
         selectedSizes.forEach(sizeId => {

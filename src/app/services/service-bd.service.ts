@@ -103,10 +103,8 @@ export class ServiceBDService {
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     totalorder INTEGER NOT NULL,
     idproduct INTEGER NOT NULL,
-    idcard INTEGER NOT NULL,
     idcomplaint INTEGER NOT NULL DEFAULT 1,
     rut TEXT NOT NULL,
-    FOREIGN KEY (idcard) REFERENCES card(idcard),
     FOREIGN KEY (rut) REFERENCES user(rut),
     FOREIGN KEY (idcomplaint) REFERENCES complaint(idcomplaint),
     FOREIGN KEY (idproduct) REFERENCES product(idproduct)
@@ -206,7 +204,7 @@ export class ServiceBDService {
   async createConnection() {
     await this.platform.ready().then(async () =>{
       const db = await this.sqlite.create({
-        name: 'shoeVault112.db',
+        name: 'shoeVault113.db',
         location: 'default',
       }).then(async (db: SQLiteObject) =>{
         this.database = db;
@@ -344,27 +342,39 @@ export class ServiceBDService {
           items.push({idfavorite_item: res.rows.item(i).idfavorite_item,idlist: res.rows.item(i).idlist,idproduct: res.rows.item(i).idproduct,added_at: res.rows.item(i).added_at});
         }
       }
-      this.listFavoriteItems.next(items as any); // Actualizamos el observable con los resultados
+      this.listFavoriteItems.next(items as any);
     } catch (e) {this.presentAlert('Select', 'Error: ' + JSON.stringify(e));}
   }
-  async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number, status: string = "available"): Promise<number> {
+  async searchOrders(){
+    try {
+      const res = await this.database.executeSql('SELECT * FROM "order"', []);
+      let items: Order[] = [];
+      if (res.rows.length > 0) {
+        for (var i = 0; i < res.rows.length; i++) {
+          items.push({idorder: res.rows.item(i).idorder, created_at: res.rows.item(i).created_at ,totalorder: res.rows.item(i).totalorder,idproduct: res.rows.item(i).idproduct,idcomplaint: res.rows.item(i).idcomplaint,rut: res.rows.item(i).rut});}
+      }
+      this.listOrders.next(items as any);
+    } catch (e) {this.presentAlert('Error', 'Error al obtener las tallas: ' + JSON.stringify(e));}
+  }
+  async insertProduct(name: string, description: string, stock: number, idcategory: number, idbrand: number, idgender: number, image: any, status: string, priceproduct: number): Promise<number> {
     const query = `INSERT INTO product (nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, status, priceproduct) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, priceproduct])
+    return this.database.executeSql(query, [name, description, stock, idcategory, idbrand, idgender, image, status, priceproduct])
       .then(res => {this.searchProducts(); return res.insertId;});
   }
   async deleteProduct(id: number) {
     try {
-      const res = await this.database.executeSql('UPDATE product SET status = "not available" WHERE idproduct = ?', [id]);
+      const res = await this.database.executeSql('UPDATE product SET status = "Disabled" WHERE idproduct = ?', [id]);
       this.searchProducts();
     } catch (e) {
       this.presentAlert('Actualizar Estado', 'Error: ' + JSON.stringify(e));
     }
   }
-  async editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, priceproduct: number) {
+
+  async editProduct(id: number, nameproduct: string, descriptionproduct: string, stockproduct: number, idcategory: number, idbrand: number, idgender: number, image: any, status: string, priceproduct: number) {
     try {
       const res = await this.database.executeSql(
-        'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ? WHERE idproduct = ?',
-        [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, id]);
+        'UPDATE product SET nameproduct = ?, descriptionproduct = ?, stockproduct = ?, idcategory = ?, idbrand = ?, idgender = ?, image = ?, priceproduct = ?, status = ? WHERE idproduct = ?',
+        [nameproduct, descriptionproduct, stockproduct, idcategory, idbrand, idgender, image, priceproduct, status, id]);
       this.presentAlert("Modificar", "Producto modificado correctamente");
       this.searchProducts();
     } catch (e) {this.presentAlert('Modificar', 'Error: ' + JSON.stringify(e));}
@@ -375,7 +385,7 @@ export class ServiceBDService {
       .then(res => {
         if (res.rows.length > 0) {
           const item = res.rows.item(0);
-          return {idproduct: item.idproduct,nameproduct: item.nameproduct,descriptionproduct: item.descriptionproduct,stockproduct: item.stockproduct,idcategory: item.idcategory,idbrand: item.idbrand,idgender: item.idgender,image: item.image,priceproduct: item.priceproduct
+          return {idproduct: item.idproduct,nameproduct: item.nameproduct,descriptionproduct: item.descriptionproduct,stockproduct: item.stockproduct,idcategory: item.idcategory,idbrand: item.idbrand,idgender: item.idgender,image: item.image, status: item.status, priceproduct: item.priceproduct
           } as Productos;
         } else {return null;}
       })

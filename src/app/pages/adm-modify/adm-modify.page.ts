@@ -16,6 +16,7 @@ export class AdmModifyPage implements OnInit {
   productForm: FormGroup;
   oldImage: any;
   newImage: any;
+  status: string = 'Available';
   productSelected: Productos | undefined;
   productSizes: ProductSizes | undefined;
   productId: number | null = null;
@@ -94,7 +95,8 @@ export class AdmModifyPage implements OnInit {
         idbrand: this.productForm.value.brand,
         idgender: this.productForm.value.gender,
         image: imageToSave,
-        priceproduct: this.productForm.value.price
+        status: this.status,
+        priceproduct: this.productForm.value.price,
       };
       const selectedSizes = this.sizesAvailable.filter(size => size.selected).map(size => size.idsize);
       if (selectedSizes.length === 0) {
@@ -110,7 +112,8 @@ export class AdmModifyPage implements OnInit {
         updatedProduct.idbrand,
         updatedProduct.idgender,
         updatedProduct.image,
-        updatedProduct.priceproduct
+        updatedProduct.status,
+        updatedProduct.priceproduct,
       ).then(() => {
         this.serviceBD.deleteProductSizes(this.productId!).then(() => {
           selectedSizes.forEach(sizeId => {
