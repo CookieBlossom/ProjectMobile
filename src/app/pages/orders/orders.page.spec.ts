@@ -1,14 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrdersPage } from './orders.page';
+import { IonicModule } from '@ionic/angular';
+import { RouterTestingModule } from '@angular/router/testing';
+import { FormsModule } from '@angular/forms';
 
 describe('OrdersPage', () => {
   let component: OrdersPage;
   let fixture: ComponentFixture<OrdersPage>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [OrdersPage],
+      imports: [
+        IonicModule.forRoot(),      // Inicializa Ionic
+        RouterTestingModule,        // Simula el enrutamiento necesario
+        FormsModule,                // Soporte para formularios template-driven
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(OrdersPage);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture.detectChanges(); // Aplica la detección de cambios inicial
   });
 
   it('should create', () => {
