@@ -2,6 +2,7 @@ import { CartItem } from './cart-item';
 
 describe('CartItem', () => {
   it('should create an instance', () => {
-    expect(new CartItem()).toBeTruthy();
+    const cartItem = new CartItem(1, 2, 3, 4, 5); // Proporcionar los valores requeridos
+    expect(cartItem).toBeTruthy();
   });
 });

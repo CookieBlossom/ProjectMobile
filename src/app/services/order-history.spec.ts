@@ -2,6 +2,7 @@ import { OrderHistory } from './order-history';
 
 describe('OrderHistory', () => {
   it('should create an instance', () => {
-    expect(new OrderHistory()).toBeTruthy();
+    const orderHistory = new OrderHistory(1, 101, '12345678-9', 1, new Date()); // Proporcionar valores válidos
+    expect(orderHistory).toBeTruthy();
   });
 });
