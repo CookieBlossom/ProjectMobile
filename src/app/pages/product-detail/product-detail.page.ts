@@ -171,27 +171,56 @@ export class ProductDetailPage implements OnInit {
       }
     }
   }
+  async getOrCreateFavoriteList(rut: string): Promise<{ idlist: number } | null> {
+    try {
 
-
-
-  async toggleFavorite(producto: Productos & { isFavorite: boolean }) {
-    if (producto.isFavorite) {
-      try {
-        await this.serviceBD.deleteFavoriteItem(this.idlist, producto.idproduct);
-        producto.isFavorite = false;
-      } catch (error) {
-        console.error('Error al eliminar el producto de favoritos:', error);
+      const favoriteList = await this.serviceBD.getFavoriteListByRutAndName(rut, 'Todos');
+      if (favoriteList) {
+        return favoriteList;
       }
-    } else {
-      try {
-        await this.serviceBD.addFavoriteItem(this.idlist, producto.idproduct);
-        producto.isFavorite = true;
-      } catch (error) {
-        console.error('Error al agregar el producto a favoritos:', error);
+      const newListId = await this.serviceBD.createFavoriteList(rut, 'Todos');
+      if (newListId) {
+        console.log('Lista "Todos" creada para el usuario:', rut);
+        return { idlist: newListId };
       }
+
+      return null;
+    } catch (error) {
+      console.error('Error al obtener o crear la lista de favoritos:', error);
+      return null;
     }
   }
 
+
+  async toggleFavorite(producto: Productos & { isFavorite: boolean }) {
+    try {
+      const userSession = await this.serviceSession.getUserSession().toPromise();
+      if (!userSession || !userSession.rut) {
+        console.error('No se encontró un usuario en la sesión.');
+        return;
+      }
+      const rut = userSession.rut;
+      const favoriteList = await this.getOrCreateFavoriteList(rut);
+
+      if (!favoriteList) {
+        console.error('No se pudo obtener o crear la lista de favoritos.');
+        return;
+      }
+
+      // Usa el ID de la lista para agregar o eliminar favoritos
+      if (producto.isFavorite) {
+        await this.serviceBD.deleteFavoriteItem(favoriteList.idlist, producto.idproduct);
+        producto.isFavorite = false;
+        console.log('Producto eliminado de favoritos:', producto.idproduct);
+      } else {
+        await this.serviceBD.addFavoriteItem(favoriteList.idlist, producto.idproduct);
+        producto.isFavorite = true;
+        console.log('Producto agregado a favoritos:', producto.idproduct);
+      }
+    } catch (error) {
+      console.error('Error en toggleFavorite:', error);
+    }
+  }
   showToast(message: string) {
     this.toastMessage = message;
     this.isToastOpen = true;

@@ -6,6 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
 
 describe('AdmModifyPage', () => {
   let component: AdmModifyPage;
@@ -23,7 +24,8 @@ describe('AdmModifyPage', () => {
       ],
       providers: [
         NativeStorage, // Proveedor para simulación de NativeStorage
-        SQLite,        // Proveedor para simulación de SQLite
+        SQLite,
+        ServiceBDService    // Proveedor para simulación de SQLite
       ],
     }).compileComponents(); // Compila los componentes necesarios
 

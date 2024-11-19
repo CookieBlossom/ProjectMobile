@@ -10,6 +10,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 describe('ModifyProfilePage', () => {
   let component: ModifyProfilePage;
@@ -30,6 +33,11 @@ describe('ModifyProfilePage', () => {
         MatSnackBarModule,          // Snackbar de Angular Material
         MatSelectModule,            // Selector de Angular Material
         MatOptionModule,            // Opciones de Angular Material
+      ],
+      providers: [
+        SQLite,                     // Agrega el provider para SQLite
+        ServiceBDService,
+        NativeStorage          // Agrega el ServiceBDService si depende de SQLite
       ],
     }).compileComponents();
 

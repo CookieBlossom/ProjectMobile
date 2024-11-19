@@ -9,6 +9,7 @@ import { RouterLinkWithHref } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSliderModule } from '@angular/material/slider';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Para habilitar animaciones
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { MatSliderModule } from '@angular/material/slider';
     MatSelectModule,
     RouterLinkWithHref,
     TabsModule,
+    BrowserAnimationsModule,
     ProductsPageRoutingModule
   ],
   declarations: [ProductsPage]

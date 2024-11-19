@@ -175,6 +175,7 @@ form{
   justify-content: space-between;
   width: 100%;
   margin: 0px;
+  flex-direction: column;
 
   .custom-slider {
     flex-grow: 1;

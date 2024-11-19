@@ -704,6 +704,7 @@ export class ServiceBDService {
         return cartItems;
       });
   }
+  
   async addFavoriteItem(idlist: number, idproduct: number): Promise<void> {
     const query = `INSERT INTO favorite_item (idlist, idproduct) VALUES (?, ?)`;
     try {

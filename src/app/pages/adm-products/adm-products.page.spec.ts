@@ -4,6 +4,9 @@ import { IonicModule } from '@ionic/angular';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
 import { AlertController } from '@ionic/angular';
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 describe('AdmProductsPage', () => {
   let component: AdmProductsPage;
@@ -18,7 +21,10 @@ describe('AdmProductsPage', () => {
         FormsModule,           // Soporte para formularios
       ],
       providers: [
-        AlertController,       // Provee AlertController utilizado en el componente
+        SQLite,                     // Agrega el provider para SQLite
+        ServiceBDService,
+        AlertController,
+        NativeStorage         // Agrega el ServiceBDService si depende de SQLite
       ],
     }).compileComponents();
 

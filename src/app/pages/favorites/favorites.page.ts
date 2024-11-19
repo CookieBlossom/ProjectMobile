@@ -20,14 +20,22 @@ export class FavoritesPage implements OnInit {
     this.loadUserData();
   }
   loadUserData() {
-    this.serviceSession.getUserSession().subscribe(userSession => {
-      if (userSession) {
-        console.log('Sesión de usuario recuperada:', userSession);
-        this.user = userSession;
-        this.checkFavoriteList();
-      }
+    this.serviceSession.getUserSession().subscribe({
+      next: (userSession) => {
+        if (userSession?.rut) { // Asegúrate de que el 'rut' esté presente
+          console.log('Sesión de usuario recuperada:', userSession);
+          this.user = userSession; // Guarda la sesión completa
+          this.checkFavoriteList(); // Llama a verificar la lista de favoritos
+        } else {
+          console.error('La sesión no contiene un RUT válido.');
+        }
+      },
+      error: (err) => {
+        console.error('Error al obtener la sesión del usuario:', err);
+      },
     });
   }
+
   async checkFavoriteList() {
     if (this.user) {
       try {
