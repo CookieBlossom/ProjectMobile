@@ -1,17 +1,21 @@
 <ion-menu side="end" menuId="filterMenu" contentId="mainContent">
-  <div class="title">Filtros</div>
-  <div class="filters">
+  <div class="form-filter">
+    <div class="title">
+      <h3>
+        Filtros
+      </h3>
+    </div>
     <form [formGroup]="filtersForm" (ngSubmit)="applyFilters()">
-      <ion-list>
-        <div class="slider-container">
-          <ion-label>Rango de Precio</ion-label>
-          <mat-slider class="example-margin" [min]="0" [max]="1000000" [step]="1000" thumbLabel>
-            <input matSliderThumb formControlName="priceRange"> <!-- Vinculado al formControlName -->
-          </mat-slider>
-        </div>
+      <div class="slider-container">
+        <ion-label>Rango de Precio</ion-label>
+        <mat-slider class="example-margin" [min]="0" [max]="1000000" [step]="1000" thumbLabel>
+          <input matSliderThumb formControlName="priceRange"> <!-- Vinculado al formControlName -->
+        </mat-slider>
         <div class="slider-values">
           <span>{{ filtersForm.get('priceRange')?.value }}</span>
         </div>
+      </div>
+      <div class="categories">
         <mat-form-field appearance="outline">
           <mat-label>Categoría</mat-label>
           <mat-select formControlName="selectedCategory">
@@ -28,16 +32,15 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+      </div>
+      <div class="buttons">
+        <ion-button class="custom-button" expand="block" type="submit">Aplicar Filtros</ion-button>
+        <ion-button class="custom-button" expand="block" (click)="clearFilters()">Limpiar Filtros</ion-button>
+      </div>
 
-        <ion-item lines="none">
-          <ion-button class="custom-button" expand="full" type="submit">Aplicar Filtros</ion-button>
-        </ion-item>
-        <ion-item lines="none">
-          <ion-button class="custom-button" expand="full" (click)="clearFilters()">Limpiar Filtros</ion-button>
-        </ion-item>
-      </ion-list>
     </form>
   </div>
+
 </ion-menu>
 
 <ion-content [fullscreen]="true" id="mainContent">
@@ -53,7 +56,6 @@
     </div>
   </section>
   <section class="section-products">
-    <ion-spinner *ngIf="isLoading"></ion-spinner>
     <ion-grid>
       <ion-row class="container-products">
         <ng-container *ngFor="let product of filteredProducts">
@@ -63,7 +65,6 @@
             </div>
             <div class="content-product">
               <h4>{{ product.nameproduct }}</h4>
-              <p class="stock-product">Disponibles: {{ product.stockproduct }}</p>
               <p class="price-product">{{ product.priceproduct | currency: 'CLP' }}</p>
             </div>
           </div>
