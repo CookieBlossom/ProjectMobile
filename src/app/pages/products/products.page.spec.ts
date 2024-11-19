@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Importa este módulo
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations'; // Importa este módulo
 import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,10 +23,10 @@ describe('ProductsPage', () => {
         RouterTestingModule,
         ReactiveFormsModule,
         FormsModule,
-        BrowserAnimationsModule, // Agrega este módulo para habilitar las animaciones en las pruebas
         MatSliderModule,         // Importa Material Slider
         MatFormFieldModule,      // Importa Material Form Field
-        MatSelectModule,         // Importa Material Select
+        MatSelectModule,
+        NoopAnimationsModule         // Importa Material Select
       ],
       providers: [
         SQLite,
