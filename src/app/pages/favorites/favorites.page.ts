@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter } from 'rxjs';
 import { Productos } from 'src/app/services/productos';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
 import { UserSessionService } from 'src/app/services/user-session.service';
@@ -15,50 +15,80 @@ export class FavoritesPage implements OnInit {
   productsFavorite: Productos[] = [];
   user: Users | null = null;
   favoriteListId: number | null = null;
-  constructor(private router: Router,private serviceBD: ServiceBDService,private serviceSession: UserSessionService) {}
+
+  constructor(
+    private router: Router,
+    private serviceBD: ServiceBDService,
+    private serviceSession: UserSessionService
+  ) {}
+
   ngOnInit() {
-    this.loadUserData();
+    console.log('FavoritesPage loaded');
+    this.verificarConexionBD();
   }
-  loadUserData() {
-    this.serviceSession.getUserSession().subscribe({
-      next: (userSession) => {
-        if (userSession?.rut) { // Asegúrate de que el 'rut' esté presente
-          console.log('Sesión de usuario recuperada:', userSession);
-          this.user = userSession; // Guarda la sesión completa
-          this.checkFavoriteList(); // Llama a verificar la lista de favoritos
-        } else {
-          console.error('La sesión no contiene un RUT válido.');
-        }
-      },
-      error: (err) => {
-        console.error('Error al obtener la sesión del usuario:', err);
-      },
+
+  ionViewWillEnter() {
+    console.log('FavoritesPage about to enter');
+    this.initializeFavorites();
+  }
+
+  verificarConexionBD() {
+    this.serviceBD.dbReady()
+      .pipe(filter(isReady => isReady))
+      .subscribe(() => {
+        console.log('Base de datos lista.');
+        this.serviceBD.searchFavorites(); // Llama al método de búsqueda de favoritos // Llama al método de búsqueda de ítems de favoritos
+        this.getUserSession(); // Obtiene la sesión de usuario
+      });
+  }
+  getUserSession() {
+    this.serviceSession.getUserSession().subscribe(user => {
+      if (user) {
+        this.user = user;
+        console.log('Sesión de usuario obtenida:', user);
+      } else {
+        console.error('No se encontró una sesión de usuario activa.');
+      }
     });
   }
 
-  async checkFavoriteList() {
-    if (this.user) {
-      try {
-        const res = await this.serviceBD.getFavoriteListByRutAndName(this.user.rut, 'Todos');
-        if (res) {
-          console.log('Lista de favoritos "Todos" encontrada:', res);
-          this.favoriteListId = res.idlist;
-        } else {
-          this.favoriteListId = await this.createFavoriteList(this.user.rut, 'Todos');
-          console.log('Lista "Todos" creada con ID:', this.favoriteListId);
-        }
-        this.loadFavoriteItems(this.favoriteListId!);
-      } catch (error) {
-        console.error('Error al verificar o crear la lista "Todos":', error);
+  async initializeFavorites() {
+    if (!this.user || !this.user.rut) {
+      console.error('No hay sesión de usuario para inicializar favoritos.');
+      return;
+    }
+
+    try {
+      this.favoriteListId = await this.getOrCreateFavoriteList(this.user.rut);
+      if (!this.favoriteListId) {
+        console.error('No se pudo obtener o crear la lista de favoritos.');
+        return;
       }
+
+      // Cargar los productos favoritos
+      await this.loadFavoriteItems(this.favoriteListId);
+    } catch (error) {
+      console.error('Error al inicializar favoritos:', error);
     }
   }
-  async createFavoriteList(rut: string, listName: string): Promise<number | null> {
+
+  async getOrCreateFavoriteList(rut: string): Promise<number | null> {
     try {
-      const newListId = await this.serviceBD.createFavoriteList(rut, listName);
-      return newListId;
+      const favoriteList = await this.serviceBD.getFavoriteListByRutAndName(rut, 'Todos');
+      if (favoriteList) {
+        console.log('Lista de favoritos encontrada:', favoriteList.idlist);
+        return favoriteList.idlist;
+      }
+
+      const newListId = await this.serviceBD.createFavoriteList(rut, 'Todos');
+      if (newListId) {
+        console.log('Lista "Todos" creada para el usuario:', rut);
+        return newListId;
+      }
+
+      return null;
     } catch (error) {
-      console.error('Error al crear la lista "Todos":', error);
+      console.error('Error al obtener o crear la lista de favoritos:', error);
       return null;
     }
   }
@@ -67,10 +97,12 @@ export class FavoritesPage implements OnInit {
     try {
       const favoriteItems = await this.serviceBD.getFavoriteItemsByListId(idlist);
       if (favoriteItems) {
-        let products: Productos[] = [];
-        for (let item of favoriteItems) {
+        const products: Productos[] = [];
+        for (const item of favoriteItems) {
           const product = await this.serviceBD.getProductById(item.idproduct);
-          if (product) {products.push(product);}
+          if (product) {
+            products.push(product);
+          }
         }
         this.productsFavorite = products;
         console.log('Productos favoritos cargados:', this.productsFavorite);
@@ -79,6 +111,7 @@ export class FavoritesPage implements OnInit {
       console.error('Error al cargar los productos favoritos:', error);
     }
   }
+
   irPagina(ruta: string) {
     this.router.navigate([ruta]);
   }

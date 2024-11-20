@@ -670,13 +670,14 @@ export class ServiceBDService {
         for (let i = 0; i < res.rows.length; i++) {
           items.push(res.rows.item(i));
         }
+        this.searchFavoriteItem(idlist);
         return items;
       } else {return null;}
     } catch (error) {console.error('Error al obtener los ítems de la lista de favoritos:', error);return null;
     }
   }
   async createFavoriteList(rut: string, listName: string): Promise<number | null> {
-    const query = `INSERT INTO favorites_list (rut, list_name) VALUES (?, ?)`;
+    const query = `INSERT OR IGNORE INTO favorites_list (rut, list_name) VALUES (?, ?)`;
     try {
       const res = await this.database.executeSql(query, [rut, listName]);
       return res.insertId;
@@ -704,11 +705,13 @@ export class ServiceBDService {
         return cartItems;
       });
   }
-  
+
   async addFavoriteItem(idlist: number, idproduct: number): Promise<void> {
     const query = `INSERT INTO favorite_item (idlist, idproduct) VALUES (?, ?)`;
     try {
       await this.database.executeSql(query, [idlist, idproduct]);
+      this.fetchFavoriteItems();
+      this.searchFavoriteItem(idlist);
       console.log('Producto agregado a la lista de favoritos en la base de datos');
     } catch (error) {
       console.error('Error al agregar el producto a la lista de favoritos:', error);
@@ -719,15 +722,17 @@ export class ServiceBDService {
     const query = `DELETE FROM favorite_item WHERE idlist = ? AND idproduct = ?`;
     try {
       await this.database.executeSql(query, [idlist, idproduct]);
-      console.log('Producto eliminado de la lista de favoritos en la base de datos');
+      this.fetchFavoriteItems();
+      this.searchFavoriteItem(idlist);
     } catch (error) {
-      console.error('Error al eliminar el producto de la lista de favoritos:', error);
       throw error;
     }
   }
   async isProductInFavorites(idlist: number, idproduct: number): Promise<boolean> {
     const query = `SELECT * FROM favorite_item WHERE idlist = ? AND idproduct = ?`;
     const res = await this.database.executeSql(query, [idlist, idproduct]);
+    console.log('Resultado de isProductInFavorites:', res.rows.length > 0);
+    this.fetchFavoriteItems();
     return res.rows.length > 0;
   }
   async insertOrder(totalorder: number, idproduct: number, idcard: number, rut: string): Promise<number> {
@@ -737,6 +742,7 @@ export class ServiceBDService {
     `;
     try {
       const result = await this.database.executeSql(query, [totalorder, idproduct, idcard, rut]);
+      this.fetchOrder();
       return result.insertId;
     } catch (error) {
       console.error('Error al insertar la orden:', error);
@@ -750,6 +756,7 @@ export class ServiceBDService {
     `;
     try {
       await this.database.executeSql(query, [idorder, rut, idstate]);
+      this.fetchOrder();
     } catch (error) {
       console.error('Error al insertar en el historial de órdenes:', error);
       throw error;
@@ -765,6 +772,7 @@ export class ServiceBDService {
           orders.push({ idorder: res.rows.item(i).idorder, created_at: res.rows.item(i).created_at, totalorder: res.rows.item(i).totalorder, idproduct: res.rows.item(i).idproduct, idcard: res.rows.item(i).idcard, idcomplaint: res.rows.item(i).idcomplaint, rut: res.rows.item(i).rut,
           } as Order);
         }
+        this.fetchOrder();
       }
       return orders;
     } catch (error) {
