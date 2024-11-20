@@ -5,7 +5,7 @@ import { Productos } from 'src/app/services/productos';
 import { ServiceBDService } from 'src/app/services/service-bd.service';
 import { ShoppingCart } from 'src/app/services/shopping-cart';
 import { UserSessionService } from 'src/app/services/user-session.service';
-
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.page.html',
@@ -21,13 +21,14 @@ export class ProductDetailPage implements OnInit {
   maxQuantity: number = 0;
   isToastOpen = false;
   toastMessage: string = '';
-  idlist: number = 1;
+  idlist!: number;
 
   constructor(
     private activatedroute: ActivatedRoute,
     private router: Router,
     private serviceBD: ServiceBDService,
-    private serviceSession: UserSessionService
+    private serviceSession: UserSessionService,
+    private cdr: ChangeDetectorRef,
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
@@ -66,19 +67,41 @@ export class ProductDetailPage implements OnInit {
   }
 
   cargarProducto(id: number) {
-    this.serviceBD.getProductById(id).then(async (product: Productos | null) => {
-      if (product) {
-        const isFavorite = await this.serviceBD.isProductInFavorites(this.idlist, product.idproduct);
-        this.productoDetalle = { ...product, isFavorite };
-        this.maxQuantity = this.productoDetalle.stockproduct;
-        this.cargarTallasProducto(id);
+    this.serviceSession.getUserSession().subscribe(async (user) => {
+      if (user) {
+        try {
+          const favoriteList = await this.getOrCreateFavoriteList(user.rut);
+          if (favoriteList && favoriteList.idlist) {
+            this.idlist = favoriteList.idlist; // Asignar el idlist correcto
+            console.log('Lista de favoritos obtenida:', this.idlist);
+            this.serviceBD.getProductById(id).then(async (product: Productos | null) => {
+              if (product) {
+                // Verificar si el producto es favorito
+                const isFavorite = await this.serviceBD.isProductInFavorites(this.idlist, product.idproduct);
+                console.log('¿Es favorito?', isFavorite);
+
+                // Asignar detalles del producto
+                this.productoDetalle = { ...product, isFavorite };
+                this.maxQuantity = this.productoDetalle.stockproduct;
+                this.cargarTallasProducto(id);
+              } else {
+                console.error('Producto no encontrado');
+              }
+            }).catch(error => {
+              console.error('Error al cargar el producto:', error);
+            });
+          } else {
+            console.error('No se pudo obtener o crear la lista de favoritos.');
+          }
+        } catch (error) {
+          console.error('Error al cargar la lista de favoritos:', error);
+        }
       } else {
-        console.error('Producto no encontrado');
+        console.error('No se encontró una sesión de usuario activa.');
       }
-    }).catch(error => {
-      console.error('Error al cargar el producto:', error);
     });
   }
+
 
   cargarTallasProducto(idproduct: number) {
     this.serviceBD.fetchProductSizesByProductId(idproduct).then(sizes => {
@@ -173,54 +196,58 @@ export class ProductDetailPage implements OnInit {
   }
   async getOrCreateFavoriteList(rut: string): Promise<{ idlist: number } | null> {
     try {
-
       const favoriteList = await this.serviceBD.getFavoriteListByRutAndName(rut, 'Todos');
       if (favoriteList) {
-        return favoriteList;
+        return { idlist: favoriteList.idlist }; // Siempre devuelve solo el idlist
       }
+
       const newListId = await this.serviceBD.createFavoriteList(rut, 'Todos');
       if (newListId) {
         console.log('Lista "Todos" creada para el usuario:', rut);
         return { idlist: newListId };
       }
 
-      return null;
+      return null; // Si no se pudo crear la lista
     } catch (error) {
       console.error('Error al obtener o crear la lista de favoritos:', error);
       return null;
     }
   }
 
-
   async toggleFavorite(producto: Productos & { isFavorite: boolean }) {
-    try {
-      const userSession = await this.serviceSession.getUserSession().toPromise();
-      if (!userSession || !userSession.rut) {
-        console.error('No se encontró un usuario en la sesión.');
-        return;
-      }
-      const rut = userSession.rut;
-      const favoriteList = await this.getOrCreateFavoriteList(rut);
+    console.log('toggleFavorite llamado:', producto);
+    this.serviceSession.getUserSession().subscribe(async (user) => {
+      if (user) {
+        try {
+          const favoriteList = await this.getOrCreateFavoriteList(user.rut);
+          if (!favoriteList) {
+            console.error('No se pudo obtener o crear la lista de favoritos.');
+            return;
+          }
+          // Determinar si agregar o eliminar el producto
+          if (producto.isFavorite) {
+            await this.serviceBD.deleteFavoriteItem(favoriteList.idlist, producto.idproduct);
+            producto.isFavorite = false;
+            console.log('Producto eliminado de favoritos:', producto.idproduct);
+          } else {
+            await this.serviceBD.addFavoriteItem(favoriteList.idlist, producto.idproduct);
+            producto.isFavorite = true;
+            console.log('Producto agregado a favoritos:', producto.idproduct);
+          }
 
-      if (!favoriteList) {
-        console.error('No se pudo obtener o crear la lista de favoritos.');
-        return;
-      }
+          this.cdr.detectChanges();
+          console.log('Estado actualizado:', producto.isFavorite);
 
-      // Usa el ID de la lista para agregar o eliminar favoritos
-      if (producto.isFavorite) {
-        await this.serviceBD.deleteFavoriteItem(favoriteList.idlist, producto.idproduct);
-        producto.isFavorite = false;
-        console.log('Producto eliminado de favoritos:', producto.idproduct);
+        } catch (error) {
+          console.error('Error en toggleFavorite:', error);
+        }
       } else {
-        await this.serviceBD.addFavoriteItem(favoriteList.idlist, producto.idproduct);
-        producto.isFavorite = true;
-        console.log('Producto agregado a favoritos:', producto.idproduct);
+        console.error('No se encontró una sesión de usuario activa.');
       }
-    } catch (error) {
-      console.error('Error en toggleFavorite:', error);
-    }
+    });
   }
+
+
   showToast(message: string) {
     this.toastMessage = message;
     this.isToastOpen = true;
