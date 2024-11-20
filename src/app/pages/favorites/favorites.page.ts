@@ -29,7 +29,7 @@ export class FavoritesPage implements OnInit {
 
   ionViewWillEnter() {
     console.log('FavoritesPage about to enter');
-    this.initializeFavorites();
+    this.refreshFavorites(); // Refrescar favoritos cada vez que la página sea visible
   }
 
   verificarConexionBD() {
@@ -37,39 +37,21 @@ export class FavoritesPage implements OnInit {
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
         console.log('Base de datos lista.');
-        this.serviceBD.searchFavorites(); // Llama al método de búsqueda de favoritos // Llama al método de búsqueda de ítems de favoritos
-        this.getUserSession(); // Obtiene la sesión de usuario
+        this.getUserSession();
       });
   }
+
   getUserSession() {
-    this.serviceSession.getUserSession().subscribe(user => {
-      if (user) {
-        this.user = user;
-        console.log('Sesión de usuario obtenida:', user);
+    this.serviceSession.getUserSession().subscribe(async (user) => {
+      if (user && user.rut) {
+        this.user = user; // Establecer el usuario actual
+        console.log('Sesión de usuario obtenida:', user.rut);
+        this.favoriteListId = await this.getOrCreateFavoriteList(user.rut); // Obtener o crear lista de favoritos
+        this.refreshFavorites(); // Refrescar favoritos al obtener el usuario
       } else {
         console.error('No se encontró una sesión de usuario activa.');
       }
     });
-  }
-
-  async initializeFavorites() {
-    if (!this.user || !this.user.rut) {
-      console.error('No hay sesión de usuario para inicializar favoritos.');
-      return;
-    }
-
-    try {
-      this.favoriteListId = await this.getOrCreateFavoriteList(this.user.rut);
-      if (!this.favoriteListId) {
-        console.error('No se pudo obtener o crear la lista de favoritos.');
-        return;
-      }
-
-      // Cargar los productos favoritos
-      await this.loadFavoriteItems(this.favoriteListId);
-    } catch (error) {
-      console.error('Error al inicializar favoritos:', error);
-    }
   }
 
   async getOrCreateFavoriteList(rut: string): Promise<number | null> {
@@ -93,22 +75,39 @@ export class FavoritesPage implements OnInit {
     }
   }
 
-  async loadFavoriteItems(idlist: number) {
+  async refreshFavorites() {
+    if (!this.favoriteListId) {
+      console.error('No hay lista de favoritos para refrescar.');
+      return;
+    }
+
     try {
-      const favoriteItems = await this.serviceBD.getFavoriteItemsByListId(idlist);
-      if (favoriteItems) {
-        const products: Productos[] = [];
-        for (const item of favoriteItems) {
-          const product = await this.serviceBD.getProductById(item.idproduct);
-          if (product) {
-            products.push(product);
-          }
-        }
-        this.productsFavorite = products;
-        console.log('Productos favoritos cargados:', this.productsFavorite);
-      }
+      await this.loadFavorites(); // Recargar los favoritos desde la base de datos
     } catch (error) {
-      console.error('Error al cargar los productos favoritos:', error);
+      console.error('Error al refrescar los favoritos:', error);
+    }
+  }
+
+  async loadFavorites() {
+    if (this.favoriteListId) {
+      try {
+        const favoriteItems = await this.serviceBD.getFavoriteItemsByListId(this.favoriteListId);
+        if (favoriteItems) {
+          const products: Productos[] = [];
+          for (const item of favoriteItems) {
+            const product = await this.serviceBD.getProductById(item.idproduct);
+            if (product) {
+              products.push(product);
+            }
+          }
+          this.productsFavorite = products;
+          console.log('Productos favoritos cargados:', this.productsFavorite);
+        }
+      } catch (error) {
+        console.error('Error al cargar los productos favoritos:', error);
+      }
+    } else {
+      console.error('No se ha definido un idlist para la lista de favoritos.');
     }
   }
 
