@@ -22,7 +22,7 @@ describe('TabsComponent', () => {
         IonicModule.forRoot(),
         FormsModule,
         ReactiveFormsModule,
-        RouterTestingModule, // Configura enrutamiento simulado
+        RouterTestingModule, 
         HttpClientModule,
       ],
       providers: [
@@ -31,16 +31,16 @@ describe('TabsComponent', () => {
           useValue: {
             snapshot: {
               paramMap: {
-                get: () => 'test-id', // Simula parámetros de ruta
+                get: () => 'test-id',
               },
             },
-            params: of({ id: 'test-id' }), // Simula parámetros observables
+            params: of({ id: 'test-id' }), 
           },
         },
-        SQLite, // Agrega SQLite si se utiliza
-        ServiceBDService, // Agrega el servicio de BD si depende de SQLite
-        NativeStorage, // Agrega NativeStorage si es necesario
-        ApiService, // Proveedor del ApiService
+        SQLite, 
+        ServiceBDService, 
+        NativeStorage, 
+        ApiService,
       ],
     }).compileComponents();
 

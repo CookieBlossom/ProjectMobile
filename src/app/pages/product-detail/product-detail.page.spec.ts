@@ -15,20 +15,20 @@ describe('ProductDetailPage', () => {
     await TestBed.configureTestingModule({
       declarations: [ProductDetailPage],
       imports: [
-        IonicModule.forRoot(),      // Inicializa los componentes de Ionic
-        RouterTestingModule,        // Simula el enrutamiento necesario
-        FormsModule,                // Soporte para formularios template-driven
+        IonicModule.forRoot(),      
+        RouterTestingModule,        
+        FormsModule,                
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
+        SQLite,                   
         ServiceBDService,
-        NativeStorage           // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage           
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductDetailPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {

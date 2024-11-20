@@ -14,19 +14,19 @@ describe('ShoppingCartPage', () => {
     await TestBed.configureTestingModule({
       declarations: [ShoppingCartPage],
       imports: [
-        IonicModule.forRoot(),      // Inicializa los componentes de Ionic
-        RouterTestingModule,        // Simula el enrutamiento necesario
+        IonicModule.forRoot(),      
+        RouterTestingModule,        
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
+        SQLite,                     
         ServiceBDService,
-        NativeStorage     // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage     
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ShoppingCartPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {

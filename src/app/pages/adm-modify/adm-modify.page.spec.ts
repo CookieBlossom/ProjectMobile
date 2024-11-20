@@ -14,28 +14,27 @@ describe('AdmModifyPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AdmModifyPage], // Declara el componente a probar
+      declarations: [AdmModifyPage],
       imports: [
-        IonicModule.forRoot(), // IonicModule para que las dependencias de Ionic se carguen correctamente
-        RouterTestingModule,   // Simula el RouterModule para pruebas
-        ReactiveFormsModule,   // Habilita los formularios reactivos
-        FormsModule,           // Soporte para formularios template-driven
-        HttpClientTestingModule, // Simula HttpClient para evitar solicitudes HTTP reales
+        IonicModule.forRoot(),
+        RouterTestingModule,
+        ReactiveFormsModule,
+        FormsModule,
+        HttpClientTestingModule,
       ],
       providers: [
-        NativeStorage, // Proveedor para simulación de NativeStorage
+        NativeStorage,
         SQLite,
-        ServiceBDService    // Proveedor para simulación de SQLite
+        ServiceBDService
       ],
-    }).compileComponents(); // Compila los componentes necesarios
+    }).compileComponents();
 
-    // Inicializa el componente y su fixture
     fixture = TestBed.createComponent(AdmModifyPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges();
   });
 
   it('should create the app', () => {
-    expect(component).toBeTruthy(); // Usa el componente inicializado
+    expect(component).toBeTruthy();
   });
 });

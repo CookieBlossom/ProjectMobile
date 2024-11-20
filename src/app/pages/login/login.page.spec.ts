@@ -15,7 +15,6 @@ describe('LoginPage', () => {
   let serviceBDSpy: jasmine.SpyObj<ServiceBDService>;
 
   beforeEach(async () => {
-    // Crear un mock para ServiceBDService
     serviceBDSpy = jasmine.createSpyObj('ServiceBDService', [
       'searchUsers',
       'loginUser',
@@ -23,7 +22,6 @@ describe('LoginPage', () => {
       'dbReady',
     ]);
 
-    // Mockear el método dbReady para devolver un observable válido
     serviceBDSpy.dbReady.and.returnValue(of(true));
 
     await TestBed.configureTestingModule({

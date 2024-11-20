@@ -1,37 +1,40 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HomePage } from './home.page';
 import { IonicModule } from '@ionic/angular';
 import { RouterTestingModule } from '@angular/router/testing';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
-import { ServiceBDService } from '../services/service-bd.service';
+import { ServiceBDService } from 'src/app/services/service-bd.service';
+import { AdmModifyPage } from '../pages/adm-modify/adm-modify.page';
 
-describe('HomePage', () => {
-  let component: HomePage;
-  let fixture: ComponentFixture<HomePage>;
+describe('AdmModifyPage', () => {
+  let component: AdmModifyPage;
+  let fixture: ComponentFixture<AdmModifyPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HomePage],
+      declarations: [AdmModifyPage],
       imports: [
-        IonicModule.forRoot(), // Inicializa los componentes de Ionic
-        RouterTestingModule,   // Simula el enrutamiento necesario
-        FormsModule,           // Soporte para formularios
+        IonicModule.forRoot(),
+        RouterTestingModule,
+        ReactiveFormsModule,
+        FormsModule,
+        HttpClientTestingModule,
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
-        ServiceBDService,
-        NativeStorage         // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage,
+        SQLite,
+        ServiceBDService
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HomePage);
+    fixture = TestBed.createComponent(AdmModifyPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the app', () => {
     expect(component).toBeTruthy();
   });
 });

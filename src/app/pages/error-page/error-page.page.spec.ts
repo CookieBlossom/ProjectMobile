@@ -11,14 +11,14 @@ describe('ErrorPagePage', () => {
     await TestBed.configureTestingModule({
       declarations: [ErrorPagePage],
       imports: [
-        IonicModule.forRoot(), // Inicializa Ionic
-        RouterTestingModule,   // Simula las rutas necesarias
+        IonicModule.forRoot(), 
+        RouterTestingModule,   
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ErrorPagePage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges();
   });
 
   it('should create', () => {

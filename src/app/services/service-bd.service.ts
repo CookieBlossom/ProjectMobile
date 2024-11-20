@@ -204,7 +204,7 @@ export class ServiceBDService {
   async createConnection() {
     await this.platform.ready().then(async () =>{
       const db = await this.sqlite.create({
-        name: 'shoeVault113.db',
+        name: 'shoeVault114.db',
         location: 'default',
       }).then(async (db: SQLiteObject) =>{
         this.database = db;

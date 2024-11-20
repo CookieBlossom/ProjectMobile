@@ -16,22 +16,22 @@ describe('ForgotPassPage', () => {
     await TestBed.configureTestingModule({
       declarations: [ForgotPassPage],
       imports: [
-        IonicModule.forRoot(),      // Inicializa Ionic
-        RouterTestingModule,        // Simula el enrutamiento necesario
-        ReactiveFormsModule,        // Soporte para formularios reactivos
-        FormsModule,                // Soporte para formularios template-driven
+        IonicModule.forRoot(),      
+        RouterTestingModule,        
+        ReactiveFormsModule,        
+        FormsModule,                
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
+        SQLite,                     
         ServiceBDService,
         NativeDateAdapter,
-        NativeStorage      // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage      
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ForgotPassPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {

@@ -22,7 +22,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
     MatSelectModule,
     RouterLinkWithHref,
     TabsModule,
-    BrowserAnimationsModule,
     ProductsPageRoutingModule
   ],
   declarations: [ProductsPage]

@@ -22,28 +22,28 @@ describe('ModifyProfilePage', () => {
     await TestBed.configureTestingModule({
       declarations: [ModifyProfilePage],
       imports: [
-        IonicModule.forRoot(),      // Inicializa los componentes de Ionic
-        RouterTestingModule,        // Simula el enrutamiento necesario
-        FormsModule,                // Soporte para formularios template-driven
-        ReactiveFormsModule,        // Soporte para formularios reactivos
-        MatFormFieldModule,         // Campo de formulario de Angular Material
-        MatInputModule,             // Entrada de datos de Angular Material
-        MatButtonModule,            // Botones de Angular Material
-        MatCardModule,              // Tarjetas de Angular Material
-        MatSnackBarModule,          // Snackbar de Angular Material
-        MatSelectModule,            // Selector de Angular Material
-        MatOptionModule,            // Opciones de Angular Material
+        IonicModule.forRoot(),    
+        RouterTestingModule,        
+        FormsModule,                
+        ReactiveFormsModule,        
+        MatFormFieldModule,         
+        MatInputModule,             
+        MatButtonModule,            
+        MatCardModule,           
+        MatSnackBarModule,         
+        MatSelectModule,            
+        MatOptionModule,            
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
+        SQLite,                    
         ServiceBDService,
-        NativeStorage          // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage         
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ModifyProfilePage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {

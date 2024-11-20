@@ -15,20 +15,20 @@ describe('FavoritesPage', () => {
     await TestBed.configureTestingModule({
       declarations: [FavoritesPage],
       imports: [
-        IonicModule.forRoot(), // Inicializa Ionic
-        RouterTestingModule,   // Simula el enrutamiento necesario
-        FormsModule,           // Importa soporte para formularios
+        IonicModule.forRoot(), 
+        RouterTestingModule,   
+        FormsModule,           
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
+        SQLite,                    
         ServiceBDService,
-        NativeStorage         // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage         
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FavoritesPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {

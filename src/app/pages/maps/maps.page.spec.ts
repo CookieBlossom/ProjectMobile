@@ -11,14 +11,14 @@ describe('MapsPage', () => {
     await TestBed.configureTestingModule({
       declarations: [MapsPage],
       imports: [
-        IonicModule.forRoot(),      // Inicializa Ionic
-        RouterTestingModule,        // Simula el enrutamiento necesario
+        IonicModule.forRoot(),      
+        RouterTestingModule,        
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MapsPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {

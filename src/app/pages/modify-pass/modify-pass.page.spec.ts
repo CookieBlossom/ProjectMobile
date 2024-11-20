@@ -21,15 +21,15 @@ describe('ModifyPassPage', () => {
         RouterTestingModule,
       ],
       providers: [
-        SQLite,                     // Agrega el provider para SQLite
+        SQLite,                     
         ServiceBDService,
-        NativeStorage         // Agrega el ServiceBDService si depende de SQLite
+        NativeStorage         
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ModifyPassPage);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Aplica la detección de cambios inicial
+    fixture.detectChanges(); 
   });
 
   it('should create', () => {
