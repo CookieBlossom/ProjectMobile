@@ -1,27 +1,35 @@
 <ion-content [fullscreen]="true">
   <div class="header-shopping">
-    <img src="/assets/arrow-back.svg" (click)="irPagina('/home')">
     <p class="items-shopping">Carrito de Compras</p>
   </div>
 
-  <div class="content-shopping">
-    <div *ngIf="productsInCart.length > 0; else noProductsTemplate">
-      <div class="shopping-product" *ngFor="let product of productsInCart">
-        <img [src]="product.image" alt="Imagen del producto">
-        <div class="text-product">
-          <p class="title-product">{{ product.nameproduct }}</p>
-          <p class="price-product">Total: CLP {{ product.priceproduct * product.quantity | number }}</p>
-          <span class="quantity">Cantidad: {{ product.quantity }}</span>
+  <div class="scrollable-container">
+    <div class="content-shopping">
+      <div *ngIf="productsInCart.length > 0; else noProductsTemplate">
+        <div class="shopping-product" *ngFor="let product of productsInCart">
+          <img [src]="product.image" alt="Imagen del producto">
+          <div class="text-product">
+            <p class="title-product">{{ product.nameproduct }}</p>
+            <p class="price-product">Total: CLP {{ product.priceproduct * product.quantity | number }}</p>
+            <p class="size-products">Talla: {{product.size}}</p>
+            <span class="quantity">Cantidad: {{ product.quantity }}</span>
+          </div>
         </div>
       </div>
+      <ng-template #noProductsTemplate>
+        <div class="no-shopping-container">
+          <p class="no-shopping-text">No tienes productos en el carrito.</p>
+        </div>
+      </ng-template>
     </div>
-    <ng-template #noProductsTemplate>
-      <p>No hay productos en el carrito</p>
-    </ng-template>
   </div>
+
+  <!-- Botón Comprar -->
   <div class="shopping-button">
-    <ion-button expand="full" (click)="comprar()" color="dark">Comprar</ion-button>
+    <ion-button expand="full" (click)="comprarTest()" color="dark">Comprar</ion-button>
   </div>
+
+  <!-- Toast -->
   <ion-toast
     id="toast-message"
     [message]="toastMessage"
@@ -30,5 +38,7 @@
     (didDismiss)="isToastOpen = false"
     position="top">
   </ion-toast>
+
+  <!-- Tabs -->
+  <app-tabs></app-tabs>
 </ion-content>
-<app-tabs></app-tabs>

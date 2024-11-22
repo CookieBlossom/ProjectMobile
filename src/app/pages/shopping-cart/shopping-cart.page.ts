@@ -8,7 +8,7 @@ import { Productos } from "src/app/services/productos";
 import { ShoppingCart } from "src/app/services/shopping-cart";
 import { filter } from "rxjs/operators";
 
-type ProductWithQuantity = Productos & { quantity: number; selected?: boolean };
+type ProductWithQuantity = Productos & { quantity: number; selected?: boolean; size: number };
 
 @Component({
   selector: 'app-shopping-cart',
@@ -17,6 +17,7 @@ type ProductWithQuantity = Productos & { quantity: number; selected?: boolean };
 })
 export class ShoppingCartPage implements OnInit {
   productsInCart: ProductWithQuantity[] = [];
+  products: Productos[] = []
   user: Users | null = null;
   cartItem: CartItem[] = [];
   shoppingCart: ShoppingCart | null = null;
@@ -34,29 +35,29 @@ export class ShoppingCartPage implements OnInit {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
+        this.serviceBD.searchProducts();
+        this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
+          this.products = data;
+          console.log("Productos cargados", JSON.stringify(this.products));
+        });
         this.serviceSession.getUserSession().subscribe(user => {
           if (user) {
             this.user = user;
             this.checkShoppingCart(user.rut);
-            console.log("hola");
           }
         });
       });
   }
 
   async checkShoppingCart(rut: string) {
-    console.log("hola2");
     try {
-      console.log("hola3");
       this.shoppingCart = await this.serviceBD.getShoppingCartByRut(rut);
-      console.log("hol4");
       if (!this.shoppingCart) {
         const newCartId = await this.serviceBD.createNewCart(rut);
         this.shoppingCart = await this.serviceBD.getShoppingCartById(newCartId);
       }
       this.serviceBD.fetchCartItems().subscribe(cartItems => {
         this.cartItem = cartItems;
-        console.log("hola5");
         this.cargarProductosEnCarrito();
       });
     } catch (error) {
@@ -64,57 +65,69 @@ export class ShoppingCartPage implements OnInit {
     }
   }
   cargarProductosEnCarrito() {
-    console.log("hola6");
     if (this.shoppingCart) {
-      console.log("hola7");
+      console.log("Cargando productos para carrito ID:", this.shoppingCart.idcart);
+
       this.serviceBD.getCartItemsByCartId(this.shoppingCart.idcart).then((cartItems) => {
-        console.log("hol8");
         this.cartItem = cartItems;
+        console.log("Ítems del carrito obtenidos:", JSON.stringify(this.cartItem));
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
-          this.productsInCart = data
-            .filter(product => this.cartItem.some(cart => cart.idproduct === product.idproduct))
-            .map(product => {
-              const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
+          console.log("Productos disponibles:", JSON.stringify(data));
+          this.productsInCart = cartItems.map(cartItem => {
+            const product = data.find(product => product.idproduct === cartItem.idproduct);
+            if (product) {
               return {
                 ...product,
-                quantity: cartItem ? cartItem.quantity : 1,
-                selected: this.selectedProducts.has(product.idproduct)
+                quantity: cartItem.quantity,
+                size: cartItem.size,
+                selected: this.selectedProducts.has(cartItem.idproduct),
               } as ProductWithQuantity;
-            });
+            }
+            return null;
+          })
+          .filter(product => product !== null) as ProductWithQuantity[];
+
+          console.log("Productos en el carrito:", JSON.stringify(this.productsInCart));
         });
       }).catch(error => {
         console.error('Error al obtener los ítems del carrito:', error);
       });
+    } else {
+      console.warn("No hay un carrito activo para cargar productos.");
     }
   }
 
-  async comprar() {
-    console.log("Entrando a la función comprar");
+  async comprarTest() {
+    console.log("Estado inicial:", JSON.stringify({
+      productsInCart: this.productsInCart,
+      shoppingCart: this.shoppingCart,
+      user: this.user
+    }));
+    try {
+      for (let product of this.productsInCart) {
+        const totalorder = product.priceproduct * product.quantity;
+        console.log("Procesando producto:", JSON.stringify(product));
+        const idorder = await this.serviceBD.insertOrder(totalorder, product.idproduct, this.user?.rut || '', product.quantity);
+        await this.serviceBD.insertOrderHistory(idorder || 0, this.user?.rut || '', 1);
+        const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
+        if (cartItem) {
+          await this.serviceBD.deleteCartItem(cartItem.idcart_item);
+        }
+      }
+      this.cargarProductosEnCarrito();
+      this.showToast('Compra realizada con éxito');
+    } catch (error) {
+      console.log("Error durante la compra:", error);
+      this.showToast('Error al realizar la compra: ' + error);
+    }
     if (this.productsInCart.length > 0 && this.shoppingCart && this.user) {
       console.log("Hay productos en el carrito, carrito y usuario disponibles");
-      try {
-        for (let product of this.productsInCart) {
-          const totalorder = product.priceproduct * product.quantity;
-          console.log("Procesando producto:", product);
-          const idorder = await this.serviceBD.insertOrder(totalorder, product.idproduct, 1, this.user.rut);
-          await this.serviceBD.insertOrderHistory(idorder, this.user.rut, 1);
-          const cartItem = this.cartItem.find(cart => cart.idproduct === product.idproduct);
-          if (cartItem) {
-            await this.serviceBD.deleteCartItem(cartItem.idcart_item);
-          }
-        }
-        this.cargarProductosEnCarrito();
-        this.showToast('Compra realizada con éxito');
-      } catch (error) {
-        console.log("Error durante la compra:", error);
-        this.showToast('Error al realizar la compra: ' + error);
-      }
     } else {
-      console.log("No hay productos en el carrito para comprar");
-      this.showToast('No hay productos en el carrito para comprar.');
+      console.log("No se cumplen las condiciones para comprar.");
+      this.showToast('No hay productos en el carrito o falta información del carrito o usuario.');
+      return;
     }
   }
-
 
   showToast(message: string) {
     this.toastMessage = message;

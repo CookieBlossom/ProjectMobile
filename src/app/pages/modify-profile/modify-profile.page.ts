@@ -22,7 +22,7 @@ export class ModifyProfilePage implements OnInit {
       name: ['', Validators.required],
       genderuser: ['', Validators.required],
       email: [{ value: this.user?.email || '', disabled: true }, [Validators.required, Validators.email, this.gmailValidator]],
-      phone: ['', [Validators.required, Validators.pattern('^\\+?[0-9]{9,12}$')]]
+      phone: ['', [Validators.required, this.phoneValidator]]
     });
   }
   rutValidator(control: any) {
@@ -32,6 +32,10 @@ export class ModifyProfilePage implements OnInit {
   gmailValidator(control: any) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(control.value) ? null : { invalidEmail: true };
+  }
+  phoneValidator(control: any) {
+    const phoneRegex = /^\d{9}$/; // Exactamente 9 dígitos
+    return phoneRegex.test(control.value) ? null : { invalidPhone: true };
   }
   ngOnInit() {
     this.verificarConexionBD();
@@ -47,18 +51,20 @@ export class ModifyProfilePage implements OnInit {
   async loadUserData() {
     this.serviceSession.getUserSession().subscribe(async (userSession) => {
       if (userSession) {
+        console.log(userSession);
         const user = await this.serviceBD.getUserByRut(userSession.rut);
         if (user) {
           console.log('Datos completos del usuario recuperados desde la base de datos:', user);
           this.user = user;
-          this.profileForm.patchValue({rut: this.user.rut,name: this.user.name,genderuser: this.user.genderuser,email: this.user.email,phone: this.user.phone});
+          console.log(user);
+          this.profileForm.patchValue({rut: this.user.rut, name: this.user.name, genderuser: this.user.genderuser, email: this.user.email, phone: this.user.phone});
         }
       }
     });
   }
   onSubmit() {
     if (this.profileForm.valid) {
-      const updatedUser = new Users(this.profileForm.value.rut,this.profileForm.value.name,this.user?.imageuser,this.profileForm.value.genderuser,this.profileForm.value.email,this.user?.password || '',this.profileForm.value.phone,this.user?.idrol || 2
+      const updatedUser = new Users(this.user?.rut || '', this.profileForm.value.name, this.user?.imageuser, this.profileForm.value.genderuser, this.user?.email || '', this.user?.password || '', this.profileForm.value.phone, this.user?.idrol || 2
       );
       this.serviceBD.editUser(updatedUser.rut,updatedUser.name,updatedUser.genderuser,updatedUser.email,updatedUser.password,updatedUser.phone,updatedUser.idrol,updatedUser.imageuser).then(() => {
         this.serviceSession.setUserSession(updatedUser).then(() => {

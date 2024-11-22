@@ -34,7 +34,7 @@ export class HomePage {
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
-          this.products = data;
+          this.products = data.filter(product => product.status === 'Available');
         });
         this.serviceBD.searchProducts();
         this.selectDataStatic();

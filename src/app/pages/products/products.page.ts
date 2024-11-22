@@ -33,10 +33,10 @@ export class ProductsPage implements OnInit {
     this.serviceBD.dbReady()
       .pipe(filter(isReady => isReady))
       .subscribe(() => {
-        this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
-          this.products = data;
-          this.filteredProducts = data;
-          this.isLoading = false;
+      this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
+        this.products = data.filter(product => product.status === 'Available');
+        this.filteredProducts = data.filter(product => product.status === 'Available');
+        this.isLoading = false;
         });
         this.serviceBD.searchProducts();
         this.selectDataStatic();

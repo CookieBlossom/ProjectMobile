@@ -22,7 +22,7 @@ export class AdmProductsPage {
       .subscribe(() => {
         this.serviceBD.searchProducts();
         this.serviceBD.fetchProducts().subscribe((data: Productos[]) => {
-          this.products = data;
+          this.products = data.filter(product => product.status === 'Available');
         });
       });
   }

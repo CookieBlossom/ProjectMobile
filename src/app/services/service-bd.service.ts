@@ -59,7 +59,7 @@ export class ServiceBDService {
     idproduct INTEGER PRIMARY KEY AUTOINCREMENT,
     nameproduct TEXT NOT NULL,
     descriptionproduct TEXT NOT NULL,
-    stockproduct INTEGER CHECK(stockproduct > 0) NOT NULL,
+    stockproduct INTEGER CHECK(stockproduct >= 0) NOT NULL,
     idcategory INTEGER NOT NULL,
     idbrand INTEGER NOT NULL,
     idgender INTEGER NOT NULL,
@@ -204,7 +204,7 @@ export class ServiceBDService {
   async createConnection() {
     await this.platform.ready().then(async () =>{
       const db = await this.sqlite.create({
-        name: 'shoeVault114.db',
+        name: 'shoeVault115.db',
         location: 'default',
       }).then(async (db: SQLiteObject) =>{
         this.database = db;
@@ -735,20 +735,42 @@ export class ServiceBDService {
     this.fetchFavoriteItems();
     return res.rows.length > 0;
   }
-  async insertOrder(totalorder: number, idproduct: number, idcard: number, rut: string): Promise<number> {
-    const query = `
-      INSERT INTO "order" (totalorder, idproduct, idcard, rut)
-      VALUES (?, ?, ?, ?);
+  async insertOrder(totalorder: number, idproduct: number, rut: string, quantity: number): Promise<number> {
+    const insertQuery = `
+      INSERT INTO "order" (totalorder, idproduct, rut)
+      VALUES (?, ?, ?);
     `;
+
+    const updateStockQuery = `
+      UPDATE product
+      SET stockproduct = stockproduct - ?
+      WHERE idproduct = ? AND stockproduct >= ?;
+    `;
+
+    const updateStatusQuery = `
+      UPDATE product
+      SET status = 'Disabled'
+      WHERE idproduct = ? AND stockproduct = 0;
+    `;
+
     try {
-      const result = await this.database.executeSql(query, [totalorder, idproduct, idcard, rut]);
+      const insertResult = await this.database.executeSql(insertQuery, [totalorder, idproduct, rut]);
+      const orderId = insertResult.insertId;
+      const updateResult = await this.database.executeSql(updateStockQuery, [quantity, idproduct, quantity]);
+      if (updateResult.rowsAffected === 0) {
+        throw new Error(`Stock insuficiente para el producto con id ${idproduct}`);
+      }
+      await this.database.executeSql(updateStatusQuery, [idproduct]);
       this.fetchOrder();
-      return result.insertId;
+      this.fetchProducts();
+      return orderId;
     } catch (error) {
-      console.error('Error al insertar la orden:', error);
+      console.error('Error al insertar la orden, actualizar el stock o cambiar el estado:', error);
       throw error;
     }
   }
+
+
   async insertOrderHistory(idorder: number, rut: string, idstate: number): Promise<void> {
     const query = `
       INSERT INTO order_history (idorder, rut, idstate)
